@@ -41,6 +41,10 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    composer install
    ```
+3. start the server
+   ```sh
+   php artisan serve
+   ```
    <!-- USAGE EXAMPLES -->
 
 ## Usage
