@@ -17,7 +17,8 @@ class ClassesFactory extends Factory
             'name' => $this->faker->userName(),
             'status' => 1,
             'descriptions' => $this->faker->sentence(),
-          'owner_id' => \App\Models\User::all()->random()->id,
+          'owner_id' => \App\Models\User::where('role', 2)
+          ->get()->random()->id,
           'subject_id' => \App\Models\Subject::all()->random()->id,
         ];
     }
