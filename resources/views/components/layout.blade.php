@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('css/font-awesome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+        integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -15,13 +17,6 @@
 
     <section>{{ $slot }}</section>
     <!-- JQUERY SCRIPTS -->
-    <script src="{{ asset('js/jquery-1.10.2.js') }}"></script>
-    <!-- BOOTSTRAP SCRIPTS -->
-    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <!-- METISMENU SCRIPTS -->
-    <script src=" {{ asset('js/jquery.metisMenu.js') }}"></script>
-    <!-- CUSTOM SCRIPTS -->
-    <script src="{{ asset('js/custom.js') }}"></script>
 </body>
 
 </html>
