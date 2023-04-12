@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
+use App\Models\Exam;
 
 class ScoreFactory extends Factory
 {
@@ -15,8 +17,8 @@ class ScoreFactory extends Factory
     {
         return [
             'total' => collect([1,2,3,4,5,6,7,8,9,10])->random(),
-          'student_id' => \App\Models\User::all()->random()->id,
-          'exam_id' => \App\Models\Exam::all()->random()->id,
+          'student_id' => User::all()->random()->id,
+          'exam_id' => Exam::all()->random()->id,
         ];
     }
 }

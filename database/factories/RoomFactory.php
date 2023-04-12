@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\StatusType;
 
 class RoomFactory extends Factory
 {
@@ -15,7 +16,7 @@ class RoomFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
-            'status' => 1,
+            'status' => StatusType::getRandomValue(),
         ];
     }
 }

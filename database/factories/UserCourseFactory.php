@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use App\Enums\StatusType;
+use App\Models\User;
+use App\Models\Course;
 class UserCourseFactory extends Factory
 {
     /**
@@ -14,9 +16,9 @@ class UserCourseFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => \App\Models\User::all()->random()->id,
-            'course_id' => \App\Models\Course::all()->random()->id,
-            'status' => 1,
+            'user_id' => User::all()->random()->id,
+            'course_id' => Course::all()->random()->id,
+            'status' => StatusType::getRandomValue(),
 
         ];
     }

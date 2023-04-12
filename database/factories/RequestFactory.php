@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use App\Enums\RequestType;
+use App\Enums\StatusType;
+use App\Models\User;
 class RequestFactory extends Factory
 {
     /**
@@ -14,9 +16,9 @@ class RequestFactory extends Factory
     public function definition()
     {
         return [
-            'type' => collect([1,2,3])->random(),
-            'status' => 1,
-            'user_request_id' => \App\Models\User::all()->random()->id,
+            'type' => RequestType::getRandomValue(),
+            'status' => StatusType::getRandomValue(),
+            'user_request_id' => User::all()->random()->id,
             'user_approve_id' => 1,
         ];
     }

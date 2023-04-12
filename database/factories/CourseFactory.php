@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Subject;
+use App\Models\User;
 
 class CourseFactory extends Factory
 {
@@ -17,9 +19,9 @@ class CourseFactory extends Factory
             'name' => $this->faker->userName(),
             'status' => 1,
             'descriptions' => $this->faker->sentence(),
-          'owner_id' => \App\Models\User::where('role', 2)
+          'owner_id' => User::where('role', 2)
           ->get()->random()->id,
-          'subject_id' => \App\Models\Subject::all()->random()->id,
+          'subject_id' => Subject::all()->random()->id,
         ];
     }
 }

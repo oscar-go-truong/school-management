@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\ExamType;
+use App\Models\Course;
 
 class ExamFactory extends Factory
 {
@@ -14,9 +16,9 @@ class ExamFactory extends Factory
     public function definition()
     {
         return [
-            'type' => collect([1,2,3])->random(),
+            'type' => ExamType::getRandomValue(),
             'status' => 1, 
-          'course_id' => \App\Models\Course::all()->random()->id,
+          'course_id' => Course::all()->random()->id,
         ];
     }
 }
