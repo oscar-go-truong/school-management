@@ -8,13 +8,7 @@
             </button>
             <a class="navbar-brand" href="#"><i class="fa fa-square-o "></i>&nbsp;XShool</a>
         </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Log in</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Log out</a></li>
-            </ul>
-        </div>
+
 
     </div>
 </div>

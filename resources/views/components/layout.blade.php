@@ -8,11 +8,12 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('css/font-awesome.css') }}">
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body>
 
-    {{ $slot }}
+    <section>{{ $slot }}</section>
     <!-- JQUERY SCRIPTS -->
     <script src="{{ asset('js/jquery-1.10.2.js') }}"></script>
     <!-- BOOTSTRAP SCRIPTS -->

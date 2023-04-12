@@ -4,18 +4,22 @@
         <!-- /. NAV TOP  -->
         @include('partials.sidebar')
         <!-- /. NAV SIDE  -->
+
         <div id="page-wrapper">
             <div id="page-inner">
                 <div class="row">
-                    <div class="col-md-12">
-                        <h2>Dash board</h2>
+
+                    <div class="col-md-12 text-3xl font-bold">
+                        Profile
                     </div>
+
                 </div>
                 <!-- /. ROW  -->
-                <hr />
-
+                <hr class="mt-2 mb-5" />
                 <!-- /. ROW  -->
             </div>
+
+            Admin
 
             <!-- /. PAGE INNER  -->
         </div>

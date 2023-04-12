@@ -18,4 +18,6 @@ class Course extends Model
         'owner_id',
         'subject_id'
     ];
+
+    
 }
