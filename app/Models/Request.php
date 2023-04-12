@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Request extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, 
+        SoftDeletes;
     protected $fillable = [
         'user_request_id',
         'user_approve_id',

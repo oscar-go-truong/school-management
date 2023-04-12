@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Exam extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, 
+        SoftDeletes;
     protected $fillable = [
         'type',
         'course_id',

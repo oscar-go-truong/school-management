@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\ExamType;
+use App\Enums\StatusType;
 use App\Models\Course;
 
 class ExamFactory extends Factory
@@ -17,7 +18,7 @@ class ExamFactory extends Factory
     {
         return [
             'type' => ExamType::getRandomValue(),
-            'status' => 1, 
+            'status' => StatusType::Active,
           'course_id' => Course::all()->random()->id,
         ];
     }

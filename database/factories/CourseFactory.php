@@ -2,8 +2,11 @@
 
 namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Enums\StatusType;
+use App\Enums\UserRole;
 use App\Models\Subject;
 use App\Models\User;
+
 
 class CourseFactory extends Factory
 {
@@ -17,9 +20,9 @@ class CourseFactory extends Factory
     {
         return [
             'name' => $this->faker->userName(),
-            'status' => 1,
+           'status' => StatusType::Active,
             'descriptions' => $this->faker->sentence(),
-          'owner_id' => User::where('role', 2)
+          'owner_id' => User::where('role', UserRole::Teacher)
           ->get()->random()->id,
           'subject_id' => Subject::all()->random()->id,
         ];
