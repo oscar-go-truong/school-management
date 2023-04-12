@@ -30,3 +30,6 @@ Route::prefix('login')->group(function() {
     )->name('login');
 });
 
+Route::get('/logout', [AuthController::class, 'logout']
+)->name('logout');
+
