@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Score extends Model
@@ -16,4 +17,12 @@ class Score extends Model
         'student_id',
         'total'
     ];
+
+    public function user() : BelongsTo {
+        return $this->belongsTo(User::class,"user_id");
+    }
+
+    public function exam() : BelongsTo {
+        return $this->belongsTo(Exam::class, "exam_id");
+    }
 }

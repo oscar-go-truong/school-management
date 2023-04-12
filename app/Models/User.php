@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,5 +50,21 @@ class User extends Authenticatable
 
     public function isStudent() : bool {
        return $this->role === UserRole::Student;
+    }
+
+    public function request_user() : HasMany {
+        return $this->hasMany(Request::class);
+    }
+
+    public function approve_user() : HasMany {
+        return $this->hasMany(Request::class);
+    }
+
+    public function coures() : HasMany {
+        return $this->HasMany(Course::class);
+    }
+
+    public function exam() : hasMany {
+        return $this->hasMany(Exam::class);
     }
 }
