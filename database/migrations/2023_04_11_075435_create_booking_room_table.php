@@ -16,7 +16,7 @@ class CreateBookingRoomTable extends Migration
         Schema::create('booking_room', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('room_id');
-            $table->unsignedBigInteger('class_id');
+            $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('request_id');
             $table->integer('status');
             $table->timestamps();
@@ -24,7 +24,7 @@ class CreateBookingRoomTable extends Migration
 
         Schema::table('booking_room', function (Blueprint $table) {   
             $table->foreign('room_id')->references('id')->on('rooms');
-            $table->foreign('class_id')->references('id')->on('classes');
+            $table->foreign('course_id')->references('id')->on('courses');
             $table->foreign('request_id')->references('id')->on('requests')->nullable;
         });
     }

@@ -3,7 +3,7 @@
 namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ClassesFactory extends Factory
+class CourseFactory extends Factory
 {
    
     /**

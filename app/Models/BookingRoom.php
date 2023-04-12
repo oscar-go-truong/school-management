@@ -10,7 +10,7 @@ class BookingRoom extends Model
     use HasFactory;
     protected $fillable = [
         'room_id',
-        'class_id',
+        'course_id',
         'request_id',
         'status'
     ];

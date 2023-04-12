@@ -16,7 +16,7 @@ class ExamFactory extends Factory
         return [
             'type' => collect([1,2,3])->random(),
             'status' => 1, 
-          'class_id' => \App\Models\Classes::all()->random()->id,
+          'course_id' => \App\Models\Course::all()->random()->id,
         ];
     }
 }

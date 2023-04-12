@@ -15,14 +15,14 @@ class CreateExamsTable extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('class_id');
+            $table->unsignedBigInteger('course_id');
             $table->integer('type');
             $table->integer('status');
             $table->timestamps();
         });
 
         Schema::table('exams', function (Blueprint $table) {
-            $table->foreign('class_id')->references('id')->on('classes');
+            $table->foreign('course_id')->references('id')->on('courses');
         });
     }
 

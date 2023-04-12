@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             RoomSeeder::class,
             SubjectSeeder::class,
-            ClassSeeder::class,
+            CoursesSeeder::class,
             RequestSeeder::class,
-            UserClassSeeder::class,
+            UserCourseSeeder::class,
             ExamSeeder::class,
             ScoreSeeder::class
         ]);

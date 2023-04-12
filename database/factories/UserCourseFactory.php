@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class UserClassFactory extends Factory
+class UserCourseFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -15,7 +15,7 @@ class UserClassFactory extends Factory
     {
         return [
             'user_id' => \App\Models\User::all()->random()->id,
-            'class_id' => \App\Models\Classes::all()->random()->id,
+            'course_id' => \App\Models\Course::all()->random()->id,
             'status' => 1,
 
         ];
