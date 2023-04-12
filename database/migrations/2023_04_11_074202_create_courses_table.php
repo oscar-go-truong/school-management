@@ -20,6 +20,7 @@ class CreateCoursesTable extends Migration
             $table->integer('status');
             $table->unsignedBigInteger('owner_id');
             $table->unsignedBigInteger('subject_id');
+            $table->softDeletes();
         });
 
         Schema::table('courses', function (Blueprint $table) {

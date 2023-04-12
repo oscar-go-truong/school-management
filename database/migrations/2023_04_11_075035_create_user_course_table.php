@@ -19,6 +19,7 @@ class CreateUserCourseTable extends Migration
             $table->unsignedBigInteger('course_id');
             $table->integer('status');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('user_course', function (Blueprint $table) {

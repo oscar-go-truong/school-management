@@ -19,6 +19,7 @@ class CreateSubjectsTable extends Migration
             $table->string('descriptions');
             $table->integer('status');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -19,6 +19,7 @@ class CreateScoresTable extends Migration
             $table->unsignedBigInteger('student_id');
             $table->integer('total');
             $table->timestamps();
+            $table->softDeletes();
         });
         Schema::table('scores', function (Blueprint $table) {
             $table->foreign('student_id')->references('id')->on('users');

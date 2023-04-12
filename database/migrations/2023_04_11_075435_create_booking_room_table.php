@@ -20,6 +20,7 @@ class CreateBookingRoomTable extends Migration
             $table->unsignedBigInteger('request_id');
             $table->integer('status');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('booking_room', function (Blueprint $table) {   

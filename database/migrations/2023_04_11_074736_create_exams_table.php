@@ -19,6 +19,7 @@ class CreateExamsTable extends Migration
             $table->integer('type');
             $table->integer('status');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('exams', function (Blueprint $table) {

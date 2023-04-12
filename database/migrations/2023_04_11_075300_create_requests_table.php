@@ -20,6 +20,7 @@ class CreateRequestsTable extends Migration
             $table->integer('type');
             $table->integer('status');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::table('requests', function (Blueprint $table) {
