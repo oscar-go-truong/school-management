@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +15,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
 
-    return view('index', ['id' => 1]);
+
+Route::prefix('/')->middleware('auth')->group(function() {
+    Route::get('/',[UserController::class, 'profile'] )->name('profile');
 });
+
+
+
+Route::get('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'authenticate']
+)->name('login');
+
+
+Route::get('/logout', [AuthController::class, 'logout']
+)->name('logout');
+

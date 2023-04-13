@@ -11,13 +11,7 @@ const mix = require("laravel-mix");
  |
  */
 
-mix.js("resources/js/jquery-1.10.2.js", "public/js")
-    .js("resources/js/bootstrap.min.js", "public/js")
-    .js("resources/js/jquery.metisMenu.js", "public/js")
-    .js("resources/js/custom.js", "public/js")
-    .postCss("resources/css/bootstrap.css", "public/css", [
-        //
-    ])
+mix.postCss("resources/css/bootstrap.css", "public/css", [])
     .postCss("resources/css/font-awesome.css", "public/css", [
         //
     ])

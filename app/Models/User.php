@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-
+use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -39,9 +40,31 @@ class User extends Authenticatable
         'password'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
+    public function isAdministrator() : bool {
+       return $this->role === UserRole::Adminstrator;
+    }
+
+    public function isTeacher() : bool{
+        return $this->role === UserRole::Teacher;
+    }
+
+    public function isStudent() : bool {
+       return $this->role === UserRole::Student;
+    }
+
+    public function request_user() : HasMany {
+        return $this->hasMany(Request::class);
+    }
+
+    public function approve_user() : HasMany {
+        return $this->hasMany(Request::class);
+    }
+
+    public function coures() : HasMany {
+        return $this->HasMany(Course::class);
+    }
+
+    public function exam() : hasMany {
+        return $this->hasMany(Exam::class);
+    }
 }
