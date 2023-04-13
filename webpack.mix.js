@@ -11,10 +11,4 @@ const mix = require("laravel-mix");
  |
  */
 
-mix.postCss("resources/css/bootstrap.css", "public/css", [])
-    .postCss("resources/css/font-awesome.css", "public/css", [
-        //
-    ])
-    .postCss("resources/css/custom.css", "public/css", [
-        //
-    ]);
+mix.postCss("resources/css/custom.css", "public/css", []);

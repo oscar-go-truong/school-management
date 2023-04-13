@@ -1,20 +1,21 @@
 @include('components.plugin')
 @include('components.topbar')
-<div class="container" style="margin-top:100px">
+<div class="container" style="margin-top:50px">
     <div class="row">
         <div class="col-md-3 offset-md-3">
         </div>
         <div class="col-md-6 offset-md-3">
-            <div class="text-center text-6xl">Login</div>
+
 
             <div class="card my-5 bg-slate-300 p-lg-5 p-8 rounded-lg pb-32">
 
                 <form class="card-body " method="POST" action="{{ route('login') }}" id="login">
                     @csrf
                     <div class="text-center">
+                        <div class="text-center text-5xl">Login</div>
                         <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"
                             class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3" width="200px"
-                            alt="profile">
+                            style="margin:0 auto" alt="profile">
                     </div>
 
                     <div class="mb-3">

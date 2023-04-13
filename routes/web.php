@@ -19,14 +19,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/')->middleware('auth')->group(function() {
     Route::get('/',[UserController::class, 'profile'] )->name('profile');
+    Route::prefix('/users')->group(function() {
+        Route::get('/',[UserController::class, 'table'] )->name('table');
+
+        Route::put('/status/{id}',[UserController::class, 'changeStatus'] )->name('admin.change.user.status');
+    });
 });
 
 
 
 Route::get('/login', [AuthController::class, 'login']);
+
 Route::post('/login', [AuthController::class, 'authenticate']
 )->name('login');
-
 
 Route::get('/logout', [AuthController::class, 'logout']
 )->name('logout');
