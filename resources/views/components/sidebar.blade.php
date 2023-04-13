@@ -10,11 +10,9 @@
             <li>
                 <a href="#"><i class="fa fa-edit "></i>Requests</a>
             </li>
-            @if (Auth::User()->isAdministrator())
-                <li>
-                    <a href="#"><i class="fa fa-table "></i>User Management</a>
-                </li>
-            @endif
+            <li>
+                <a href="#"><i class="fa fa-table "></i>User Management</a>
+            </li>
 
 
             <li>
