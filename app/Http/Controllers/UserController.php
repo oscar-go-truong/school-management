@@ -25,11 +25,15 @@ class UserController extends Controller
         $users = $this->UserService->table();
         return view('user.table', ['users'=> $users]);
     }
-    //update user's status
+    // Handle update user's status
     public function changeStatus(Request $request,int $id){
-        dd(1234);
         $status = $request->status;
         $user = $this->UserService->changeStatus($id, $status);
         return $user;
-    }
+    }  
+    // Handle delete user 
+    public function delete(Request $request,int $id){
+        $user = $this->UserService->delete($id);
+        return $user;
+    } 
 }

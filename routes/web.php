@@ -23,6 +23,8 @@ Route::prefix('/')->middleware('auth')->group(function() {
         Route::get('/',[UserController::class, 'table'] )->name('table');
 
         Route::put('/status/{id}',[UserController::class, 'changeStatus'] )->name('admin.change.user.status');
+
+        Route::delete('/{id}',[UserController::class, 'delete'] )->name('admin.delete.user.status');
     });
 });
 

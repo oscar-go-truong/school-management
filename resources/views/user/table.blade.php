@@ -27,7 +27,7 @@
                         </thead>
                         <tbody>
                             @foreach ($users as $user)
-                                <tr>
+                                <tr id="user-{{ $user->id }}">
                                     <td>{{ $user->id }}</td>
                                     <td>{{ $user->username }}</td>
                                     <td>{{ $user->fullname }}</td>
@@ -37,12 +37,13 @@
                                             <input class="form-check-input status" type="checkbox" id="{{ $user->id }}"
                                                 data-id="{{ $user->id }}" {{ $user->status === 1 ? 'checked' : '' }}>
                                             <label class="form-check-label" for="{{ $user->id }}">
-                                                {{ $user->status === 1 ? 'active' : 'block' }}
+                                                {{ $user->status === 1 ? 'active' : 'blocked' }}
                                             </label>
                                         </div>
                                     </td>
                                     <td class="text-primary"><i class="fa-solid fa-pen-to-square"></i></td>
-                                    <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus"></i></i></td>
+                                    <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
+                                            data-id={{ $user->id }}></i></i></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -59,28 +60,54 @@
     </div>
     <script>
         $(document).ready(function() {
+            // update user's status
             $('.status').change(function() {
+                toastr.info('Updating status!');
                 let id = $(this).data('id');
                 let status = $(this).is(':checked') ? 1 : 0;
                 let _token = '{{ csrf_token() }}';
-
-                $.ajax({
-                    header: {
+                $.ajaxSetup({
+                    headers: {
                         'X-CSRF-TOKEN': _token
-                    },
+                    }
+                });
+                $(this).parent().children('label').text(status ? "active" : "blocked");
+                $.ajax({
                     type: "PUT",
                     url: "/users/status/" + id,
                     data: {
                         status: status,
                         _token: _token
                     },
-                    contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function() {
-                        alert(1);
+                        toastr.success('Update status successful!');
                     },
                     error: function() {
-                        alert(2);
+                        toastr.success('Error, Please try again later!');
+                    }
+                });
+            });
+            // delete user
+            $('.delete').click(function() {
+                toastr.info('Deleting user!');
+                let id = $(this).data('id');
+                let _token = '{{ csrf_token() }}';
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': _token
+                    }
+                });
+                $.ajax({
+                    type: "DELETE",
+                    url: "/users/" + id,
+                    dataType: "json",
+                    success: function() {
+                        toastr.success('Delete user successful!');
+                        $('#user-' + id).remove();
+                    },
+                    error: function() {
+                        toastr.success('Error, Please try again later!');
                     }
                 });
             });

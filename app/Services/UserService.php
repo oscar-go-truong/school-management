@@ -13,4 +13,9 @@ class UserService {
         $user = User::where('id', $id)->update(['status' => $status]);
         return $user;
     }
+
+    public function delete($id) {
+        $user = User::where('id', $id)->delete();
+        return $user;
+    }
 }
