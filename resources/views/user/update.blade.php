@@ -13,9 +13,10 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="blank-content relative">
-                    <form class="container" method="POST" action="{{ route('user.store.update', $user->id) }}" id="update">
+                    <form class="container" method="POST" action="{{ route('users.update', $user->id) }}" id="update">
                         @csrf
                         {{ method_field('PUT') }}
+                        <input type="hidden" value={{ $user->id }} name="id" id="id" />
                         <div class="form-group mt-3">
                             <label for="email" class="font-bold mb-1">Email address <span
                                     class="text-danger">*</span></label>

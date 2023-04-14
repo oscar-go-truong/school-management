@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    protected $UserService;
+    protected $userService;
 
-    public function __construct(UserService $UserService)
+    public function __construct(UserService $userService)
     {
-        $this->UserService = $UserService;
+        $this->userService = $userService;
     } 
 
     // Render profile view.
@@ -24,55 +24,41 @@ class UserController extends Controller
     }
 
     // Render all user 
-    public function table() {
-        $users = $this->UserService->table();
+    public function index() {
+        $users = $this->userService->index();
         return view('user.table', ['users'=> $users, 'role'=>UserRole::asArray()]);
     }
     // Handle update user's status
     public function changeStatus(Request $request,int $id){
         $status = $request->status;
-        $user = $this->UserService->changeStatus($id, $status);
+        $user = $this->userService->changeStatus($id, $status);
         return $user;
     }  
     // Handle delete user 
-    public function delete(int $id){
-        $user = $this->UserService->delete($id);
+    public function destroy(int $id){
+        $user = $this->userService->destroy($id);
         return $user;
     } 
     // Render create user form
-    public function viewCreate(){   
+    public function create(){   
         return view('user.create', ['role'=>UserRole::asArray()]);
     }
     // Store user
     public function storeCreate(CreateUserRequest $request) {
-       $this->UserService->storeCreate($request->input());
+       $this->userService->store($request->input());
        return redirect('/users');
     }
     // Render update user form
-    public function viewUpdate(int $id){   
-        $user = $this->UserService->getUserById($id);
+    public function edit(int $id){   
+        $user = $this->userService->getById($id);
         return view('user.update', ['role'=>UserRole::asArray(), 'user'=>$user]);
     }
     // Store update
-    public function storeUpdate(UpdateUserRequest $request, int $id) {
-       
-        $user = $this->UserService->getUserById(($id));
-        if($user->email !== $request->email)
-        { 
-            $request->validate([
-                'email' => 'unique:users,email',
-            ]);
-        }
-        if($user->username !== $request->username)
-        { 
-            $request->validate([
-                'username' => 'unique:users,username',
-            ]);
-        }
-        $data = array('email'=>$request->email, 'username'=>$request->username, 'role'=>$request->role, 'fullname'=>$request->fullname);
+    public function update(UpdateUserRequest $request, int $id) {
+        $user = array('email'=>$request->email, 'username'=>$request->username, 'role'=>$request->role, 'fullname'=>$request->fullname);
         if($request->password)
-            $data['password'] = $request->password;
-        $this->UserService->storeUpdate($id, $data);
+            $user['password'] = $request->password;
+        $this->userService->update($id, $user);
         return redirect('/users');
     }
 }

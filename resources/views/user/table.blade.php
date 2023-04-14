@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div> User managerment</div>
-                        <div> <a href='{{ route('user.view.create') }}'><i class="fa-solid fa-user-plus"></i></a></div>
+                        <div> <a href='{{ route('users.index') }}'><i class="fa-solid fa-user-plus"></i></a></div>
                     </div>
 
                 </div>
@@ -50,7 +50,7 @@
                                             </label>
                                         </div>
                                     </td>
-                                    <td class="text-primary"><a href="/users/{{ $user->id }}"><i
+                                    <td class="text-primary"><a href="/users/{{ $user->id }}/edit"><i
                                                 class="fa-solid fa-pen-to-square"></i></a></td>
                                     <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
                                             data-id={{ $user->id }}></i></i></td>

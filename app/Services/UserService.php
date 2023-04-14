@@ -2,34 +2,29 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-class UserService {
+class UserService  extends BaseService{
 
-    protected $user; 
+   
     public function __construct(User $user){
-        $this->user = $user;
-    }
-    public function table() {
-        return $this->user->orderBy('created_at',"DESC")->paginate(15);
+        $this->model = $user;
     }
 
     public function changeStatus($id, $status) {
-        return  $this->user->where('id', $id)->update(['status' => $status]);
+        return  $this->model->where('id', $id)->update(['status' => $status]);
     }
 
-    public function delete($id) {
-        return $this->user->destroy($id);
+
+    public function store($user){
+        $user->password = Hash::make($user->passowrd);
+        return $this->model->create($user);
     }
 
-    public function storeCreate($user){
-        return $this->user->create($user);
-    }
 
-    public function getUserById($id) {
-        return $this->user->where('id', $id)->first();
-    }
-
-    public function storeUpdate($id, $user) {
-        return  $this->user->where('id', $id)->update($user);
+    public function update($id, $user) {
+        if(array_key_exists("password", $user))
+            $user->password = Hash::make($user->passowrd);
+        return  $this->model->where('id',$id)->update($user);
     }
 }
