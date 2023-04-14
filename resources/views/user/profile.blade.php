@@ -13,10 +13,12 @@
                 <!-- /. ROW  -->
                 <hr class="mt-2 mb-5" />
                 <!-- /. ROW  -->
-                <div>Hello <span class="font-medium text-green-500 text-2xl"> {{ $user->username }}! </span></div>
-                <div>Email: <span class="font-medium  text-2xl"> {{ $user->email }} </span></div>
-                <div>Fullname: <span class="font-medium  text-2xl"> {{ $user->fullname }} </span></div>
-                <a href="{{ route('logout') }}">Log out</a>
+                <div class="blank-content">
+                    <div>Hello <span class="font-medium text-green-500 text-2xl"> {{ $user->username }}! </span></div>
+                    <div>Email: <span class="font-medium  text-2xl"> {{ $user->email }} </span></div>
+                    <div>Fullname: <span class="font-medium  text-2xl"> {{ $user->fullname }} </span></div>
+                    <a href="{{ route('logout') }}">Log out</a>
+                </div>
             </div>
 
 

@@ -4,8 +4,9 @@
         <div id="page-wrapper">
             <div id="page-inner">
                 <div class="row">
-                    <div class="col-md-12 text-3xl font-bold">
-                        User managerment
+                    <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
+                        <div> User managerment</div>
+                        <div> <a href='{{ route('user.view.create') }}'><i class="fa-solid fa-user-plus"></i></a></div>
                     </div>
 
                 </div>
@@ -20,6 +21,7 @@
                                 <th>Username</th>
                                 <th>Full name</th>
                                 <th>Email</th>
+                                <th>Role</th>
                                 <th>Status</th>
                                 <th></th>
                                 <th></th>
@@ -33,6 +35,13 @@
                                     <td>{{ $user->fullname }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
+                                        @foreach ($role as $key => $value)
+                                            @if ($value === $user->role)
+                                                {{ $key }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input status" type="checkbox" id="{{ $user->id }}"
                                                 data-id="{{ $user->id }}" {{ $user->status === 1 ? 'checked' : '' }}>
@@ -41,7 +50,8 @@
                                             </label>
                                         </div>
                                     </td>
-                                    <td class="text-primary"><i class="fa-solid fa-pen-to-square"></i></td>
+                                    <td class="text-primary"><a href="/users/{{ $user->id }}"><i
+                                                class="fa-solid fa-pen-to-square"></i></a></td>
                                     <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
                                             data-id={{ $user->id }}></i></i></td>
                                 </tr>

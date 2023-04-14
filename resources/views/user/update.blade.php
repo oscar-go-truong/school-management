@@ -5,7 +5,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold">
-                        User managerment - Create user
+                        User managerment - Update user
                     </div>
 
                 </div>
@@ -13,13 +13,15 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="blank-content relative">
-                    <form class="container" method="POST" action="{{ route('user.store.create') }}" id="create">
+                    <form class="container" method="POST" action="{{ route('user.store.update', $user->id) }}" id="update">
                         @csrf
+                        {{ method_field('PUT') }}
                         <div class="form-group mt-3">
                             <label for="email" class="font-bold mb-1">Email address <span
                                     class="text-danger">*</span></label>
                             <input type="email" class="form-control @error('gmail') is-invalid @enderror" id="email"
-                                name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                                name="email" aria-describedby="emailHelp" value="{{ $user->email }}"
+                                placeholder="Enter email">
                             @error('email')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -27,7 +29,8 @@
                         <div class="form-group mt-3">
                             <label for="username" class="font-bold mb-1">Username <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                id="username" name="username" placeholder="Enter your username">
+                                id="username" name="username" value="{{ $user->username }}"
+                                placeholder="Enter your username">
                             @error('username')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -53,7 +56,7 @@
                         <div class="form-group mt-3">
                             <label for="fullname" class="font-bold mb-1">Fullname <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('fullname') is-invalid @enderror"
-                                id="fullname" name="fullname" placeholder="Enter your name">
+                                id="fullname" name="fullname" value="{{ $user->fullname }}" placeholder="Enter your name">
                             @error('fullname')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
@@ -62,9 +65,9 @@
                             <label for="role" class="font-bold mb-1">Role <span class="text-danger">*</span></label>
                             <select class="form-select form-control @error('role') is-invalid @enderror" id='role'
                                 name='role' aria-label="Default select example">
-                                <option selected value="0">Select role</option>
+                                <option value="0">Select role</option>
                                 @foreach ($role as $key => $value)
-                                    <option value="{{ $value }}" @if (@value === $user->role) checked @endif>
+                                    <option value="{{ $value }}" @if ($value === $user->role) selected @endif>
                                         {{ $key }}</option>
                                 @endforeach
                             </select>
@@ -84,8 +87,8 @@
         // validate form
         const validate = (email, username, password, repassword, fullname, role) => {
             $('.form-control').removeClass('is-invalid');
-            if (!email || !username || !repassword || password.length < 8 || password != repassword || !
-                fullname || !role) {
+            if (!email || !username || password != repassword || password && password.length < 8 || !fullname || !
+                role) {
                 // Missing email
                 if (!email) {
                     toastr.warning('Email field is requried.');
@@ -101,24 +104,15 @@
                     $('#username').addClass('is-valid');
                 };
                 // Missing password
-                if (!password) {
-                    toastr.warning('Password field is requried.');
-                    $('#password').addClass('is-invalid');
-                } else {
-                    $('#password').addClass('is-valid');
-                };
-                if (password.length < 8) {
+
+                if (password && password.length < 8) {
                     toastr.warning('The password must be at least 8 characters.');
                     $('#password').addClass('is-invalid');
                 } else {
                     $('#password').addClass('is-valid');
                 };
 
-                // Missing confirm password
-                if (!repassword) {
-                    toastr.warning('Confirm password field is requried.');
-                    $('#repassword').addClass('is-invalid');
-                };
+
                 // Repassword incorrect
                 if (password != repassword) {
                     toastr.warning('Confirm password is incorrect.');
@@ -158,7 +152,7 @@
                 const role = $('#role').val();
                 const isValid = validate(email, username, password, repassword, fullname, role);
                 if (isValid)
-                    $('#create').submit();
+                    $('#update').submit();
             });
         });
     </script>

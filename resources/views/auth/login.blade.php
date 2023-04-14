@@ -7,7 +7,7 @@
         <div class="col-md-6 offset-md-3">
 
 
-            <div class="card my-5 bg-slate-300 p-lg-5 p-8 rounded-lg pb-32">
+            <div class="card bg-slate-300 p-lg-5 p-8 rounded-lg pb-32">
 
                 <form class="card-body " method="POST" action="{{ route('login') }}" id="login">
                     @csrf
