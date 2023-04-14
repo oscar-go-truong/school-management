@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Requests\CreateUpdateUserRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Services\UserService;
@@ -44,7 +45,7 @@ class UserController extends Controller
         return view('user.create', ['role'=>UserRole::asArray()]);
     }
     // Store user
-    public function storeCreate(CreateUserRequest $request) {
+    public function store(CreateUpdateUserRequest $request) {
        $this->userService->store($request->input());
        return redirect('/users');
     }
@@ -54,7 +55,7 @@ class UserController extends Controller
         return view('user.update', ['role'=>UserRole::asArray(), 'user'=>$user]);
     }
     // Store update
-    public function update(UpdateUserRequest $request, int $id) {
+    public function update(CreateUpdateUserRequest $request, int $id) {
         $user = array('email'=>$request->email, 'username'=>$request->username, 'role'=>$request->role, 'fullname'=>$request->fullname);
         if($request->password)
             $user['password'] = $request->password;

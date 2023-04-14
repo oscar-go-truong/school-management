@@ -1,14 +1,14 @@
 <?php
 namespace App\Services;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
+
+use App\Enums\Contants;
 
 class BaseService {
 
     protected  $model;
 
     public function index() {
-        return $this->model->orderBy('created_at',"DESC")->paginate(Constants::LIMIT);
+        return $this->model->orderBy('created_at',"DESC")->paginate(Contants::LIMIT);
     }
 
     public function getById($id) {

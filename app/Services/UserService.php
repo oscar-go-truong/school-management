@@ -17,14 +17,14 @@ class UserService  extends BaseService{
 
 
     public function store($user){
-        $user->password = Hash::make($user->passowrd);
-        return $this->model->create($user);
+        $user['password'] = Hash::make($user['password']);
+        parent::store($user);
     }
 
 
     public function update($id, $user) {
         if(array_key_exists("password", $user))
-            $user->password = Hash::make($user->passowrd);
-        return  $this->model->where('id',$id)->update($user);
+            $user['password'] = Hash::make($user['password']);
+       parent::update($id,$user);
     }
 }

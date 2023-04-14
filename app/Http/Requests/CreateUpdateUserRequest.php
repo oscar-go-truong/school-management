@@ -4,9 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
-class UpdateUserRequest extends FormRequest
-
+class CreateUpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,6 +25,16 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules()
     {
+        $method = Request::method();
+        if($method === "POST") 
+            return [
+                'email' => 'required|unique:users,email|max:255',
+                'username'=> 'required|unique:users,username|max:255',
+                'password'=> 'required|min:8|max:32',
+                'repassword'=> 'required|min:8|max:32',
+                'fullname'=>'required',
+                'role'=>'required|integer|between:1,3'
+            ];
         return [
             'email' => 'required|max:255|unique:users,email,'.$this->id,
             'username'=> 'required|max:255|unique:users,username,'.$this->id,
@@ -33,5 +43,6 @@ class UpdateUserRequest extends FormRequest
             'fullname'=>'required',
             'role'=>'required|integer|between:1,3'
         ];
+
     }
 }
