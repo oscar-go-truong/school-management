@@ -83,7 +83,7 @@
                 });
                 $(this).parent().children('label').text(status ? "active" : "blocked");
                 $.ajax({
-                    type: "PUT",
+                    type: "PATCH",
                     url: "/users/status/" + id,
                     data: {
                         status: status,

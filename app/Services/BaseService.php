@@ -1,14 +1,23 @@
 <?php
 namespace App\Services;
 
-use App\Enums\Contants;
+use App\Enums\PaginationContants;
+use Illuminate\Database\Eloquent\Model;
 
 class BaseService {
 
     protected  $model;
 
+    public function __construct(){
+        $this->model = app()->make(
+            $this->getModel()
+        );
+    }
+    public function getModel() {
+        return Model::class;
+    }
     public function index() {
-        return $this->model->orderBy('created_at',"DESC")->paginate(Contants::LIMIT);
+        return $this->model->paginate(PaginationContants::LIMIT);
     }
 
     public function getById($id) {

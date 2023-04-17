@@ -9,7 +9,7 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class Contants extends Enum
+final class PaginationContants extends Enum
 {
     const LIMIT = 15;
 }

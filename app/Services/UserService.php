@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService  extends BaseService{
 
-   
-    public function __construct(User $user){
-        $this->model = $user;
+    public function getModel(){
+        return User::class;
     }
 
     public function changeStatus($id, $status) {

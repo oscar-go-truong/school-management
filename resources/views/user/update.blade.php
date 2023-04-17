@@ -15,7 +15,7 @@
                 <div class="blank-content relative">
                     <form class="container" method="POST" action="{{ route('users.update', $user->id) }}" id="update">
                         @csrf
-                        {{ method_field('PUT') }}
+                        {{ method_field('PATCH') }}
                         <input type="hidden" value={{ $user->id }} name="id" id="id" />
                         <div class="form-group mt-3">
                             <label for="email" class="font-bold mb-1">Email address <span
