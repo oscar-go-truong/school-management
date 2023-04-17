@@ -28,7 +28,13 @@ body {
 }
 
 .table-content {
-    min-height: 748px;
+    height: 748px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.table-content::-webkit-scrollbar {
+    display: none;
 }
 
 .blank-content {
@@ -281,4 +287,68 @@ h5,
         border-radius: 0px;
     }
 
+}
+
+.sorting {
+    position: relative;
+}
+
+.sorting::after {
+    content: "\f0dd";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    right: 16px;
+    font-size: 1rem;
+    color: gainsboro;
+    position: absolute;
+}
+
+.sorting::before {
+    right: 1em;
+    content: "\f0de";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    font-size: 1rem;
+    color: gainsboro;
+    position: absolute;
+}
+
+.sorting_desc::after {
+    content: "\f0dd";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    right: 16px;
+    color: black;
+    font-size: 1rem;
+    position: absolute;
+}
+
+.sorting_desc::before {
+    right: 1em;
+    content: "\f0de";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    font-size: 1rem;
+    color: gainsboro;
+    position: absolute;
+}
+
+.sorting_asc::after {
+    content: "\f0dd";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    right: 16px;
+    color: gainsboro;
+    font-size: 1rem;
+    position: absolute;
+}
+
+.sorting_asc::before {
+    right: 1em;
+    content: "\f0de";
+    font-family: 'Font Awesome\ 5 Free';
+    font-weight: 900;
+    font-size: 1rem;
+    color: black;
+    position: absolute;
 }
