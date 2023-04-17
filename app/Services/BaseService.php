@@ -2,7 +2,6 @@
 namespace App\Services;
 
 use App\Enums\PaginationContants;
-use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseService {
 
