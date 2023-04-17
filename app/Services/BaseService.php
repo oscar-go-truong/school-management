@@ -17,6 +17,15 @@ abstract class BaseService {
         return $this->model->paginate(PaginationContants::LIMIT);
     }
 
+    public function getTable($request){
+        $limit = $request->query('limit',PaginationContants::LIMIT);
+        $query = $this->model;
+        if(array_key_exists('orderBy',$request->query()))
+            foreach($request->query('orderBy') as $column => $sortType) {
+                $query = $query->orderBy($column, $sortType);
+            }
+        return $query->paginate($limit);
+    }
     public function getById($id) {
         return $this->model->where('id', $id)->first();
     }

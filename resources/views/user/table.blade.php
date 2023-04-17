@@ -71,6 +71,8 @@
         <!-- /. PAGE WRAPPER  -->
     </div>
     <script>
+        // Contants
+        const PAGINATION_LIMIT = 7;
         // query's data
         let queryData = {
             page: 1,
@@ -146,13 +148,34 @@
                     $('#to').text(resp.to);
                     $('#total').text(resp.total);
                     $('#pagination').html("");
-                    for (let i = 1; i <= last_page; i++) {
-                        $('#pagination').append(`<span id="page-${i}"
-                                            class="pageIndex relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 ${i === queryData.page ? "bg-gray-300":""} border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-                                            data-index="${i}">
-                                            ${i}
+                    let pages = [queryData.page];
+                    let k = 1;
+                    while (pages.length < PAGINATION_LIMIT && (queryData.page - k > 0 || queryData.page +
+                            k <=
+                            last_page)) {
+                        if (queryData.page - k > 0) pages.unshift(queryData.page - k);
+                        if (queryData.page + k <= last_page) pages.push(queryData.page + k);
+                        k++;
+                    }
+                    if (pages[0] > 1)
+                        $('#pagination').append(`<span 
+                                            class="pageIndex relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700  border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                          >
+                                            ...
+                                        </span>`);
+                    for (let i = 0; i < pages.length; i++) {
+                        $('#pagination').append(`<span id="page-${pages[i]}"
+                                            class="pageIndex relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 ${pages[i] === queryData.page ? "bg-gray-300":""} border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                            data-index="${pages[i]}">
+                                            ${pages[i]}
                                         </span>`)
                     }
+                    if (pages[pages.length - 1] < last_page)
+                        $('#pagination').append(`<span 
+                                            class="pageIndex relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700  border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                          >
+                                            ...
+                                        </span>`)
                 },
                 error: function() {
                     $('#usersTable').show();
