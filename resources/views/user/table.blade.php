@@ -6,7 +6,12 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div> User managerment</div>
-                        <div> <a href='{{ route('users.create') }}'><i class="fa-solid fa-user-plus"></i></a></div>
+
+                        <div>
+                            <input type="text" class="form-control w-60 h-8 inline translate-y-[-5px] " placeholder="email"
+                                id='email'>
+                            <a href='{{ route('users.create') }}'><i class="fa-solid fa-user-plus inline"></i></a>
+                        </div>
                     </div>
 
                 </div>
@@ -78,6 +83,9 @@
             page: 1,
             orderBy: {
                 id: "asc"
+            },
+            searchLike: {
+                email: ""
             }
         };
 
@@ -228,7 +236,11 @@
                 }
                 getTable();
             })
-
+            // search by email 
+            $('#email').change(function() {
+                queryData.searchLike.email = $(this).val();
+                getTable();
+            })
             // Change user status
             $('.status').change(function() {
                 toastr.info('Updating status!');
