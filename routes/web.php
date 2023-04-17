@@ -16,18 +16,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
-Route::prefix('/')->middleware('auth')->group(function() {
-    Route::get('/',[UserController::class, 'profile'] )->name('profile');
-});
-
-
-
 Route::get('/login', [AuthController::class, 'login']);
+
 Route::post('/login', [AuthController::class, 'authenticate']
 )->name('login');
 
-
 Route::get('/logout', [AuthController::class, 'logout']
 )->name('logout');
+
+
+Route::prefix('/')->middleware('auth')->group(function() {
+    Route::get('/',[UserController::class, 'profile'] )->name('profile');
+    Route::patch('users/status/{id}',[UserController::class, 'changeStatus'] )->name('admin.change.user.status');
+    Route::resources(['users' => UserController::class]);
+});
+
 

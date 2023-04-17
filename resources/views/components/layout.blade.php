@@ -1,7 +1,6 @@
 @include('components.plugin')
 
 <body>
-
     <section>
         @include('components.topbar')
         @include('components.sidebar')
