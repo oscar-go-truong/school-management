@@ -24,10 +24,11 @@ abstract class BaseService {
             foreach($request->query('orderBy') as $column => $sortType) {
                 $query = $query->orderBy($column, $sortType);
             }
-            if(array_key_exists('searchLike',$request->query()))
-            foreach($request->query('searchLike') as $column => $searchKey) {
-                $query = $query->where($column,'like','%'.$searchKey.'%');
-            }
+            if(array_key_exists('searchKey',$request->query()) && array_key_exists('searchType',$request->query()) && array_key_exists('searchColumn',$request->query()))
+         {   $searchColumn = $request->query('searchColumn');
+            $searchType = $request->query('searchType');
+            $searchKey = $request->query('searchKey');
+            $query = $query->where($searchColumn,$searchType,'%'.$searchKey.'%');}
         
         return $query->paginate($limit);
     }

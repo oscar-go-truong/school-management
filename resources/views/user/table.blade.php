@@ -84,9 +84,9 @@
             orderBy: {
                 id: "asc"
             },
-            searchLike: {
-                email: ""
-            }
+            searchKey: "",
+            searchType: "like",
+            searchColumn: "email"
         };
 
         let last_page;
@@ -238,7 +238,8 @@
             })
             // search by email 
             $('#email').change(function() {
-                queryData.searchLike.email = $(this).val();
+                queryData.searchKey = $(this).val();
+                queryData.page = 1;
                 getTable();
             })
             // Change user status

@@ -3,13 +3,13 @@
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
                 <p class="text-sm text-gray-700 leading-5 inline">
-                    {!! __('Showing') !!}
+                    Showing
                     <span class="font-medium" id="from">{{ $paginator->firstItem() }}</span>
-                    {!! __('to') !!}
+                    to
                     <span class="font-medium" id="to">{{ $paginator->lastItem() }}</span>
-                    {!! __('of') !!}
+                    of
                     <span class="font-medium" id="total">{{ $paginator->total() }}</span>
-                    {!! __('results') !!}
+                    results
                 </p>
                 <div class="inline-block ml-5">
                     <span class="font-medium">Items per page: <span>
