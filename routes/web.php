@@ -24,10 +24,10 @@ Route::post('/login', [AuthController::class, 'authenticate']
 Route::get('/logout', [AuthController::class, 'logout']
 )->name('logout');
 
-Route::patch('/users/status/{id}',[UserController::class, 'changeStatus'] )->name('admin.change.user.status');
 
 Route::prefix('/')->middleware('auth')->group(function() {
     Route::get('/',[UserController::class, 'profile'] )->name('profile');
+    Route::patch('users/status/{id}',[UserController::class, 'changeStatus'] )->name('admin.change.user.status');
     Route::resources(['users' => UserController::class]);
 });
 

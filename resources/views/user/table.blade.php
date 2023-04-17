@@ -94,7 +94,7 @@
                         toastr.success('Update status successful!');
                     },
                     error: function() {
-                        toastr.success('Error, Please try again later!');
+                        toastr.error('Error, Please try again later!');
                     }
                 });
             });
@@ -117,7 +117,7 @@
                         $('#user-' + id).remove();
                     },
                     error: function() {
-                        toastr.success('Error, Please try again later!');
+                        toastr.error('Error, Please try again later!');
                     }
                 });
             });

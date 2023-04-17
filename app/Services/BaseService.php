@@ -4,7 +4,7 @@ namespace App\Services;
 use App\Enums\PaginationContants;
 use Illuminate\Database\Eloquent\Model;
 
-class BaseService {
+abstract class BaseService {
 
     protected  $model;
 
@@ -13,9 +13,7 @@ class BaseService {
             $this->getModel()
         );
     }
-    public function getModel() {
-        return Model::class;
-    }
+    abstract public function getModel();
     public function index() {
         return $this->model->paginate(PaginationContants::LIMIT);
     }
