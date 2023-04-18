@@ -18,15 +18,14 @@ abstract class BaseService {
     }
 
     public function orderNSearch($request, $query){
+        $input = $request->input();
         $limit = $request->query('limit',PaginationContants::LIMIT);
         // order by
-        if(array_key_exists('orderBy',$request->query()))
-            foreach($request->query('orderBy') as $column => $sortType) {
+        if(isset($input['orderBy']))
+            foreach($input['orderBy'] as $column => $sortType) {
                 $query = $query->orderBy($column, $sortType);
             }
-        $isSearch = array_key_exists('search',$request->query()) && $request->query('search');
-        // search
-        if($isSearch)
+        if(isset($input['search']) && $input['search'])
         {   
             $searchColumn = $request->query('search')['column'];
             $searchType = $request->query('search')['type'];
