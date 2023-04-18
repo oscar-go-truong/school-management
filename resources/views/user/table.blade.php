@@ -1,6 +1,11 @@
 @extends('components.layout')
 @section('content')
     <div id="wrapper">
+        @if (session('error'))
+            <script>
+                toastr.error('{{ session('error') }}')
+            </script>
+        @endif
         <div id="page-wrapper">
             <div id="page-inner">
                 <div class="row">
@@ -44,7 +49,7 @@
                                         Email
                                     </option>
                                     <option value="username">
-                                        username
+                                        Username
                                     </option>
                                     <option value="fullname">
                                         Fullname
@@ -52,10 +57,10 @@
                                 </select>
                                 <input type="text" class="form-control w-60 h-8 inline py-[16px] " id='searchKey'>
                             </div>
-                            <a href='{{ route('users.create') }}'><i class="fa-solid fa-user-plus inline"></i></a>
+                            <a href='{{ route('users.create') }}' class="text-gray-400"><i
+                                    class="fa-solid fa-user-plus inline"></i></a>
                         </div>
                     </div>
-
                 </div>
                 <!-- /. ROW  -->
                 <hr class="mt-2 mb-3" />
@@ -100,7 +105,7 @@
                                     <td class="text-primary"><a href="/users/{{ $user->id }}/edit"><i
                                                 class="fa-solid fa-pen-to-square"></i></a></td>
                                     <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
-                                            data-id={{ $user->id }}></i></i></td>
+                                            data-id={{ $user->id }} data-email={{ $user->email }}></i></i></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -161,7 +166,7 @@
             row.append(`<td class="text-primary"><a href="/users/${ user.id }/edit"><i
                                                 class="fa-solid fa-pen-to-square"></i></a></td>`);
             row.append(`<td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
-                                            data-id=${ user.id }></i></i></td>`);
+                                            data-id=${ user.id } data-email=${ user.email }></i></i></td>`);
             return row;
         }
 
@@ -188,20 +193,36 @@
                     const users = resp.data;
 
                     // loading new data
-                    for (let i = 0; i < users.length; i++) {
-                        const user = createUserRow(users[i]);
-                        $('#usersTable').append(user);
-                    }
+                    if (users.length === 0)
+                        $('#usersTable').append($(
+                            `<tr>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td></td>
+                                <td></td>
+                            </tr>`
+                        ));
+                    else
+                        for (let i = 0; i < users.length; i++) {
+                            const user = createUserRow(users[i]);
+                            $('#usersTable').append(user);
+                        }
                     last_page = resp.last_page;
 
                     // update pagination
                     $('#from').text(resp.from);
                     $('#to').text(resp.to);
-                    $('#total').text(resp.total);
+                    $('#total').text(resp
+                        .total);
                     $('#pagination').html("");
                     let pages = [queryData.page];
                     let k = 1;
-                    while (pages.length < PAGINATION_LIMIT && (queryData.page - k > 0 || queryData.page +
+                    while (pages.length < PAGINATION_LIMIT && (queryData.page - k > 0 || queryData
+                            .page +
                             k <=
                             last_page)) {
                         if (queryData.page - k > 0) pages.unshift(queryData.page - k);
@@ -233,6 +254,21 @@
                     toastr.error('Error, Please try again later!');
                 }
             });
+        }
+        const deleteUser = (id) => {
+            toastr.info('Deleting user!');
+            $.ajax({
+                type: "DELETE",
+                url: "/users/" + id,
+                dataType: "json",
+                success: function() {
+                    toastr.success('Delete user successful!');
+                    $('#user-' + id).remove();
+                },
+                error: function() {
+                    toastr.error('Error, Please try again later!');
+                }
+            });;
         }
         $(document).ready(function() {
 
@@ -315,8 +351,10 @@
                     queryData.filter[column] = val;
                     queryData.page = 1;
                     getTable();
-                } else
+                } else {
                     delete queryData.filter[column];
+                    getTable();
+                }
             })
             // Change user status
             $(document).on('change', '.status', function() {
@@ -344,22 +382,23 @@
             });
             // delete user
             $(document).on('click', '.delete', function() {
-                toastr.info('Deleting user!');
-                let id = $(this).data('id');
+                const email = $(this).data('email');
+                const id = $(this).data('id');
 
-                $.ajax({
-                    type: "DELETE",
-                    url: "/users/" + id,
-                    dataType: "json",
-                    success: function() {
-                        toastr.success('Delete user successful!');
-                        $('#user-' + id).remove();
-                    },
-                    error: function() {
-                        toastr.error('Error, Please try again later!');
-                    }
-                });
+                toastr.options.timeOut = 0;
+                toastr.options.extendedTimeOut = 0;
+                toastr.options.closeButton = true;
+                toastr.options.preventDuplicates = true;
+                toastr.warning(`<div class="z-10">
+                    <div class="mb-10">Are you sure is you want to delete user <b>${email}!</b></div>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-secondary mr-3">cancel</button> 
+                        <button class="btn btn-danger ml-3 submit-delete" onclick='deleteUser(${id})'>delete</button></div>
+                    </div>`);
+                toastr.options.timeOut = 600;
+                toastr.options.extendedTimeOut = 600;
             });
+
         });
     </script>
 @endsection

@@ -57,7 +57,10 @@ class UserController extends Controller
     // Render update user form
     public function edit(int $id){   
         $user = $this->userService->getById($id);
-        return view('user.update', ['role'=>UserRole::asArray(), 'user'=>$user]);
+        if($user)
+            return view('user.update', ['role'=>UserRole::asArray(), 'user'=>$user]);
+        else
+            return redirect()->back()->with('error', "User was deleted!");
     }
     // Store update
     public function update(CreateUpdateUserRequest $request, int $id) {
