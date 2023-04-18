@@ -8,8 +8,50 @@
                         <div> User managerment</div>
 
                         <div>
-                            <input type="text" class="form-control w-60 h-8 inline translate-y-[-5px] " placeholder="email"
-                                id='email'>
+                            <div class='inline-block translate-y-[-5px]'>
+                                {{-- filter by role --}}
+                                <select class="form-select  w-40  text-sm filter inline-block" data-column="role"">
+                                    <option value="">
+                                        Select role
+                                    </option>
+                                    @foreach ($role as $name => $id)
+                                        <option value="{{ $id }}">
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                {{-- filter by status --}}
+                                <select class="form-select  w-40  text-sm filter inline-block" data-column="status">
+                                    <option value="">
+                                        Select status
+                                    </option>
+                                    @foreach ($status as $name => $id)
+                                        <option value="{{ $id }}">
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                            <div class="translate-y-[-5px] inline-block ">
+                                {{-- select column for search --}}
+                                <select class="form-select  w-40  text-sm inline-block translate-x-[12px]"
+                                    id="searchColumn">
+                                    <option value="">
+                                        Select column
+                                    </option>
+                                    <option value="email">
+                                        Email
+                                    </option>
+                                    <option value="username">
+                                        username
+                                    </option>
+                                    <option value="fullname">
+                                        Fullname
+                                    </option>
+                                </select>
+                                <input type="text" class="form-control w-60 h-8 inline py-[16px] " id='searchKey'>
+                            </div>
                             <a href='{{ route('users.create') }}'><i class="fa-solid fa-user-plus inline"></i></a>
                         </div>
                     </div>
@@ -75,6 +117,7 @@
         </div>
         <!-- /. PAGE WRAPPER  -->
     </div>
+
     <script>
         // Contants
         const PAGINATION_LIMIT = 7;
@@ -84,9 +127,9 @@
             orderBy: {
                 id: "asc"
             },
-            searchKey: "",
-            searchType: "like",
-            searchColumn: "email"
+            search: null,
+            filter: {}
+
         };
 
         let last_page;
@@ -236,11 +279,44 @@
                 }
                 getTable();
             })
-            // search by email 
-            $('#email').change(function() {
-                queryData.searchKey = $(this).val();
-                queryData.page = 1;
-                getTable();
+            // search
+            $('#searchKey').change(function() {
+                const val = $(this).val()
+                if (queryData.search) {
+                    queryData.search.key = val;
+                    queryData.page = 1;
+                    getTable();
+                } else if (val) {
+                    toastr.warning('Select column before search!');
+                }
+            });
+            $('#searchColumn').change(function() {
+                const val = $(this).val();
+
+                if (val) {
+                    queryData.search = {
+                        column: val,
+                        type: 'like',
+                        key: $('#searchKey').val()
+                    };
+                    queryData.page = 1;
+                    getTable();
+                } else {
+
+                    queryData.search = null;
+                    getTable();
+                }
+            })
+            // filter 
+            $('.filter').change(function() {
+                const column = $(this).data('column');
+                const val = $(this).val();
+                if (val) {
+                    queryData.filter[column] = val;
+                    queryData.page = 1;
+                    getTable();
+                } else
+                    delete queryData.filter[column];
             })
             // Change user status
             $(document).on('change', '.status', function() {
