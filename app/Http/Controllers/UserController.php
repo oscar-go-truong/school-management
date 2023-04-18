@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaginationContants;
 use App\Enums\UserRole;
 use App\Http\Requests\CreateUpdateUserRequest;
 use App\Services\UserService;
@@ -23,9 +24,14 @@ class UserController extends Controller
     }
 
     // Render all user 
-    public function index() {
-        $users = $this->userService->index();
-        return view('user.table', ['users'=> $users, 'role'=>UserRole::asArray()]);
+    public function index(Request $request) {
+        $users = $this->userService->getTable($request);
+        return view('user.table', ['users'=> $users, 'role'=>UserRole::asArray(), 'itemPerPageOptions'=> PaginationContants::ITEM_PER_PAGE_OPTIONS]);
+    }
+    // Get table data
+    public function getTable(Request $request){
+        $table = $this->userService->getTable($request);
+        return response()->json($table);
     }
     // Handle update user's status
     public function changeStatus(Request $request,int $id){

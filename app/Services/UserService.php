@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Enums\PaginationContants;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,6 +12,13 @@ class UserService  extends BaseService{
         return User::class;
     }
 
+    public function getTable($request){
+        $users = parent::getTable($request);
+        foreach($users as $user) {
+            $user->role = UserRole::getKey($user->role);
+        }
+        return $users;
+    }
     public function changeStatus($id, $status) {
         return  $this->model->where('id', $id)->update(['status' => $status]);
     }
