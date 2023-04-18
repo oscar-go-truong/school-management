@@ -1,6 +1,11 @@
 @extends('components.layout')
 @section('content')
     <div id="wrapper">
+        @if (session('error'))
+            <script>
+                toastr.error('{{ session('error') }}')
+            </script>
+        @endif
         <div id="page-wrapper">
             <div id="page-inner">
                 <div class="row">
@@ -8,12 +13,72 @@
                         <div> User managerment</div>
 
                         <div>
-                            <input type="text" class="form-control w-60 h-8 inline translate-y-[-5px] " placeholder="email"
-                                id='email'>
-                            <a href='{{ route('users.create') }}'><i class="fa-solid fa-user-plus inline"></i></a>
+                            <div class="translate-y-[-5px] inline-block ">
+                                {{-- select column for search --}}
+                                <select class="form-select  w-40  text-sm inline-block translate-x-[12px]" id="searchColumn">
+                                    <option value="">
+                                        Select column
+                                    </option>
+                                    <option value="email">
+                                        Email
+                                    </option>
+                                    <option value="username">
+                                        Username
+                                    </option>
+                                    <option value="fullname">
+                                        Fullname
+                                    </option>
+                                </select>
+                                <input type="text" class="form-control w-60 h-8 inline py-[16px] " id='searchKey'>
+                            </div>
+                            <div class='inline-block translate-y-[-5px] mr-3'>
+
+                                {{-- filter by status --}}
+                                <select
+                                    class="form-select
+                                                    w-40 text-sm filter inline-block"
+                                    data-column="status" id="filter-status">
+                                    <option value="">
+                                        Select status
+                                    </option>
+                                    @foreach ($status as $name => $id)
+                                        <option value="{{ $id }}">
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                {{-- filter by role --}}
+                                <div class="dropdown inline-block">
+                                    <button class="form-control text-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Select role
+                                    </button>
+                                    <ul class="dropdown-menu p-3 " aria-labelledby="dropdownRole" id="dropdownRole">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="all" id="all-role">
+                                            <label for="all-role" class="text-base font-light">
+                                                All role
+                                            </label>
+                                        </div>
+                                        @foreach ($role as $name => $id)
+                                            <div class="form-check">
+                                                <input class="form-check-input role-check-input" name="role"
+                                                    type="checkbox" value="{{ $id }}"
+                                                    id="role-{{ $id }}">
+                                                <label for="role-{{ $id }}" class="text-base font-light">
+                                                    {{ $name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <a href='{{ route('users.create') }}' class="text-gray-400"><i
+                                    class="fa-solid fa-user-plus inline"></i></a>
                         </div>
                     </div>
-
                 </div>
                 <!-- /. ROW  -->
                 <hr class="mt-2 mb-3" />
@@ -22,14 +87,14 @@
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th class="sorting sorting_asc" data-column="id">#</th>
-                                <th class="sorting" data-column="username">Username</th>
-                                <th class="sorting" data-column="fullname">Full name</th>
-                                <th class="sorting" data-column="email">Email</th>
-                                <th class="sorting" data-column="role">Role</th>
-                                <th class="sorting" data-column="status">Status</th>
-                                <th></th>
-                                <th></th>
+                                <th class="sort sorting sorting_asc" data-column="id">#</th>
+                                <th class="sort sorting" data-column="username">Username</th>
+                                <th class="sort sorting" data-column="fullname">Full name</th>
+                                <th class="sort sorting" data-column="email">Email</th>
+                                <th class="sort sorting" data-column="role">Role</th>
+                                <th class="sort sorting" data-column="status">Status</th>
+                                <th>Update</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody id="usersTable">
@@ -39,13 +104,7 @@
                                     <td>{{ $user->username }}</td>
                                     <td>{{ $user->fullname }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>
-                                        @foreach ($role as $key => $value)
-                                            @if ($value === $user->role)
-                                                {{ $key }}
-                                            @endif
-                                        @endforeach
-                                    </td>
+                                    <td>{{ $user->role }}</td>
                                     <td>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input status" type="checkbox" id="{{ $user->id }}"
@@ -58,7 +117,8 @@
                                     <td class="text-primary"><a href="/users/{{ $user->id }}/edit"><i
                                                 class="fa-solid fa-pen-to-square"></i></a></td>
                                     <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
-                                            data-id={{ $user->id }}></i></i></td>
+                                            data-id={{ $user->id }} data-email={{ $user->email }}></i></i>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -75,6 +135,7 @@
         </div>
         <!-- /. PAGE WRAPPER  -->
     </div>
+
     <script>
         // Contants
         const PAGINATION_LIMIT = 7;
@@ -84,9 +145,10 @@
             orderBy: {
                 id: "asc"
             },
-            searchKey: "",
-            searchType: "like",
-            searchColumn: "email"
+            search: null,
+            role: [],
+            status: null
+
         };
 
         let last_page;
@@ -118,7 +180,7 @@
             row.append(`<td class="text-primary"><a href="/users/${ user.id }/edit"><i
                                                 class="fa-solid fa-pen-to-square"></i></a></td>`);
             row.append(`<td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
-                                            data-id=${ user.id }></i></i></td>`);
+                                            data-id=${ user.id } data-email=${ user.email }></i></i></td>`);
             return row;
         }
 
@@ -145,20 +207,36 @@
                     const users = resp.data;
 
                     // loading new data
-                    for (let i = 0; i < users.length; i++) {
-                        const user = createUserRow(users[i]);
-                        $('#usersTable').append(user);
-                    }
+                    if (users.length === 0)
+                        $('#usersTable').append($(
+                            `<tr>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td>Empty</td>
+                                <td></td>
+                                <td></td>
+                            </tr>`
+                        ));
+                    else
+                        for (let i = 0; i < users.length; i++) {
+                            const user = createUserRow(users[i]);
+                            $('#usersTable').append(user);
+                        }
                     last_page = resp.last_page;
 
                     // update pagination
                     $('#from').text(resp.from);
                     $('#to').text(resp.to);
-                    $('#total').text(resp.total);
+                    $('#total').text(resp
+                        .total);
                     $('#pagination').html("");
                     let pages = [queryData.page];
                     let k = 1;
-                    while (pages.length < PAGINATION_LIMIT && (queryData.page - k > 0 || queryData.page +
+                    while (pages.length < PAGINATION_LIMIT && (queryData.page - k > 0 || queryData
+                            .page +
                             k <=
                             last_page)) {
                         if (queryData.page - k > 0) pages.unshift(queryData.page - k);
@@ -191,8 +269,22 @@
                 }
             });
         }
+        const deleteUser = (id) => {
+            toastr.info('Deleting user!');
+            $.ajax({
+                type: "DELETE",
+                url: "/users/" + id,
+                dataType: "json",
+                success: function() {
+                    toastr.success('Delete user successful!');
+                    $('#user-' + id).remove();
+                },
+                error: function() {
+                    toastr.error('Error, Please try again later!');
+                }
+            });;
+        }
         $(document).ready(function() {
-
             // update user's status
             $('#itemPerPage').change(function() {
                 queryData['limit'] = $(this).val();
@@ -222,9 +314,9 @@
                 }
             })
             // Sorting column
-            $('th').click(function() {
-                $('th').removeClass('sorting_desc');
-                $('th').removeClass('sorting_asc');
+            $('.sort').click(function() {
+                $('.sort').removeClass('sorting_desc');
+                $('.sort').removeClass('sorting_asc');
                 const column = $(this).data('column');
                 if (queryData.orderBy[column] === 'asc') {
                     queryData.orderBy[column] = "desc";
@@ -236,9 +328,81 @@
                 }
                 getTable();
             })
-            // search by email 
-            $('#email').change(function() {
-                queryData.searchKey = $(this).val();
+            // search
+            $('#searchKey').change(function() {
+                const val = $(this).val()
+                if (queryData.search) {
+                    queryData.search.key = val;
+                    queryData.page = 1;
+                    getTable();
+                } else if (val) {
+                    toastr.warning('Select column before search!');
+                }
+            });
+            $('#searchColumn').change(function() {
+                const val = $(this).val();
+
+                if (val) {
+                    queryData.search = {
+                        column: val,
+                        type: 'like',
+                        key: $('#searchKey').val()
+                    };
+                    queryData.page = 1;
+                    getTable();
+                } else {
+
+                    queryData.search = null;
+                    getTable();
+                }
+            })
+
+            $('#filter-status').change(function() {
+                const val = $(this).val();
+                if (val)
+                    queryData.status = val;
+                else
+                    queryData.status = null;
+                queryData.page = 1;
+                getTable();
+            })
+            // filter by role
+            $('#dropdownRole').click(function(event) {
+                event.stopPropagation();
+            });
+            $('.role-check-input').change(function() {
+                const checked = $(this).is(':checked');
+                const val = $(this).val();
+
+                if (!checked) {
+                    const index = queryData.role.indexOf(val);
+                    queryData.role.splice(index, 1);
+                } else {
+                    $('#role-' + val).addClass('bg-gray-300');
+                    queryData.role.push(val);
+                }
+                console.log(queryData.role);
+                getTable();
+            })
+            $('#all-role').change(function() {
+                const checked = $(this).is(':checked');
+                $('.role-check-input').prop('checked', false);
+                if (!checked) {
+                    $('.role-check-input').prop('checked', false);
+                    $('.role-check-input').prop('disabled', false);
+                } else {
+                    $('.role-check-input').prop('checked', true);
+                    $('.role-check-input').prop('disabled', true);
+                }
+                getTable();
+            })
+            //filter status
+            $('#filter-status').change(function() {
+                const val = $(this).val();
+                if (val)
+                    queryData.status = val;
+                else
+                    queryData.status = null;
                 queryData.page = 1;
                 getTable();
             })
@@ -268,22 +432,23 @@
             });
             // delete user
             $(document).on('click', '.delete', function() {
-                toastr.info('Deleting user!');
-                let id = $(this).data('id');
+                const email = $(this).data('email');
+                const id = $(this).data('id');
 
-                $.ajax({
-                    type: "DELETE",
-                    url: "/users/" + id,
-                    dataType: "json",
-                    success: function() {
-                        toastr.success('Delete user successful!');
-                        $('#user-' + id).remove();
-                    },
-                    error: function() {
-                        toastr.error('Error, Please try again later!');
-                    }
-                });
+                toastr.options.timeOut = 0;
+                toastr.options.extendedTimeOut = 0;
+                toastr.options.closeButton = true;
+                toastr.options.preventDuplicates = true;
+                toastr.warning(`<div class="z-10">
+                    <div class="mb-10">Are you sure is you want to delete user <b>${email}!</b></div>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-secondary mr-3">cancel</button> 
+                        <button class="btn btn-danger ml-3 submit-delete" onclick='deleteUser(${id})'>delete</button></div>
+                    </div>`);
+                toastr.options.timeOut = 600;
+                toastr.options.extendedTimeOut = 600;
             });
+
         });
     </script>
 @endsection

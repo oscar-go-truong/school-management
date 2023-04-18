@@ -17,19 +17,22 @@ abstract class BaseService {
         return $this->model->paginate(PaginationContants::LIMIT);
     }
 
-    public function getTable($request){
+    public function orderNSearch($request, $query){
         $limit = $request->query('limit',PaginationContants::LIMIT);
-        $query = $this->model;
+        // order by
         if(array_key_exists('orderBy',$request->query()))
             foreach($request->query('orderBy') as $column => $sortType) {
                 $query = $query->orderBy($column, $sortType);
             }
-            if(array_key_exists('searchKey',$request->query()) && array_key_exists('searchType',$request->query()) && array_key_exists('searchColumn',$request->query()))
-         {   $searchColumn = $request->query('searchColumn');
-            $searchType = $request->query('searchType');
-            $searchKey = $request->query('searchKey');
-            $query = $query->where($searchColumn,$searchType,'%'.$searchKey.'%');}
-        
+        $isSearch = array_key_exists('search',$request->query()) && $request->query('search');
+        // search
+        if($isSearch)
+        {   
+            $searchColumn = $request->query('search')['column'];
+            $searchType = $request->query('search')['type'];
+            $searchKey = $request->query('search')['key'];
+            $query = $query->where($searchColumn,$searchType,'%'.$searchKey.'%');
+        }
         return $query->paginate($limit);
     }
     public function getById($id) {

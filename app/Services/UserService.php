@@ -13,12 +13,19 @@ class UserService  extends BaseService{
     }
 
     public function getTable($request){
-        $users = parent::getTable($request);
+        
+        $query = $this->model;
+        $query = $query->status($request)->role($request);
+
+        $users = $this->orderNSearch($request, $query);
+        
         foreach($users as $user) {
             $user->role = UserRole::getKey($user->role);
         }
+
         return $users;
     }
+    
     public function changeStatus($id, $status) {
         return  $this->model->where('id', $id)->update(['status' => $status]);
     }
