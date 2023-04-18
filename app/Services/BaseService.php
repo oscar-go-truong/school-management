@@ -17,9 +17,7 @@ abstract class BaseService {
         return $this->model->paginate(PaginationContants::LIMIT);
     }
 
-    public function getTable($request){
-        $limit = $request->query('limit',PaginationContants::LIMIT);
-        $query = $this->model;
+    public function orderNSearch($request, $query){
         // order by
         if(array_key_exists('orderBy',$request->query()))
             foreach($request->query('orderBy') as $column => $sortType) {
@@ -34,16 +32,7 @@ abstract class BaseService {
             $searchKey = $request->query('search')['key'];
             $query = $query->where($searchColumn,$searchType,'%'.$searchKey.'%');
         }
-        // filter 
-        $isFilter = array_key_exists('filter',$request->query()) && $request->query('filter');
-        if($isFilter)
-        {   
-          $filter = $request->query('filter');
-          foreach($filter as $column => $val){
-            $query->where($column, $val);
-          }
-        }
-        return $query->paginate($limit);
+        return $query;
     }
     public function getById($id) {
         return $this->model->where('id', $id)->first();

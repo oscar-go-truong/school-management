@@ -40,6 +40,15 @@ class User extends Authenticatable
         'password'
     ];
 
+    public function scopeRole($query,$role) {
+        return $query->whereIn('role',$role);
+    }
+
+    public function scopeStatus($query, $status) {
+        return $query->where('status',$status);
+    }
+    
+
     public function isAdministrator() : bool {
        return $this->role === UserRole::Adminstrator;
     }
@@ -51,7 +60,6 @@ class User extends Authenticatable
     public function isStudent() : bool {
        return $this->role === UserRole::Student;
     }
-
     public function request_user() : HasMany {
         return $this->hasMany(Request::class);
     }

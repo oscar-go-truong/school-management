@@ -13,35 +13,9 @@
                         <div> User managerment</div>
 
                         <div>
-                            <div class='inline-block translate-y-[-5px]'>
-                                {{-- filter by role --}}
-                                <select class="form-select  w-40  text-sm filter inline-block" data-column="role"">
-                                    <option value="">
-                                        Select role
-                                    </option>
-                                    @foreach ($role as $name => $id)
-                                        <option value="{{ $id }}">
-                                            {{ $name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                {{-- filter by status --}}
-                                <select class="form-select  w-40  text-sm filter inline-block" data-column="status">
-                                    <option value="">
-                                        Select status
-                                    </option>
-                                    @foreach ($status as $name => $id)
-                                        <option value="{{ $id }}">
-                                            {{ $name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                            </div>
                             <div class="translate-y-[-5px] inline-block ">
                                 {{-- select column for search --}}
-                                <select class="form-select  w-40  text-sm inline-block translate-x-[12px]"
-                                    id="searchColumn">
+                                <select class="form-select  w-40  text-sm inline-block translate-x-[12px]" id="searchColumn">
                                     <option value="">
                                         Select column
                                     </option>
@@ -57,6 +31,50 @@
                                 </select>
                                 <input type="text" class="form-control w-60 h-8 inline py-[16px] " id='searchKey'>
                             </div>
+                            <div class='inline-block translate-y-[-5px] mr-3'>
+
+                                {{-- filter by status --}}
+                                <select
+                                    class="form-select
+                                                    w-40 text-sm filter inline-block"
+                                    data-column="status" id="filter-status">
+                                    <option value="">
+                                        Select status
+                                    </option>
+                                    @foreach ($status as $name => $id)
+                                        <option value="{{ $id }}">
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                {{-- filter by role --}}
+                                <div class="dropdown inline-block">
+                                    <button class="form-control text-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Select role
+                                    </button>
+                                    <ul class="dropdown-menu p-3 " aria-labelledby="dropdownRole" id="dropdownRole">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="all" id="all-role">
+                                            <label for="all-role" class="text-base font-light">
+                                                All role
+                                            </label>
+                                        </div>
+                                        @foreach ($role as $name => $id)
+                                            <div class="form-check">
+                                                <input class="form-check-input role-check-input" name="role"
+                                                    type="checkbox" value="{{ $id }}"
+                                                    id="role-{{ $id }}">
+                                                <label for="role-{{ $id }}" class="text-base font-light">
+                                                    {{ $name }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+
                             <a href='{{ route('users.create') }}' class="text-gray-400"><i
                                     class="fa-solid fa-user-plus inline"></i></a>
                         </div>
@@ -75,8 +93,8 @@
                                 <th class="sorting" data-column="email">Email</th>
                                 <th class="sorting" data-column="role">Role</th>
                                 <th class="sorting" data-column="status">Status</th>
-                                <th></th>
-                                <th></th>
+                                <th>Update</th>
+                                <th>Delete</th>
                             </tr>
                         </thead>
                         <tbody id="usersTable">
@@ -86,13 +104,7 @@
                                     <td>{{ $user->username }}</td>
                                     <td>{{ $user->fullname }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>
-                                        @foreach ($role as $key => $value)
-                                            @if ($value === $user->role)
-                                                {{ $key }}
-                                            @endif
-                                        @endforeach
-                                    </td>
+                                    <td>{{ $user->role }}</td>
                                     <td>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input status" type="checkbox" id="{{ $user->id }}"
@@ -105,7 +117,8 @@
                                     <td class="text-primary"><a href="/users/{{ $user->id }}/edit"><i
                                                 class="fa-solid fa-pen-to-square"></i></a></td>
                                     <td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
-                                            data-id={{ $user->id }} data-email={{ $user->email }}></i></i></td>
+                                            data-id={{ $user->id }} data-email={{ $user->email }}></i></i>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -133,7 +146,8 @@
                 id: "asc"
             },
             search: null,
-            filter: {}
+            role: [],
+            status: null
 
         };
 
@@ -271,7 +285,6 @@
             });;
         }
         $(document).ready(function() {
-
             // update user's status
             $('#itemPerPage').change(function() {
                 queryData['limit'] = $(this).val();
@@ -343,18 +356,55 @@
                     getTable();
                 }
             })
-            // filter 
-            $('.filter').change(function() {
-                const column = $(this).data('column');
+
+            $('#filter-status').change(function() {
                 const val = $(this).val();
-                if (val) {
-                    queryData.filter[column] = val;
-                    queryData.page = 1;
-                    getTable();
+                if (val)
+                    queryData.status = val;
+                else
+                    queryData.status = null;
+                queryData.page = 1;
+                getTable();
+            })
+            // filter by role
+            $('#dropdownRole').click(function(event) {
+                event.stopPropagation();
+            });
+            $('.role-check-input').change(function() {
+                const checked = $(this).is(':checked');
+                const val = $(this).val();
+
+                if (!checked) {
+                    const index = queryData.role.indexOf(val);
+                    queryData.role.splice(index, 1);
                 } else {
-                    delete queryData.filter[column];
-                    getTable();
+                    $('#role-' + val).addClass('bg-gray-300');
+                    queryData.role.push(val);
                 }
+                console.log(queryData.role);
+                getTable();
+            })
+            $('#all-role').change(function() {
+                const checked = $(this).is(':checked');
+                $('.role-check-input').prop('checked', false);
+                if (!checked) {
+                    $('.role-check-input').prop('checked', false);
+                    $('.role-check-input').prop('disabled', false);
+                } else {
+                    $('.role-check-input').prop('checked', true);
+                    $('.role-check-input').prop('disabled', true);
+                }
+                getTable();
+            })
+            //filter status
+            $('#filter-status').change(function() {
+                const val = $(this).val();
+                if (val)
+                    queryData.status = val;
+                else
+                    queryData.status = null;
+                queryData.page = 1;
+                getTable();
             })
             // Change user status
             $(document).on('change', '.status', function() {
