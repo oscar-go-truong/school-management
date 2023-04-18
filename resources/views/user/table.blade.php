@@ -243,7 +243,7 @@
                 getTable();
             })
             // Change user status
-            $('.status').change(function() {
+            $(document).on('change', '.status', function() {
                 toastr.info('Updating status!');
                 let id = $(this).data('id');
                 let status = $(this).is(':checked') ? 1 : 0;
@@ -267,7 +267,7 @@
                 });
             });
             // delete user
-            $('.delete').click(function() {
+            $(document).on('click', '.delete', function() {
                 toastr.info('Deleting user!');
                 let id = $(this).data('id');
 
