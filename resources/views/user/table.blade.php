@@ -87,12 +87,12 @@
                     <table class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th class="sorting sorting_asc" data-column="id">#</th>
-                                <th class="sorting" data-column="username">Username</th>
-                                <th class="sorting" data-column="fullname">Full name</th>
-                                <th class="sorting" data-column="email">Email</th>
-                                <th class="sorting" data-column="role">Role</th>
-                                <th class="sorting" data-column="status">Status</th>
+                                <th class="sort sorting sorting_asc" data-column="id">#</th>
+                                <th class="sort sorting" data-column="username">Username</th>
+                                <th class="sort sorting" data-column="fullname">Full name</th>
+                                <th class="sort sorting" data-column="email">Email</th>
+                                <th class="sort sorting" data-column="role">Role</th>
+                                <th class="sort sorting" data-column="status">Status</th>
                                 <th>Update</th>
                                 <th>Delete</th>
                             </tr>
@@ -314,9 +314,9 @@
                 }
             })
             // Sorting column
-            $('th').click(function() {
-                $('th').removeClass('sorting_desc');
-                $('th').removeClass('sorting_asc');
+            $('.sort').click(function() {
+                $('.sort').removeClass('sorting_desc');
+                $('.sort').removeClass('sorting_asc');
                 const column = $(this).data('column');
                 if (queryData.orderBy[column] === 'asc') {
                     queryData.orderBy[column] = "desc";
