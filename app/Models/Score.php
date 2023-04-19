@@ -11,18 +11,20 @@ class Score extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'exam_id',
         'student_id',
         'total'
     ];
 
-    public function user() : BelongsTo {
-        return $this->belongsTo(User::class,"user_id");
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "user_id");
     }
 
-    public function exam() : BelongsTo {
+    public function exam(): BelongsTo
+    {
         return $this->belongsTo(Exam::class, "exam_id");
     }
 }

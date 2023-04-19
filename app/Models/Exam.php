@@ -12,18 +12,20 @@ class Exam extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'type',
         'course_id',
         'status'
     ];
 
-    public function course() : BelongsTo {
+    public function course(): BelongsTo
+    {
         return $this->belongsTo(Course::class, "course_id");
     }
 
-    public function score() : HasMany {
+    public function score(): HasMany
+    {
         return $this->hasMany(Score::class);
     }
 }

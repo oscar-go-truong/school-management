@@ -1,16 +1,15 @@
 <?php
 
 namespace Database\Factories;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\StatusType;
 use App\Enums\UserRole;
 use App\Models\Subject;
 use App\Models\User;
 
-
 class CourseFactory extends Factory
 {
-   
     /**
      * Define the model's default state.
      *

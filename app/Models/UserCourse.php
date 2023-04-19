@@ -9,22 +9,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserCourse extends Model
 {
-    protected $table = "user_course";
-
     use HasFactory;
     use SoftDeletes;
-    
+
+    protected $table = "user_course";
+
     protected $fillable = [
         'user_id',
         'course_id',
         'status'
     ];
 
-    public function user() : BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, "user_id");
     }
 
-    public function course() : BelongsTo {
+    public function course(): BelongsTo
+    {
         return $this->belongsTo(Course::class, 'course_id');
     }
 }

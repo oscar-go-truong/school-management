@@ -12,7 +12,7 @@ class BookingRoom extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'room_id',
         'course_id',
@@ -20,15 +20,18 @@ class BookingRoom extends Model
         'status'
     ];
 
-    public function room() : BelongsTo {
+    public function room(): BelongsTo
+    {
         return $this->belongsTo(Room::class, 'room_id');
     }
 
-    public function course() : BelongsTo {
+    public function course(): BelongsTo
+    {
         return $this->belongsTo(Course::class, 'courses_id');
     }
 
-    public function request() : HasOne {
+    public function request(): HasOne
+    {
         return $this->hasOne(Request::class, 'request_id');
     }
 }
