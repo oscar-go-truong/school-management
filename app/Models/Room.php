@@ -11,13 +11,14 @@ class Room extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'name',
         'status'
     ];
 
-    public function booking_room() : HasMany {
+    public function bookingRoom(): HasMany
+    {
         return $this->hasMany(BookingRoom::class);
     }
 }

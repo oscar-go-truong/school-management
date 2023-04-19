@@ -40,44 +40,55 @@ class User extends Authenticatable
         'password'
     ];
 
-    public function scopeRole($query,$request) {
+    public function scopeRole($query, $request)
+    {
         $input = $request->input();
-        if(isset($input['role']) && count($input['role']) > 0 )
-            return $query->whereIn('role',$input['role']);
+        if (isset($input['role']) && count($input['role']) > 0) {
+            return $query->whereIn('role', $input['role']);
+        }
         return $query;
     }
 
-    public function scopeStatus($query, $request) {
+    public function scopeStatus($query, $request)
+    {
         $input = $request->input();
-        if(isset($input['status']) )
-            return $query->where('status',$input['status']);
-    }
-    
-
-    public function isAdministrator() : bool {
-       return $this->role === UserRole::Adminstrator;
+        if (isset($input['status'])) {
+            return $query->where('status', $input['status']);
+        }
     }
 
-    public function isTeacher() : bool{
+
+    public function isAdministrator(): bool
+    {
+        return $this->role === UserRole::Adminstrator;
+    }
+
+    public function isTeacher(): bool
+    {
         return $this->role === UserRole::Teacher;
     }
 
-    public function isStudent() : bool {
-       return $this->role === UserRole::Student;
+    public function isStudent(): bool
+    {
+        return $this->role === UserRole::Student;
     }
-    public function request_user() : HasMany {
+    public function requestUser(): HasMany
+    {
         return $this->hasMany(Request::class);
     }
 
-    public function approve_user() : HasMany {
+    public function approveUser(): HasMany
+    {
         return $this->hasMany(Request::class);
     }
 
-    public function coures() : HasMany {
+    public function coures(): HasMany
+    {
         return $this->HasMany(Course::class);
     }
 
-    public function exam() : hasMany {
+    public function exam(): hasMany
+    {
         return $this->hasMany(Exam::class);
     }
 }

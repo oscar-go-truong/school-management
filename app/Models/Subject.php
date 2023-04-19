@@ -9,16 +9,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subject extends Model
 {
-    use HasFactory; 
+    use HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'name',
         'descriptions',
         'status'
     ];
 
-    public function course() : HasMany {
+    public function course(): HasMany
+    {
         return $this->hasMany(Course::class);
     }
 }

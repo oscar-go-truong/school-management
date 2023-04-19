@@ -9,10 +9,11 @@ use App\Http\Requests\Auth\LoginRequest;
 class AuthController extends Controller
 {
     // Handle Authenticate
-    public function authenticate(LoginRequest $user) {
-        if (Auth::attempt(['email'=> $user->email, 'password' => $user->password ])) {
+    public function authenticate(LoginRequest $user)
+    {
+        if (Auth::attempt(['email' => $user->email, 'password' => $user->password ])) {
             $user->session()->regenerate();
- 
+
             return redirect()->intended('/');
         }
         return back()->withErrors([
@@ -32,11 +33,11 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
- 
+
         $request->session()->invalidate();
- 
+
         $request->session()->regenerateToken();
- 
+
         return redirect('/login');
     }
 }

@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use HasFactory; 
+    use HasFactory;
     use SoftDeletes;
-    
+
     protected $fillable = [
         'name',
         'descriptions',
@@ -21,16 +21,19 @@ class Course extends Model
         'subject_id'
     ];
 
-    
-    public function booking_room() :HasMany {
+
+    public function bookingRoom(): HasMany
+    {
         return $this->HasMany(BookingRoom::class);
     }
 
-    public function exam() : HasMany{
+    public function exam(): HasMany
+    {
         return $this->hasMany(Exam::class);
     }
 
-    public function subject() : BelongsTo {
+    public function subject(): BelongsTo
+    {
         return $this->belongsTo(Subject::class, "subject_id");
     }
 }

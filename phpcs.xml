@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="PHP Standards">
+
+<exclude-pattern>./database/factories/*</exclude-pattern>
+<exclude-pattern>./database/seeders/*</exclude-pattern>
+
+    <rule ref="PSR12" >
+      <exclude name="Generic.Files.LineEndings.InvalidEOLChar" />
+    </rule>
+    
+</ruleset>

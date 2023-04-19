@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\RequestType;
 use App\Enums\StatusType;
 use App\Models\User;
+
 class RequestFactory extends Factory
 {
     /**
