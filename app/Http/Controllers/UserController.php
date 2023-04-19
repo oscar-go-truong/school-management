@@ -28,7 +28,7 @@ class UserController extends Controller
     // Render all user
     public function index(Request $request)
     {
-        $users = $this->userService->getTable($request);
+            $users = $this->userService->getTable($request);
         return view('user.table', ['users' => $users, 'role' => UserRole::asArray(), 'status' => StatusType::asArray(), 'itemPerPageOptions' => PaginationContants::ITEM_PER_PAGE_OPTIONS]);
     }
     // Get table data
