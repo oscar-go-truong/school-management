@@ -58,7 +58,7 @@
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="all" id="all-role">
                                             <label for="all-role" class="text-base font-light">
-                                                All role
+                                                All roles
                                             </label>
                                         </div>
                                         @foreach ($role as $name => $id)
@@ -186,6 +186,7 @@
 
         // Update data 
         const getTable = () => {
+
             // hidden data on table
             $('#usersTable').hide();
 
@@ -381,7 +382,6 @@
                     $('#role-' + val).addClass('bg-gray-300');
                     queryData.role.push(val);
                 }
-                console.log(queryData.role);
                 getTable();
             })
             $('#all-role').change(function() {
@@ -394,6 +394,7 @@
                     $('.role-check-input').prop('checked', true);
                     $('.role-check-input').prop('disabled', true);
                 }
+                queryData.role = [];
                 getTable();
             })
             //filter status
