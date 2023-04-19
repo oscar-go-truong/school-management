@@ -36,4 +36,9 @@ class Course extends Model
     {
         return $this->belongsTo(Subject::class, "subject_id");
     }
+
+    public function homeroomTeacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "owner_id");
+    }
 }

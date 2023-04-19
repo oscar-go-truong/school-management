@@ -17,7 +17,12 @@ abstract class BaseService
     abstract public function getModel();
     public function index()
     {
-        return $this->model->paginate(PaginationContants::LIMIT);
+        return $this->model->all();
+    }
+
+    public function changeStatus($id, $status)
+    {
+        return  $this->model->where('id', $id)->update(['status' => $status]);
     }
 
     public function orderNSearch($request, $query)

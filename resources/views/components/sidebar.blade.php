@@ -31,7 +31,7 @@
             </a>
         </li>
         <li>
-            <a href="/course" class="nav-link link-dark">
+            <a href="/courses" class="nav-link link-dark">
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#course"></use>
                 </svg>

@@ -26,11 +26,6 @@ class UserService extends BaseService
 
         return $users;
     }
-    public function changeStatus($id, $status)
-    {
-        return  $this->model->where('id', $id)->update(['status' => $status]);
-    }
-
 
     public function store($user)
     {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,8 +26,11 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('/', [UserController::class, 'profile'])->name('profile');
+
     Route::patch('users/status/{id}', [UserController::class, 'changeStatus'])->name('admin.change.user.status');
     Route::get('users/table', [UserController::class, 'getTable'])->name('admin.get.user.table');
-
     Route::resources(['users' => UserController::class]);
+
+    Route::patch('courses/status/{id}', [CourseController::class, 'changeStatus'])->name('admin.change.courses.status');
+    Route::resources(['courses' => CourseController::class]);
 });
