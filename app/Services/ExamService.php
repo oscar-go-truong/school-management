@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\ExamTypeConstants;
+use App\Enums\MyExamTypeConstants;
 use App\Models\Exam;
 
 class ExamService extends BaseService
@@ -15,13 +15,13 @@ class ExamService extends BaseService
     public function getTable($request)
     {
         
-        $query = $this->model->withCount('score');
+        $query = $this->model->withCount('score')->with('course.subject');
         $courseId = $request->query('courseId');
         if($courseId != null)
             $query = $query->where('course_id', $courseId);
         $exams = $this->orderNSearch($request, $query);
         foreach ($exams as $exam) {
-            $exam->type = ExamTypeConstants::getKey($exam->type);
+            $exam->type = MyExamTypeConstants::getKey($exam->type);
         }
         return $exams;
     }

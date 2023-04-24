@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRoleContants;
 use App\Services\CourseService;
 use App\Services\UserCourseService;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class TeacherController extends Controller
     }
 
     public function getTable(Request $request, $courseId){
-        $teachers = $this->userCourseService->getTeachers($request, $courseId);
+        $teachers = $this->userCourseService->getTable($request, $courseId, UserRoleContants::TEACHER);
         return $teachers;
     }
 }

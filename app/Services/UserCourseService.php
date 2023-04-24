@@ -12,18 +12,12 @@ class UserCourseService extends BaseService
         return UserCourse::class;
     }
 
-    public function getTeachers($request, $CourseId)
+    public function getTable($request, $courseId, $role)
     {
-        $query = $this->model->where('role', UserRoleContants::TEACHER)->where('course_id', $CourseId)->with('user');
+        $query = $this->model->where('course_id', $courseId)->whereHas('user', function ($query) use ($role) {
+            $query->where('role', $role);
+        })->with('user');
         $teachers = $this->orderNSearch($request, $query);
         return $teachers;
-    }
-
-
-    public function getStudents($request, $CourseId)
-    {
-        $query = $this->model->where('role', UserRoleContants::STUDENT)->where('course_id', $CourseId)->with('user');
-        $students = $this->orderNSearch($request, $query);
-        return $students;
     }
 }

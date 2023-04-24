@@ -1,7 +1,11 @@
 <script>
     const PAGINATION_LIMIT = 7;
+    toastr.options = {
+        maxOpened: 1,
+    };
     const getTable = (createRow) => {
         // hidden data on table
+        toastr.clear();
         toastr.info('Loading, please wait...');
         $(tableId).hide();
         $('#paginations').hide();
@@ -72,15 +76,18 @@
                                             ...
                                         </span>`);
                 }
+                toastr.clear();
                 toastr.success('Done!');
             },
             error: function() {
                 $(tableId).show();
+                toastr.clear();
                 toastr.error('Error, Please try again later!');
             }
         });
     }
     const submitDelete = (id) => {
+        toastr.clear();
         toastr.info(`Deleting ${model}!`);
         $.ajax({
             type: "DELETE",
@@ -88,11 +95,16 @@
             dataType: "json",
             success: function(resp) {
                 if (resp.data) {
+                    toastr.clear();
                     toastr.success(resp.message);
                     $(`#${model}-` + id).remove();
-                } else toastr.error(resp.message);
+                } else {
+                    toastr.clear();
+                    toastr.error(resp.message);
+                }
             },
             error: function() {
+                toastr.clear();
                 toastr.error('Error, Please try again later!');
             }
         });;
@@ -155,6 +167,7 @@
                 queryData.page = 1;
                 getTable(createRow);
             } else if (val) {
+                toastr.clear();
                 toastr.warning('Select column before search!');
             }
         });
@@ -177,6 +190,7 @@
 
         // Change model status
         $(document).on('change', '.status', function() {
+            toastr.clear();
             toastr.info('Updating status!');
             let id = $(this).data('id');
             let status = $(this).is(':checked') ? 1 : 0;
@@ -190,10 +204,15 @@
                 dataType: "json",
                 success: function(resp) {
                     if (resp.data) {
+                        toastr.clear();
                         toastr.success(resp.message);
-                    } else toastr.error(resp.message);
+                    } else {
+                        toastr.clear();
+                        toastr.error(resp.message);
+                    }
                 },
                 error: function() {
+                    toastr.clear();
                     toastr.error('Error, Please try again later!');
                 }
             });
@@ -202,6 +221,7 @@
         $(document).on('click', '.delete', function() {
             const name = $(this).data('name');
             const id = $(this).data('id');
+            toastr.clear();
             toastr.options.timeOut = 0;
             toastr.options.extendedTimeOut = 0;
             toastr.options.closeButton = true;

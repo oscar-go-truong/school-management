@@ -17,10 +17,9 @@ class UserCourseFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => User::all()->random()->id,
+            'user_id' => User::where('role',UserRoleContants::STUDENT)->inRandomOrder()->first()->id,
             'course_id' => Course::all()->random()->id,
             'status' => StatusTypeContants::getRandomValue(),
-            'role' => collect([UserRoleContants::TEACHER,UserRoleContants::STUDENT])->random()
         ];
     }
 }

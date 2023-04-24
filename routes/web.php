@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
@@ -57,4 +59,15 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('table', [ExamController::class, 'getTable'])->name('user.get.exam.table');
       });
     Route::resource('exams', ExamController::class);
+
+    Route::prefix('/scores/')->group(function () {
+        Route::get('table', [ScoreController::class, 'getTable'])->name('user.get.score.table');
+      });
+    Route::resource('scores', ScoreController::class);
+
+    Route::prefix('/requests/')->group(function () {
+        Route::get('table', [RequestController::class, 'getTable'])->name('user.get.request.table');
+      });
+    Route::resource('requests', RequestController::class);
+
 });

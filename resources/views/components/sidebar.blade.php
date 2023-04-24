@@ -38,6 +38,16 @@
                 Courses
             </a>
         </li>
+        @if (Auth::User()->isStudent())
+            <li class="nav-item {{ Request::is('scores/*') || Request::is('scores') ? 'bg-sky-300' : '' }}">
+                <a href="/scores" class="nav-link link-dark">
+                    <svg class="bi me-2" width="16" height="16">
+                        <use xlink:href="#user"></use>
+                    </svg>
+                    My Scores
+                </a>
+            </li>
+        @endif
         <li class="nav-item {{ Request::is('requests/*') || Request::is('requests') ? 'bg-sky-300' : '' }}">
             <a href="/requests" class="nav-link link-dark">
                 <svg class="bi me-2" width="16" height="16">

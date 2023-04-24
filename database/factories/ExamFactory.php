@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Enums\ExamTypeConstants;
+use App\Enums\MyExamTypeConstants;
 use App\Enums\StatusTypeContants;
 use App\Models\Course;
 
@@ -17,7 +17,7 @@ class ExamFactory extends Factory
     public function definition()
     {
         return [
-            'type' => ExamTypeConstants::getRandomValue(),
+            'type' => MyExamTypeConstants::getRandomValue(),
             'status' => StatusTypeContants::ACTIVE,
           'course_id' => Course::all()->random()->id,
         ];

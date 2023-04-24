@@ -45,11 +45,15 @@ class Course extends Model
 
     public function teachers()
     {
-        return $this->hasMany(UserCourse::class)->where('role', UserRoleContants::TEACHER);
+        return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {
+            $query->where('role', UserRoleContants::TEACHER);
+        });
     }
 
     public function students()
     {
-        return $this->hasMany(UserCourse::class)->where('role', UserRoleContants::STUDENT);
+        return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {
+            $query->where('role', UserRoleContants::STUDENT);
+        });
     }
 }
