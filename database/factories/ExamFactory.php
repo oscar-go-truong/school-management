@@ -18,7 +18,7 @@ class ExamFactory extends Factory
     {
         return [
             'type' => ExamType::getRandomValue(),
-            'status' => StatusType::Active,
+            'status' => StatusType::ACTIVE,
           'course_id' => Course::all()->random()->id,
         ];
     }

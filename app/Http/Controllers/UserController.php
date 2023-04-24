@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PaginationContants;
+use App\Enums\APIUrlEnums;
+use App\Enums\SearchColumn;
 use App\Enums\StatusType;
 use App\Enums\UserRole;
 use App\Http\Requests\CreateUpdateUserRequest;
@@ -26,10 +27,13 @@ class UserController extends Controller
     }
 
     // Render all user
-    public function index(Request $request)
+    public function index()
     {
-            $users = $this->userService->getTable($request);
-        return view('user.table', ['users' => $users, 'role' => UserRole::asArray(), 'status' => StatusType::asArray(), 'itemPerPageOptions' => PaginationContants::ITEM_PER_PAGE_OPTIONS]);
+        $role = UserRole::asArray();
+        $status = StatusType::asArray();
+        $searchColumns = SearchColumn::USER;
+        $API = APIUrlEnums::TABLE_USER_API;
+        return view('user.index', compact('role', 'status', 'searchColumns', 'API'));
     }
     // Get table data
     public function getTable(Request $request)
@@ -42,13 +46,21 @@ class UserController extends Controller
     {
         $status = $request->status;
         $user = $this->userService->changeStatus($id, $status);
-        return $user;
+        if ($user !== null) {
+            return response()->json(['data' => $user, 'message' => "Update successful!"]);
+        } else {
+            return response()->json(['data' => null,'message' => "Error, Please try again later!"]);
+        }
     }
     // Handle delete user
     public function destroy(int $id)
     {
         $user = $this->userService->destroy($id);
-        return $user;
+        if ($user !== null) {
+            return response()->json(['data' => $user, 'message' => "Delete successful!"]);
+        } else {
+            return response()->json(['data' => null,'message' => "Error, Please try again later!"]);
+        }
     }
     // Render create user form
     public function create()

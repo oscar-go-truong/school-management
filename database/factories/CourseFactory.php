@@ -19,9 +19,9 @@ class CourseFactory extends Factory
     {
         return [
             'name' => $this->faker->userName(),
-           'status' => StatusType::Active,
-            'descriptions' => $this->faker->sentence(),
-          'owner_id' => User::where('role', UserRole::Teacher)
+           'status' => StatusType::ACTIVE,
+            'descriptions' => $this->faker->text(),
+          'owner_id' => User::where('role', UserRole::TEACHER)
           ->get()->random()->id,
           'subject_id' => Subject::all()->random()->id,
         ];

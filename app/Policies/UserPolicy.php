@@ -20,11 +20,13 @@ class UserPolicy
         //
     }
 
-    public function create(User $user) : bool {
-        return $user->role === UserRole::Adminstrator;
+    public function create(User $user): bool
+    {
+        return $user->role === UserRole::ADMIN;
     }
 
-    public function update(User $user, User $update) : bool {
+    public function update(User $user, User $update): bool
+    {
         return $user->id === $update->id;
     }
 }

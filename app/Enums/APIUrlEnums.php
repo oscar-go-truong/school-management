@@ -9,8 +9,10 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class StatusType extends Enum
+final class APIUrlEnums extends Enum
 {
-    const INACTIVE =   0;
-    const ACTIVE =   1;
+    const TABLE_USER_API = "/users/table";
+    const TABLE_COURSE_API = "/courses/table";
+
+    const TABLE_SUBJECT_API = "/subjects/table";
 }

@@ -1,138 +1,64 @@
-@extends('components.layout')
-@section('content')
-    <div id="wrapper">
-        @if (session('error'))
-            <script>
-                toastr.error('{{ session('error') }}')
-            </script>
-        @endif
-        <div id="page-wrapper">
-            <div id="page-inner">
-                <div class="row">
-                    <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-                        <div> Courses managerment</div>
-
-
-                    </div>
-                </div>
-                <!-- /. ROW  -->
-                <hr class="mt-2 mb-3" />
-                <!-- /. ROW  -->
-                <div class="table-content">
-                    <table class="table table-striped table-bordered table-hover" id='courseTable'>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Descriptions</th>
-                                <th>Homeroom Teacher</th>
-                                <th>Subject</th>
-                                <th>Status</th>
-                                <th>Update</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($courses as $course)
-                                <tr id="course-{{ $course->id }}">
-                                    <td>{{ $course->id }}</td>
-                                    <td>{{ $course->name }}</td>
-                                    <td>{{ $course->descriptions }}</td>
-                                    <td>{{ $course->homeroomTeacher->fullname }}</td>
-                                    <td>{{ $course->subject->name }}</td>
-                                    <td>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input status" type="checkbox" id="{{ $course->id }}"
-                                                data-id="{{ $course->id }}" {{ $course->status === 1 ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="{{ $course->id }}">
-                                                {{ $course->status === 1 ? 'active' : 'inactive' }}
-                                            </label>
-                                        </div>
-                                    </td>
-                                    <td class="text-primary"><a href="/courses/{{ $course->id }}/edit"><i
-                                                class="fa-solid fa-pen-to-square"></i></a></td>
-                                    <td class="text-danger"><i class="fa-sharp fa-regular fa-calendar-xmark delete"
-                                            data-id={{ $course->id }} data-name={{ $course->name }}></i></i>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-
-
-            <!-- /. PAGE INNER  -->
-        </div>
-        <!-- /. PAGE WRAPPER  -->
-    </div>
-    <script>
-        const deleteCourse = (id) => {
-            toastr.info('Deleting course!');
-            $.ajax({
-                type: "DELETE",
-                url: "/courses/" + id,
-                dataType: "json",
-                success: function() {
-                    toastr.success('Delete course successful!');
-                    $('#course-' + id).remove();
-                },
-                error: function() {
-                    toastr.error('Error, Please try again later!');
-                }
-            });;
-        }
-        $(document).ready(function() {
-            let _token = '{{ csrf_token() }}';
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': _token
-                }
-            });
-            let table = $('#courseTable').dataTable({
-                scrollY: 600
-            });
-            // delete Course
-            $(document).on('click', '.delete', function() {
-                const name = $(this).data('name');
-                const id = $(this).data('id');
-
-                toastr.options.timeOut = 0;
-                toastr.options.extendedTimeOut = 0;
-                toastr.options.closeButton = true;
-                toastr.options.preventDuplicates = true;
-                toastr.warning(`<div class="z-10">
-                    <div class="mb-10">Are you sure is you want to delete course <b>${name}!</b></div>
-                    <div class="d-flex justify-content-center">
-                        <button class="btn btn-secondary mr-3">cancel</button> 
-                        <button class="btn btn-danger ml-3" onclick='deleteCourse(${id})'>delete</button></div>
-                    </div>`);
-                toastr.options.timeOut = 600;
-                toastr.options.extendedTimeOut = 600;
-            });
-            //change status course 
-            $('.status').change(function() {
-                toastr.info(`updating course's status!`);
-                const val = $(this).is(':checked') ? 1 : 0;
-                const id = $(this).data('id');
-                $.ajax({
-                    type: "PATCH",
-                    url: "/courses/status/" + id,
-                    data: {
-                        id: id,
-                        status: val
-                    },
-                    dataType: "json",
-                    success: function() {
-                        toastr.success(`update course's status successful!`);
-                    },
-                    error: function() {
-                        toastr.error('Error, Please try again later!');
-                    }
-                });;
-            })
-        })
-    </script>
+@extends('components.tableLayout')
+@section('th')
+    <tr>
+        <th class="sort sorting sorting_asc" data-column="id">#</th>
+        <th class="sort sorting" data-column="name">Name</th>
+        <th class="sort sorting" data-column="subject">Subject</th>
+        <th class="sort sorting" data-column="descriptions">Descriptions</th>
+        <th>Teachers</th>
+        <th>Students</th>
+        <th>Exams</th>
+        <th class="text-center">Detail</th>
+        <th>Status</th>
+        <th class="text-center">Update</th>
+    </tr>
 @endsection
+@section('tableId', 'coursesTable')
+<script>
+    const model = 'course';
+    const tableId = '#coursesTable';
+    const url = '{{ $API }}';
+    let queryData = {
+        page: 1,
+        orderBy: 'id',
+        orderDirect: 'asc',
+        search: null,
+        role: [],
+        status: null
+
+    };
+    let last_page = 1;
+    // end config
+    //
+    // Create row for table
+    const createRow = (course) => {
+        let row = $(`<tr id="course-${ course.id    }">`);
+        row.append(`<td>${ course.id }</td>`);
+        row.append(`<td>${ course.name }</td>`);
+        row.append(`<td>${ course.subject.name}</td>`);
+        row.append(`<td>${ course.descriptions }</td>`);
+        row.append(
+            `<td class="dark-link text-center"><a href="/courses/${course.id}/teachers">${course.teachers_count}</a></td>`
+        );
+        row.append(
+            `<td class="dark-link text-center"><a href="/courses/${course.id}/students">${course.students_count}</a></td>`
+        );
+        row.append(
+            `<td class="dark-link text-center"><a href="/courses/${course.id}/exams">${course.exam_count}</a></td>`
+        );
+        row.append(` <td class="text-info text-2xl text-center">
+                        <a href='/courses/${ course.id }'><i class="fa-sharp fa-solid fa-clipboard-list"></i></a>
+                    </td>`);
+        row.append(`<td><div class="form-check form-switch">
+                    <input class="form-check-input status" type="checkbox" id="${ course.id }"
+                    data-id="${ course.id }" ${ course.status === 1 ? 'checked' : '' }>
+                    <label class="form-check-label" for="${ course.id }">
+                    ${ course.status === 1 ? 'active' : 'blocked' }
+                    </label>
+                    </div>
+                    </td>`);
+        row.append(`<td class="text-primary"><a href="/courses/${ course.id }/edit"><i
+                                        class="fa-solid fa-pen-to-square"></i></a></td>`);
+        return row;
+    }
+</script>

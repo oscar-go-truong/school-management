@@ -22,7 +22,12 @@ abstract class BaseService
 
     public function changeStatus($id, $status)
     {
-        return  $this->model->where('id', $id)->update(['status' => $status]);
+        $update = $this->model->where('id', $id)->update(['status' => $status]);
+        if ($update) {
+            return $this->model->find($id);
+        } else {
+            return  null;
+        }
     }
 
     public function orderNSearch($request, $query)
@@ -30,10 +35,11 @@ abstract class BaseService
         $input = $request->input();
         $limit = $request->query('limit', PaginationContants::LIMIT);
         // order by
-        if (isset($input['orderBy'])) {
-            foreach ($input['orderBy'] as $column => $sortType) {
-                $query = $query->orderBy($column, $sortType);
-            }
+        $isOrder = isset($input['orderBy']) && isset($input['orderDirect']);
+        if ($isOrder) {
+            $orderBy = $input['orderBy'];
+            $orderDirect = $input['orderDirect'];
+                $query = $query->orderBy($orderBy, $orderDirect);
         }
         if (isset($input['search']) && $input['search']) {
             $searchColumn = $request->query('search')['column'];
@@ -61,6 +67,12 @@ abstract class BaseService
 
     public function destroy($id)
     {
-        return $this->model->destroy($id);
+        $model = $this->model->find($id);
+        if ($model) {
+            $this->model->destroy($id);
+            return $model;
+        } else {
+            return null;
+        }
     }
 }

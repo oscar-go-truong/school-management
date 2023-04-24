@@ -34,3 +34,11 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
 
 </head>
+<script>
+    let _token = '{{ csrf_token() }}';
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': _token
+        }
+    });
+</script>

@@ -60,17 +60,17 @@ class User extends Authenticatable
 
     public function isAdministrator(): bool
     {
-        return $this->role === UserRole::Adminstrator;
+        return $this->role === UserRole::ADMIN;
     }
 
     public function isTeacher(): bool
     {
-        return $this->role === UserRole::Teacher;
+        return $this->role === UserRole::TEACHER;
     }
 
     public function isStudent(): bool
     {
-        return $this->role === UserRole::Student;
+        return $this->role === UserRole::STUDENT;
     }
     public function requestUser(): HasMany
     {
@@ -90,5 +90,10 @@ class User extends Authenticatable
     public function exam(): hasMany
     {
         return $this->hasMany(Exam::class);
+    }
+
+    public function userCourse(): HasMany
+    {
+        return $this->hasMany(UserCourse::class);
     }
 }

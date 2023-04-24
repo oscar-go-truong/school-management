@@ -16,8 +16,8 @@ class SubjectFactory extends Factory
     {
         return [
             'name' => $this->faker->userName(),
-            'descriptions' => $this->faker->sentence(),
-            'status' => StatusType::Active,
+            'descriptions' => $this->faker->text(),
+            'status' => StatusType::ACTIVE,
         ];
     }
 }

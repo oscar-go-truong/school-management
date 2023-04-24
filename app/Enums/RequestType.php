@@ -11,7 +11,7 @@ use BenSampo\Enum\Enum;
  */
 final class RequestType extends Enum
 {
-    const Review_grades =   1;
-    const Book_room_or_labs =  2;
-    const  Swicth_class= 3;
+    const REVIEW_GRADES =   1;
+    const BOOK_ROOM_OR_LAB =  2;
+    const  SWITCH_CLASS = 3;
 }

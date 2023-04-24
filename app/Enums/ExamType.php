@@ -11,7 +11,7 @@ use BenSampo\Enum\Enum;
  */
 final class ExamType extends Enum
 {
-    const Quiz =   1;
-    const Middle =   2;
-    const Final = 3;
+    const QUIZ =   1;
+    const MIDDLE =   2;
+    const FINAL = 3;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\PaginationContants;
 use App\Models\Course;
 
 class CourseService extends BaseService
@@ -11,9 +12,17 @@ class CourseService extends BaseService
         return Course::class;
     }
 
-    public function getTable()
+    public function getTable($request)
     {
-        $courses = $this->model->with('homeroomTeacher')->with('subject')->get();
+        $query = $this->model->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
+        $courses = $this->orderNSearch($request, $query);
+        return $courses;
+    }
+
+    public function getCoursesBySubjectId($request, $id)
+    {
+        $query = $this->model->where('subject_id', $id)->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
+        $courses = $this->orderNSearch($request, $query);
         return $courses;
     }
 }

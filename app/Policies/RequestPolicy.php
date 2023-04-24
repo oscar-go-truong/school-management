@@ -21,7 +21,8 @@ class RequestPolicy
         //
     }
 
-    public function approve(User $user, Request $request) :bool {
-        return $user->role === UserRole::Adminstrator;
+    public function approve(User $user, Request $request): bool
+    {
+        return $user->role === UserRole::ADMIN;
     }
 }

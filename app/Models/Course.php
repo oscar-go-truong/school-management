@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
+use Database\Seeders\UserCourseSeeder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,5 +42,15 @@ class Course extends Model
     public function homeroomTeacher(): BelongsTo
     {
         return $this->belongsTo(User::class, "owner_id");
+    }
+
+    public function teachers()
+    {
+        return $this->hasMany(UserCourse::class)->where('role', UserRole::TEACHER);
+    }
+
+    public function students()
+    {
+        return $this->hasMany(UserCourse::class)->where('role', UserRole::STUDENT);
     }
 }

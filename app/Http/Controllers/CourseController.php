@@ -2,28 +2,75 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\APIUrlEnums;
 use App\Services\CourseService;
+use App\Services\ExamService;
+use App\Services\UserCourseService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
     protected $courseService;
+    protected $userCourseService;
+    protected $examService;
 
-    public function __construct(CourseService $courseService)
+    public function __construct(CourseService $courseService, UserCourseService $userCourseService, ExamService $examService)
     {
         $this->courseService = $courseService;
+        $this->userCourseService = $userCourseService;
+        $this->examService = $examService;
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
-        $courses = $this->courseService->getTable();
-        return view('course.table', compact('courses'));
+        $API = APIUrlEnums::TABLE_COURSE_API;
+        return view('course.index', compact('API'));
     }
 
+    public function getTable(Request $request)
+    {
+        $courses = $this->courseService->getTable($request);
+        return response()->json($courses);
+    }
+
+    public function getTeachers($id)
+    {
+        $course = $this->courseService->getById($id);
+        return view('course.teacher.index', compact('id', 'course'));
+    }
+
+    public function getTeachersTable(Request $request, $id)
+    {
+        $teachers = $this->userCourseService->getTeachers($request, $id);
+        return $teachers;
+    }
+    public function getStudents($id)
+    {
+        return view('course.student.index', compact('id'));
+    }
+
+    public function getStudentsTable(Request $request, $id)
+    {
+        $students = $this->userCourseService->getStudents($request, $id);
+        return $students;
+    }
+
+    public function getExams($id)
+    {
+        $API = '/courses/' . $id . '/exams/table';
+        return view('exam.index', compact('API'));
+    }
+
+    public function getExamsTable(Request $request, $id)
+    {
+        $exams = $this->examService->getCourseExams($request, $id);
+        return $exams;
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -51,9 +98,10 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id): View
     {
-        //
+        $course = $this->courseService->getById($id);
+        return view('course.detail', compact('course'));
     }
 
     /**
@@ -87,7 +135,12 @@ class CourseController extends Controller
      */
     public function destroy($id)
     {
-        return $this->courseService->destroy(($id));
+        $course = $this->courseService->destroy(($id));
+        if ($course !== null) {
+            return response()->json(['data' => $course, 'message' => "Delete course successful!"]);
+        } else {
+            return response()->json(['data' => $course, 'message' => "Error, please try again later!"]);
+        }
     }
 
     // change course status
@@ -95,6 +148,10 @@ class CourseController extends Controller
     {
         $status = $request->status;
         $course = $this->courseService->changeStatus($id, $status);
-        return $course;
+        if ($course !== null) {
+            return response()->json(['data' => $course, 'message' => "Update course successful!"]);
+        } else {
+            return response()->json(['data' => $course, 'message' => "Error, please try again later!"]);
+        }
     }
 }

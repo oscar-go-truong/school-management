@@ -20,11 +20,13 @@ class UserCoursePolicy
         //
     }
 
-    public function create(User $user) : bool {
-        return $user->role === UserRole::Adminstrator;
+    public function create(User $user): bool
+    {
+        return $user->role === UserRole::ADMIN;
     }
 
-    public function update(User $user) : bool {
-        return $user->role === UserRole::Adminstrator;
+    public function update(User $user): bool
+    {
+        return $user->role === UserRole::ADMIN;
     }
 }
