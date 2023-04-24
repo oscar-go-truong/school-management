@@ -15,15 +15,16 @@
 <script>
     const model = 'course-exam';
     const tableId = '#course-examsTable';
-    const courseId = '{{ $courseId }}';
-    const url = `/courses/${courseId}/exams/table`;
+    const courseId = '{{ request()->query('courseId') }}';
+    const url = `/exams/table`;
     let queryData = {
         page: 1,
         orderBy: 'id',
         orderDirect: 'asc',
         search: null,
         role: [],
-        status: null
+        status: null,
+        courseId: !isNaN(courseId) && courseId ? courseId : null
 
     };
     let last_page = 1;

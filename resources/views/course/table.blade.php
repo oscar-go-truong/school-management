@@ -45,7 +45,7 @@
             `<td class="dark-link text-center"><a href="/courses/${course.id}/students">${course.students_count}</a></td>`
         );
         row.append(
-            `<td class="dark-link text-center"><a href="/courses/${course.id}/exams">${course.exam_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/exams?courseId=${course.id}">${course.exam_count}</a></td>`
         );
         row.append(` <td class="text-info text-2xl text-center">
                         <a href='/courses/${ course.id }'><i class="fa-sharp fa-solid fa-clipboard-list"></i></a>

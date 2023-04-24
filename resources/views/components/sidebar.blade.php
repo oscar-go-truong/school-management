@@ -18,7 +18,7 @@
                     <svg class="bi me-2" width="16" height="16">
                         <use xlink:href="#user"></use>
                     </svg>
-                    User management
+                    Users
                 </a>
             </li>
         @endif
@@ -27,7 +27,7 @@
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#course"></use>
                 </svg>
-                Subject
+                Subjects
             </a>
         </li>
         <li class="nav-item {{ Request::is('courses/*') || Request::is('courses') ? 'bg-sky-300' : '' }}">
@@ -35,7 +35,7 @@
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#course"></use>
                 </svg>
-                Course
+                Courses
             </a>
         </li>
         <li class="nav-item {{ Request::is('requests/*') || Request::is('requests') ? 'bg-sky-300' : '' }}">
@@ -43,7 +43,7 @@
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#Request"></use>
                 </svg>
-                Request
+                Requests
             </a>
         </li>
         <li class="nav-item {{ Request::is('schedules/*') || Request::is('schedules') ? 'bg-sky-300' : '' }}">
@@ -51,7 +51,7 @@
                 <svg class="bi me-2" width="16" height="16">
                     <use xlink:href="#schedule"></use>
                 </svg>
-                Schedule
+                Schedules
             </a>
         </li>
     </ul>

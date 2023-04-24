@@ -5,7 +5,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold">
-                        User management - Update user
+                        Update user
                     </div>
 
                 </div>
