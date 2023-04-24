@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\APIUrlEnums;
-use App\Enums\StatusType;
+use App\Enums\StatusTypeContants;
 use App\Services\CourseService;
 use App\Services\SubjectService;
 use Illuminate\Contracts\View\View;
@@ -27,8 +26,7 @@ class SubjectController extends Controller
      */
     public function index(): View
     {
-        $API = APIUrlEnums::TABLE_SUBJECT_API;
-        return view('subject.index', compact('API'));
+        return view('subject.index');
     }
 
     public function getTable(Request $request)
@@ -68,17 +66,6 @@ class SubjectController extends Controller
         $subject = $this->subjectService->getById($id);
         return view('subject.detail', compact('subject'));
     }
-
-    public function getCourses($id): View
-    {
-        $API = '/subjects/' . $id . '/courses/table';
-        return view('course.index', compact('API'));
-    }
-    public function getCoursesTable(Request $request, $id)
-    {
-        $courses = $this->courseService->getCoursesBySubjectId($request, $id);
-        return response()->json($courses);
-    }
     /**
      * Show the form for editing the specified resource.
      *
@@ -104,13 +91,12 @@ class SubjectController extends Controller
 
     public function changeStatus(Request $request, $id)
     {
-        $status = $request->input('status', StatusType::ACTIVE);
+        $status = $request->input('status', StatusTypeContants::ACTIVE);
         $subject = $this->subjectService->changeStatus($id, $status);
-        if ($subject != null) {
+        if ($subject != null) 
             return response()->json(['data' => $subject, 'message' => "Update subject status successful!"]);
-        } else {
-            return response()->json(['data' => $subject, 'message' => "Error, please try again later!"]);
-        }
+        return response()->json(['data' => $subject, 'message' => "Error, please try again later!"]);
+        
     }
 
     /**
@@ -122,10 +108,8 @@ class SubjectController extends Controller
     public function destroy($id)
     {
         $subject = $this->subjectService->destroy($id);
-        if ($subject != null) {
+        if ($subject != null) 
             return response()->json(['data' => $subject, 'message' => "Delete subject successful!"]);
-        } else {
-            return response()->json(['data' => $subject, 'message' => "Error, please try again later!"]);
-        }
+        return response()->json(['data' => $subject, 'message' => "Error, please try again later!"]);
     }
 }

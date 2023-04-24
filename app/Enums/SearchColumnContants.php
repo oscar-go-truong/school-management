@@ -9,8 +9,7 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class StatusType extends Enum
+final class SearchColumnContants extends Enum
 {
-    const INACTIVE =   0;
-    const ACTIVE =   1;
+    const USER =   array('email' => 'Email', 'username' => 'Username', 'fullname' => 'Fullname');
 }

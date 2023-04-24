@@ -10,14 +10,18 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-                        <div> Students managerment</div>
+                        <div> Teachers management</div>
                     </div>
                 </div>
                 <!-- /. ROW  -->
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
-                @include('course.student.table')
+                @include('teacher.table')
+
             </div>
+
+
+
             <!-- /. PAGE INNER  -->
         </div>
         <!-- /. PAGE WRAPPER  -->

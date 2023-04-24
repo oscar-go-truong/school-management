@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\APIUrlEnums;
-use App\Enums\SearchColumn;
-use App\Enums\StatusType;
-use App\Enums\UserRole;
+use App\Enums\SearchColumnContants;
+use App\Enums\StatusTypeContants;
+use App\Enums\UserRoleContants;
 use App\Http\Requests\CreateUpdateUserRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -29,11 +28,10 @@ class UserController extends Controller
     // Render all user
     public function index()
     {
-        $role = UserRole::asArray();
-        $status = StatusType::asArray();
-        $searchColumns = SearchColumn::USER;
-        $API = APIUrlEnums::TABLE_USER_API;
-        return view('user.index', compact('role', 'status', 'searchColumns', 'API'));
+        $role = UserRoleContants::asArray();
+        $status = StatusTypeContants::asArray();
+        $searchColumns = SearchColumnContants::USER;
+        return view('user.index', compact('role', 'status', 'searchColumns'));
     }
     // Get table data
     public function getTable(Request $request)
@@ -56,16 +54,14 @@ class UserController extends Controller
     public function destroy(int $id)
     {
         $user = $this->userService->destroy($id);
-        if ($user !== null) {
+        if ($user !== null) 
             return response()->json(['data' => $user, 'message' => "Delete successful!"]);
-        } else {
-            return response()->json(['data' => null,'message' => "Error, Please try again later!"]);
-        }
+        return response()->json(['data' => null,'message' => "Error, Please try again later!"]);
     }
     // Render create user form
     public function create()
     {
-        return view('user.create', ['role' => UserRole::asArray()]);
+        return view('user.create', ['role' => UserRoleContants::asArray()]);
     }
     // Store user
     public function store(CreateUpdateUserRequest $request)
@@ -77,11 +73,10 @@ class UserController extends Controller
     public function edit(int $id)
     {
         $user = $this->userService->getById($id);
-        if ($user) {
-            return view('user.update', ['role' => UserRole::asArray(), 'user' => $user]);
-        } else {
-            return redirect()->back()->with('error', "User was deleted!");
-        }
+        if ($user) 
+            return view('user.update', ['role' => UserRoleContants::asArray(), 'user' => $user]);
+       return redirect()->back()->with('error', "User was deleted!");
+        
     }
     // Store update
     public function update(CreateUpdateUserRequest $request, int $id)

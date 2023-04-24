@@ -9,7 +9,7 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class ExamType extends Enum
+final class ExamTypeConstants extends Enum
 {
     const QUIZ =   1;
     const MIDDLE =   2;

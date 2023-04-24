@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\PaginationContants;
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -21,7 +20,7 @@ class UserService extends BaseService
 
         $users = $this->orderNSearch($request, $query);
         foreach ($users as $user) {
-            $user->role = UserRole::getKey($user->role);
+            $user->role = UserRoleContants::getKey($user->role);
         }
 
         return $users;

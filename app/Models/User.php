@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -60,17 +60,17 @@ class User extends Authenticatable
 
     public function isAdministrator(): bool
     {
-        return $this->role === UserRole::ADMIN;
+        return $this->role === UserRoleContants::ADMIN;
     }
 
     public function isTeacher(): bool
     {
-        return $this->role === UserRole::TEACHER;
+        return $this->role === UserRoleContants::TEACHER;
     }
 
     public function isStudent(): bool
     {
-        return $this->role === UserRole::STUDENT;
+        return $this->role === UserRoleContants::STUDENT;
     }
     public function requestUser(): HasMany
     {

@@ -16,7 +16,7 @@
     // config for table
     const model = 'user';
     const tableId = '#usersTable';
-    const url = '{{ $API }}';
+    const url = '/users/table';
     let queryData = {
         page: 1,
         orderBy: 'id',

@@ -15,7 +15,7 @@
 <script>
     const model = 'subject';
     const tableId = '#subjectsTable';
-    const url = '{{ $API }}';
+    const url = '/subjects/table';
     let queryData = {
         page: 1,
         orderBy: 'id',
@@ -35,7 +35,7 @@
         row.append(`<td>${ subject.name }</td>`);
         row.append(`<td>${ subject.descriptions }</td>`);
         row.append(
-            `<td class="dark-link text-center"><a href="/subjects/${subject.id}/courses">${subject.course_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/courses?subjectId=${subject.id}">${subject.course_count}</a></td>`
         );
         row.append(` <td class="text-info text-2xl text-center">
                         <a href='/subjects/${ subject.id }'><i class="fa-sharp fa-solid fa-clipboard-list"></i></a>

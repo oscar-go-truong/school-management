@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\Request;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -23,6 +23,6 @@ class RequestPolicy
 
     public function approve(User $user, Request $request): bool
     {
-        return $user->role === UserRole::ADMIN;
+        return $user->role === UserRoleContants::ADMIN;
     }
 }

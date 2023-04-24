@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\UserCourse;
 
 class UserCourseService extends BaseService
@@ -14,7 +14,7 @@ class UserCourseService extends BaseService
 
     public function getTeachers($request, $CourseId)
     {
-        $query = $this->model->where('role', UserRole::TEACHER)->where('course_id', $CourseId)->with('user');
+        $query = $this->model->where('role', UserRoleContants::TEACHER)->where('course_id', $CourseId)->with('user');
         $teachers = $this->orderNSearch($request, $query);
         return $teachers;
     }
@@ -22,7 +22,7 @@ class UserCourseService extends BaseService
 
     public function getStudents($request, $CourseId)
     {
-        $query = $this->model->where('role', UserRole::STUDENT)->where('course_id', $CourseId)->with('user');
+        $query = $this->model->where('role', UserRoleContants::STUDENT)->where('course_id', $CourseId)->with('user');
         $students = $this->orderNSearch($request, $query);
         return $students;
     }

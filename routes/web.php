@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,12 +38,12 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::prefix('/courses/')->group(function () {
         Route::patch('status/{id}', [CourseController::class, 'changeStatus'])->name('admin.change.course.status');
         Route::get('table', [CourseController::class, 'getTable'])->name('user.get.courses.table');
-        Route::get('{id}/teachers', [CourseController::class, 'getTeachers'])->name('user.get.course.teachers');
-        Route::get('{id}/teachers/table', [CourseController::class, 'getTeachersTable'])->name('user.get.course.teachers.table');
-        Route::get('{id}/students', [CourseController::class, 'getStudents'])->name('user.get.course.students');
-        Route::get('{id}/students/table', [CourseController::class, 'getStudentsTable'])->name('user.get.course.students.table');
-        Route::get('{id}/exams', [CourseController::class, 'getExams'])->name('user.get.course.exams');
-        Route::get('{id}/exams/table', [CourseController::class, 'getExamsTable'])->name('user.get.course.exams.table');
+        Route::get('{id}/teachers', [TeacherController::class, 'index'])->name('user.get.course.teachers');
+        Route::get('{id}/teachers/table', [TeacherController::class, 'getTable'])->name('user.get.course.teachers.table');
+        Route::get('{id}/students', [StudentController::class, 'index'])->name('user.get.course.students');
+        Route::get('{id}/students/table', [StudentController::class, 'getTable'])->name('user.get.course.students.table');
+        Route::get('{id}/exams', [ExamController::class, 'index'])->name('user.get.course.exams');
+        Route::get('{id}/exams/table', [ExamController::class, 'getTable'])->name('user.get.course.exams.table');
     });
     Route::resources(['courses' => CourseController::class]);
 

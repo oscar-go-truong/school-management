@@ -15,7 +15,8 @@
 <script>
     const model = 'course-exam';
     const tableId = '#course-examsTable';
-    const url = '{{ $API }}';
+    const courseId = '{{ $courseId }}';
+    const url = `/courses/${courseId}/exams/table`;
     let queryData = {
         page: 1,
         orderBy: 'id',
@@ -34,7 +35,7 @@
         row.append(`<td>${ exam.id }</td>`);
         row.append(`<td>${ exam.type }</td>`);
         row.append(`<td></td>`);
-        row.append(` <td class="text-center text-secondary"><i class="fa-solid fa-file-lines"></i></td>`);
+        row.append(` <td class="text-center text-secondary">${exam.score_count}</td>`);
         row.append(
             `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );

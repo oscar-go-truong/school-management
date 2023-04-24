@@ -15,6 +15,9 @@ class CourseService extends BaseService
     public function getTable($request)
     {
         $query = $this->model->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
+        $subjectId = $request->query('subjectId');
+        if($subjectId != null)
+            $query = $query->where('subject_id', $subjectId);
         $courses = $this->orderNSearch($request, $query);
         return $courses;
     }

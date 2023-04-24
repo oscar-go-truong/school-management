@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -22,7 +22,7 @@ class UserPolicy
 
     public function create(User $user): bool
     {
-        return $user->role === UserRole::ADMIN;
+        return $user->role === UserRoleContants::ADMIN;
     }
 
     public function update(User $user, User $update): bool

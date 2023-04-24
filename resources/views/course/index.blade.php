@@ -10,7 +10,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-                        <div> Courses managerment</div>
+                        <div> Courses management</div>
                     </div>
                 </div>
                 <!-- /. ROW  -->

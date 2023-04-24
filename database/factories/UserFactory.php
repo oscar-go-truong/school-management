@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Enums\UserRole;
-use App\Enums\StatusType;
+use App\Enums\UserRoleContants;
+use App\Enums\StatusTypeContants;
 
 class UserFactory extends Factory
 {
@@ -20,8 +20,8 @@ class UserFactory extends Factory
             'fullname' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'status' => StatusType::ACTIVE,
-            'role' => UserRole::getRandomValue()
+            'status' => StatusTypeContants::ACTIVE,
+            'role' => UserRoleContants::getRandomValue()
         ];
 
     }

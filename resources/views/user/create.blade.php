@@ -5,7 +5,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold">
-                        User managerment - Create user
+                        User management - Create user
                     </div>
 
                 </div>

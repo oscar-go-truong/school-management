@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Enums\StatusType;
+use App\Enums\StatusTypeContants;
 
 class SubjectFactory extends Factory
 {
@@ -17,7 +17,7 @@ class SubjectFactory extends Factory
         return [
             'name' => $this->faker->userName(),
             'descriptions' => $this->faker->text(),
-            'status' => StatusType::ACTIVE,
+            'status' => StatusTypeContants::ACTIVE,
         ];
     }
 }

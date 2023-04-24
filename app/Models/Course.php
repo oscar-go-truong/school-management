@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
-use Database\Seeders\UserCourseSeeder;
+use App\Enums\UserRoleContants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,11 +45,11 @@ class Course extends Model
 
     public function teachers()
     {
-        return $this->hasMany(UserCourse::class)->where('role', UserRole::TEACHER);
+        return $this->hasMany(UserCourse::class)->where('role', UserRoleContants::TEACHER);
     }
 
     public function students()
     {
-        return $this->hasMany(UserCourse::class)->where('role', UserRole::STUDENT);
+        return $this->hasMany(UserCourse::class)->where('role', UserRoleContants::STUDENT);
     }
 }

@@ -17,15 +17,16 @@
 <script>
     const model = 'course';
     const tableId = '#coursesTable';
-    const url = '{{ $API }}';
+    const subjectId = '{{ request()->query('subjectId') }}';
+    const url = '/courses/table';
     let queryData = {
         page: 1,
         orderBy: 'id',
         orderDirect: 'asc',
         search: null,
         role: [],
-        status: null
-
+        status: null,
+        subjectId: !isNaN(subjectId) && subjectId ? subjectId : null
     };
     let last_page = 1;
     // end config

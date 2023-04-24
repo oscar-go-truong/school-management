@@ -4,6 +4,7 @@
         <th>#</th>
         <th>Fullname</th>
         <th>Homeroom teacher</th>
+        <th>Email</th>
         <th>Joined at</th>
         <th>Status</th>
         <th class="text-center">Remove</th>
@@ -14,7 +15,7 @@
     const model = 'course-teacher';
     const tableId = '#course-teachersTable';
     const hoomeroomTeacherId = '{{ $course->owner_id }}';
-    const id = '{{ $id }}';
+    const id = '{{ $courseId }}';
     const url = `/courses/${id}/teachers/table`
     let queryData = {
         page: 1,
@@ -36,6 +37,7 @@
         row.append(
             `<td class="text-center">${teacher.user_id == hoomeroomTeacherId?'<span class="text-success"><i class="fa-solid fa-check"></i></span>':""}</td>`
         );
+        row.append(`<td>${ teacher.user.email }</td>`);
         row.append(
             `<td>${ new Date(teacher.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
