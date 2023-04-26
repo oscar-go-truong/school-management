@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MyExamTypeConstants;
+use App\Enums\StatusTypeContants;
 use App\Services\ExamService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -19,9 +21,10 @@ class ExamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() :View
+    public function index(Request $request) :View
     {
-        return view('exam.index');
+        $examTypes = MyExamTypeConstants::asArray();
+        return view('exam.index', compact('examTypes'));
     }
 
     public function getTable(Request $request)
@@ -48,7 +51,10 @@ class ExamController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $input = $request->input();
+       $input['status'] = StatusTypeContants::ACTIVE;
+       $resp = $this->examService->store($input);
+       return $resp;
     }
 
     /**

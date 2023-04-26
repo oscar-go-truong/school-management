@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Enums\MyExamTypeConstants;
+use App\Enums\UserRoleContants;
 use App\Models\Exam;
+use App\Models\Score;
+use App\Models\UserCourse;
 
 class ExamService extends BaseService
 {
@@ -24,5 +27,24 @@ class ExamService extends BaseService
             $exam->type = MyExamTypeConstants::getKey($exam->type);
         }
         return $exams;
+    }
+    public function store($input) {
+        $exam= $this->model->create($input);
+        $resp = ['data' => $exam,'message' => ''];
+        if($exam)
+        {
+            $userCourses = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
+                $query->where('role', UserRoleContants::STUDENT);
+            })->get();;
+            foreach($userCourses as $userCourse){
+                Score::insert([
+                    'student_id' => $userCourse->user_id,
+                    'exam_id' => $exam->id
+                ]);
+            }
+            $resp['message'] = 'Create successful!';  
+        }
+        $resp['error'] = 'Error, please try again later!'; 
+        return $resp;
     }
 }

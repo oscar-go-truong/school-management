@@ -6,6 +6,7 @@ use App\Enums\StatusTypeContants;
 use App\Services\CourseService;
 use App\Services\SubjectService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
@@ -92,11 +93,8 @@ class SubjectController extends Controller
     public function changeStatus(Request $request, $id)
     {
         $status = $request->input('status', StatusTypeContants::ACTIVE);
-        $subject = $this->subjectService->changeStatus($id, $status);
-        if ($subject != null) 
-            return response()->json(['data' => $subject, 'message' => "Update subject status successful!"]);
-        return response()->json(['data' => $subject, 'message' => "Error, please try again later!"]);
-        
+        $resp = $this->subjectService->changeStatus($id, $status);
+        return response()->json($resp);  
     }
 
     /**
@@ -105,11 +103,9 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : JsonResponse
     {
-        $subject = $this->subjectService->destroy($id);
-        if ($subject != null) 
-            return response()->json(['data' => $subject, 'message' => "Delete subject successful!"]);
-        return response()->json(['data' => $subject, 'message' => "Error, please try again later!"]);
+        $resp = $this->subjectService->destroy($id);
+        return response()->json($resp);
     }
 }

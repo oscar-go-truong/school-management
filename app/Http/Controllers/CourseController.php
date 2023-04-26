@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Services\CourseService;
 use App\Services\ExamService;
 use App\Services\UserCourseService;
+use Doctrine\DBAL\Types\JsonType;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use PHPUnit\Util\Json;
 
 class CourseController extends Controller
 {
@@ -34,15 +37,6 @@ class CourseController extends Controller
     {
         $courses = $this->courseService->getTable($request);
         return response()->json($courses);
-    }
-
-    public function getExams($id) {
-       return view('exam.index', compact('API'));  
-    }
-
-    public function getExamsTable(Request $request ,$id){
-        $exams = $this->examService->getCourseExams($request, $id);
-        return $exams;
     }
     /**
      * Show the form for creating a new resource.
@@ -106,22 +100,17 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : JsonResponse
     {
-        $course = $this->courseService->destroy(($id));
-        if($course !== null)
-            return response()->json(['data'=>$course, 'message'=>"Delete course successful!"]);
-        return response()->json(['data'=>$course, 'message'=>"Error, please try again later!"]);
+        $resp = $this->courseService->destroy($id);
+        return response()->json($resp);
     }
 
     // change course status
     public function changeStatus(Request $request, int $id)
     {
         $status = $request->status;
-        $course = $this->courseService->changeStatus($id, $status);
-        if($course !== null)
-            return response()->json(['data'=>$course, 'message'=>"Update course successful!"]);
-        return response()->json(['data'=>$course, 'message'=>"Error, please try again later!"]);
-       
+        $resp = $this->courseService->changeStatus($id, $status);
+        return response()->json($resp);
     }
 }

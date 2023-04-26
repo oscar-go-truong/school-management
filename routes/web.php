@@ -41,8 +41,10 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::patch('status/{id}', [CourseController::class, 'changeStatus'])->name('admin.change.course.status');
         Route::get('table', [CourseController::class, 'getTable'])->name('user.get.courses.table');
         Route::get('{id}/teachers', [TeacherController::class, 'index'])->name('user.get.course.teachers');
+        Route::post('{id}/teachers', [TeacherController::class, 'store'])->name('user.store.course.teachers');
         Route::get('{id}/teachers/table', [TeacherController::class, 'getTable'])->name('user.get.course.teachers.table');
         Route::get('{id}/students', [StudentController::class, 'index'])->name('user.get.course.students');
+        Route::post('{id}/students', [StudentController::class, 'store'])->name('user.store.course.students');
         Route::get('{id}/students/table', [StudentController::class, 'getTable'])->name('user.get.course.students.table');
     });
     Route::resources(['courses' => CourseController::class]);

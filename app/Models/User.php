@@ -40,21 +40,20 @@ class User extends Authenticatable
         'password'
     ];
 
-    public function scopeRole($query, $request)
+    public function scopeRole($query, $input)
     {
-        $input = $request->input();
         if (isset($input['role']) && count($input['role']) > 0) {
             return $query->whereIn('role', $input['role']);
         }
         return $query;
     }
 
-    public function scopeStatus($query, $request)
+    public function scopeStatus($query, $input)
     {
-        $input = $request->input();
         if (isset($input['status'])) {
             return $query->where('status', $input['status']);
         }
+        return $query;
     }
 
 

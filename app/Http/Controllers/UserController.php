@@ -7,6 +7,7 @@ use App\Enums\StatusTypeContants;
 use App\Enums\UserRoleContants;
 use App\Http\Requests\CreateUpdateUserRequest;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +23,9 @@ class UserController extends Controller
     // Render profile view.
     public function profile()
     {
-        return view('user.profile', ['user' => Auth::User()]);
+        $user =$this->userService->getById(Auth::User()->id);
+        $user->role = UserRoleContants::getKey($user->role);
+        return view('user.profile', compact('user'));
     }
 
     // Render all user
@@ -36,27 +39,22 @@ class UserController extends Controller
     // Get table data
     public function getTable(Request $request)
     {
-        $table = $this->userService->getTable($request);
+        $input = $request->input();
+        $table = $this->userService->getTable($input);
         return response()->json($table);
     }
     // Handle update user's status
     public function changeStatus(Request $request, int $id)
     {
         $status = $request->status;
-        $user = $this->userService->changeStatus($id, $status);
-        if ($user !== null) {
-            return response()->json(['data' => $user, 'message' => "Update successful!"]);
-        } else {
-            return response()->json(['data' => null,'message' => "Error, Please try again later!"]);
-        }
+        $resp = $this->userService->changeStatus($id, $status);
+        return response()->json($resp);
     }
     // Handle delete user
-    public function destroy(int $id)
+    public function destroy(int $id) : JsonResponse
     {
-        $user = $this->userService->destroy($id);
-        if ($user !== null) 
-            return response()->json(['data' => $user, 'message' => "Delete successful!"]);
-        return response()->json(['data' => null,'message' => "Error, Please try again later!"]);
+        $resp = $this->userService->destroy($id);
+        return response()->json($resp);
     }
     // Render create user form
     public function create()

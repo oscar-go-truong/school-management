@@ -20,4 +20,6 @@ class UserCourseService extends BaseService
         $teachers = $this->orderNSearch($request, $query);
         return $teachers;
     }
+
 }
+

@@ -354,3 +354,7 @@ h5,
     color: black;
     position: absolute;
 }
+
+.select2-container--default .select2-results__options {
+    z-index: 9999 !important;
+}
