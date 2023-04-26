@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRoleContants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,5 +36,24 @@ class Course extends Model
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class, "subject_id");
+    }
+
+    public function homeroomTeacher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "owner_id");
+    }
+
+    public function teachers()
+    {
+        return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {
+            $query->where('role', UserRoleContants::TEACHER);
+        });
+    }
+
+    public function students()
+    {
+        return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {
+            $query->where('role', UserRoleContants::STUDENT);
+        });
     }
 }

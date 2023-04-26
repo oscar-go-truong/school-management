@@ -3,8 +3,6 @@
 
 <exclude-pattern>./database/factories/*</exclude-pattern>
 <exclude-pattern>./database/seeders/*</exclude-pattern>
-<exclude-pattern>./app/Enums/*</exclude-pattern>
-
     <rule ref="PSR12" >
       <exclude name="Generic.Files.LineEndings.InvalidEOLChar" />
     </rule>

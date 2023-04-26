@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\Exam;
 use App\Models\Score;
 use App\Models\User;
@@ -22,13 +22,16 @@ class ScorePolicy
     {
         //
     }
-    
-    public function update(User $user, Score $score) : bool {
-        if($user->role !== UserRole::Teacher) 
+
+    public function update(User $user, Score $score): bool
+    {
+        if ($user->role !== UserRoleContants::TEACHER) {
             return false;
+        }
         $course_id = Exam::where("id", $score->exam_id)->exec()->coure_id;
-        if(!UserCourse::where('course_id',$course_id)->where('user_id',$user->id)->exists())
+        if (!UserCourse::where('course_id', $course_id)->where('user_id', $user->id)->exists()) {
             return false;
+        }
         return true;
     }
 }

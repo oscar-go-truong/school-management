@@ -9,9 +9,9 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class UserRole extends Enum
+final class RequestTypeContants extends Enum
 {
-    const Adminstrator =   1;
-    const Teacher =   2;
-    const Student = 3;
+    const REVIEW_GRADES =   1;
+    const BOOK_ROOM_OR_LAB =  2;
+    const  SWITCH_CLASS = 3;
 }

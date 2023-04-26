@@ -9,9 +9,9 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class RequestType extends Enum
+final class MyExamTypeConstants extends Enum
 {
-    const Review_grades =   1;
-    const Book_room_or_labs =  2;
-    const  Swicth_class= 3;
+    const QUIZ =   1;
+    const MIDDLE =   2;
+    const FINAL = 3;
 }

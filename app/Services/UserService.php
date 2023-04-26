@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Enums\PaginationContants;
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\User;
+use App\Models\UserCourse;
 use Illuminate\Support\Facades\Hash;
 
 class UserService extends BaseService
@@ -14,23 +14,17 @@ class UserService extends BaseService
         return User::class;
     }
 
-    public function getTable($request)
+    public function getTable($input)
     {
         $query = $this->model;
-        $query = $query->status($request)->role($request);
+        $query = $query->status($input)->role($input);
 
-        $users = $this->orderNSearch($request, $query);
+        $users = $this->orderNSearch($input, $query);
         foreach ($users as $user) {
-            $user->role = UserRole::getKey($user->role);
+            $user->role = UserRoleContants::getKey($user->role);
         }
-
         return $users;
     }
-    public function changeStatus($id, $status)
-    {
-        return  $this->model->where('id', $id)->update(['status' => $status]);
-    }
-
 
     public function store($user)
     {
@@ -45,5 +39,11 @@ class UserService extends BaseService
             $user['password'] = Hash::make($user['password']);
         }
         parent::update($id, $user);
+    }
+
+    public function getUserCanJoinToCourseByRole($courseId, $role) {
+        $joinedUserId = UserCourse::select('user_id')->where('course_id', $courseId)->get();
+        $users = $this->model->whereNotIn('id', $joinedUserId)->where('role',$role)->get();
+        return $users;
     }
 }
