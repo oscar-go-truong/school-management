@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,37 +40,36 @@ class User extends Authenticatable
         'password'
     ];
 
-    public function scopeRole($query, $request)
+    public function scopeRole($query, $input)
     {
-        $input = $request->input();
         if (isset($input['role']) && count($input['role']) > 0) {
             return $query->whereIn('role', $input['role']);
         }
         return $query;
     }
 
-    public function scopeStatus($query, $request)
+    public function scopeStatus($query, $input)
     {
-        $input = $request->input();
         if (isset($input['status'])) {
             return $query->where('status', $input['status']);
         }
+        return $query;
     }
 
 
     public function isAdministrator(): bool
     {
-        return $this->role === UserRole::Adminstrator;
+        return $this->role === UserRoleContants::ADMIN;
     }
 
     public function isTeacher(): bool
     {
-        return $this->role === UserRole::Teacher;
+        return $this->role === UserRoleContants::TEACHER;
     }
 
     public function isStudent(): bool
     {
-        return $this->role === UserRole::Student;
+        return $this->role === UserRoleContants::STUDENT;
     }
     public function requestUser(): HasMany
     {
@@ -90,5 +89,10 @@ class User extends Authenticatable
     public function exam(): hasMany
     {
         return $this->hasMany(Exam::class);
+    }
+
+    public function userCourse(): HasMany
+    {
+        return $this->hasMany(UserCourse::class);
     }
 }

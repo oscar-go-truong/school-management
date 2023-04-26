@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PaginationContants;
-use App\Enums\StatusType;
-use App\Enums\UserRole;
+use App\Enums\SearchColumnContants;
+use App\Enums\StatusTypeContants;
+use App\Enums\UserRoleContants;
 use App\Http\Requests\CreateUpdateUserRequest;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,38 +23,43 @@ class UserController extends Controller
     // Render profile view.
     public function profile()
     {
-        return view('user.profile', ['user' => Auth::User()]);
+        $user =$this->userService->getById(Auth::User()->id);
+        $user->role = UserRoleContants::getKey($user->role);
+        return view('user.profile', compact('user'));
     }
 
     // Render all user
-    public function index(Request $request)
+    public function index()
     {
-        $users = $this->userService->getTable($request);
-        return view('user.table', ['users' => $users, 'role' => UserRole::asArray(), 'status' => StatusType::asArray(), 'itemPerPageOptions' => PaginationContants::ITEM_PER_PAGE_OPTIONS]);
+        $role = UserRoleContants::asArray();
+        $status = StatusTypeContants::asArray();
+        $searchColumns = SearchColumnContants::USER;
+        return view('user.index', compact('role', 'status', 'searchColumns'));
     }
     // Get table data
     public function getTable(Request $request)
     {
-        $table = $this->userService->getTable($request);
+        $input = $request->input();
+        $table = $this->userService->getTable($input);
         return response()->json($table);
     }
     // Handle update user's status
     public function changeStatus(Request $request, int $id)
     {
         $status = $request->status;
-        $user = $this->userService->changeStatus($id, $status);
-        return $user;
+        $resp = $this->userService->changeStatus($id, $status);
+        return response()->json($resp);
     }
     // Handle delete user
-    public function destroy(int $id)
+    public function destroy(int $id) : JsonResponse
     {
-        $user = $this->userService->destroy($id);
-        return $user;
+        $resp = $this->userService->destroy($id);
+        return response()->json($resp);
     }
     // Render create user form
     public function create()
     {
-        return view('user.create', ['role' => UserRole::asArray()]);
+        return view('user.create', ['role' => UserRoleContants::asArray()]);
     }
     // Store user
     public function store(CreateUpdateUserRequest $request)
@@ -65,11 +71,10 @@ class UserController extends Controller
     public function edit(int $id)
     {
         $user = $this->userService->getById($id);
-        if ($user) {
-            return view('user.update', ['role' => UserRole::asArray(), 'user' => $user]);
-        } else {
-            return redirect()->back()->with('error', "User was deleted!");
-        }
+        if ($user) 
+            return view('user.update', ['role' => UserRoleContants::asArray(), 'user' => $user]);
+       return redirect()->back()->with('error', "User was deleted!");
+        
     }
     // Store update
     public function update(CreateUpdateUserRequest $request, int $id)

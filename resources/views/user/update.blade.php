@@ -5,14 +5,14 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold">
-                        User managerment - Update user
+                        Update user
                     </div>
 
                 </div>
                 <!-- /. ROW  -->
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
-                <div class="blank-content relative">
+                <div class="table-content relative">
                     <form class="container" method="POST" action="{{ route('users.update', $user->id) }}" id="update">
                         @csrf
                         {{ method_field('PATCH') }}
@@ -76,9 +76,23 @@
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="form-group mt-3">
+                            <label for="phone" class="font-bold mb-1">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone"
+                                placeholder="Enter your phone" value="{{ $user->phone }}">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="mobile" class="font-bold mb-1">Mobile</label>
+                            <input type="text" class="form-control" id="mobile" name="mobile"
+                                placeholder="Enter your mobile" value="{{ $user->mobile }}">
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="address" class="font-bold mb-1">Address</label>
+                            <input type="text" class="form-control" id="address" name="address"
+                                placeholder="Enter your address" value="{{ $user->address }}">
+                        </div>
                     </form>
-                    <button type="submit"
-                        class=" btn bg-black text-white p-3 rounded-lg w-32 mb-5 bottom-8 right-8 absolute"
+                    <button type="submit" class=" btn bg-black text-white p-3 rounded-lg w-32 mb-5 float-right"
                         id="submit">submit</button>
                 </div>
             </div>

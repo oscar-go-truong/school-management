@@ -15,25 +15,33 @@ abstract class BaseService
         );
     }
     abstract public function getModel();
-    public function index()
+    public function getAll()
     {
-        return $this->model->paginate(PaginationContants::LIMIT);
+        return $this->model->all();
     }
 
-    public function orderNSearch($request, $query)
+    public function changeStatus($id, $status)
     {
-        $input = $request->input();
-        $limit = $request->query('limit', PaginationContants::LIMIT);
+        $update = $this->model->where('id', $id)->update(['status' => $status]);
+        if ($update) 
+            return ['data'=>$this->model->find($id), 'message'=>"Update status successful!"];
+        return  ['data'=> null, 'message'=>"Error, please try again later!"];
+    }
+
+    protected function orderNSearch($input, $query)
+    {
+        $limit =isset($input['limit']) ? $input['limit'] : PaginationContants::LIMIT;
         // order by
-        if (isset($input['orderBy'])) {
-            foreach ($input['orderBy'] as $column => $sortType) {
-                $query = $query->orderBy($column, $sortType);
-            }
+        $isOrder = isset($input['orderBy']) && isset($input['orderDirect']);
+        if ($isOrder) {
+            $orderBy = $input['orderBy'];
+            $orderDirect = $input['orderDirect'];
+                $query = $query->orderBy($orderBy, $orderDirect);
         }
         if (isset($input['search']) && $input['search']) {
-            $searchColumn = $request->query('search')['column'];
-            $searchType = $request->query('search')['type'];
-            $searchKey = $request->query('search')['key'];
+            $searchColumn = $input['search']['column'];
+            $searchType = $input['search']['type'];
+            $searchKey = $input['search']['key'];
             $query = $query->where($searchColumn, $searchType, '%' . $searchKey . '%');
         }
         return $query->paginate($limit);
@@ -44,18 +52,29 @@ abstract class BaseService
     }
 
 
-    public function store($model)
+    public function store($arg)
     {
-        return $this->model->create($model);
+        $result =  $this->model->create($arg);
+        if ($result) 
+            return ['data'=> $result, 'message'=>"Create successful!"];
+        return  ['data'=> null, 'message'=>"Error, please try again later!"];
     }
 
     public function update($id, $arg)
     {
-        return  $this->model->where('id', $id)->update($arg);
+        $result = $this->model->where('id', $id)->update($arg);
+        if ($result) 
+            return ['data'=>$this->model->find($id), 'message'=>"Update status successful!"];
+        return  ['data'=> null, 'message'=>"Error, please try again later!"];
     }
 
     public function destroy($id)
     {
-        return $this->model->destroy($id);
+        $item = $this->model->find($id);
+        if ($item) {
+            $this->model->destroy($id);
+            return ['data'=>$item, 'message'=>"Delete successful!"];
+        }
+        return ['data'=>null, 'message'=>"Error, please try again later!"];
     }
 }

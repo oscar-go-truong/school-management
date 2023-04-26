@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\UserRole;
+use App\Enums\UserRoleContants;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -20,11 +21,13 @@ class UserCoursePolicy
         //
     }
 
-    public function create(User $user) : bool {
-        return $user->role === UserRole::Adminstrator;
+    public function create(User $user): bool
+    {
+        return $user->role === UserRoleContants::ADMIN;
     }
 
-    public function update(User $user) : bool {
-        return $user->role === UserRole::Adminstrator;
+    public function update(User $user): bool
+    {
+        return $user->role === UserRoleContants::ADMIN;
     }
 }
