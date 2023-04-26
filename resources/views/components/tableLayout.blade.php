@@ -51,4 +51,4 @@
         @include('components.pagination')
     </div>
 </div>
-@include('components.tableScript')
+@include('components.scripts.tableScript')
