@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Feature\User;
+namespace Tests\Feature\Subject;
 
+use App\Models\Subject;
 use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -16,12 +16,13 @@ class GetUpdatePageTest extends TestCase
      *
      * @return void
      */
-    public function testViewUpdateOfUsersManagementSuccess()
+    public function testUpdatePageSuccess()
     {
-        $user = User::factory()->create();
+        $user  = User::factory()->create();
         $this->actingAs($user);
-        $response = $this->get('users/'.$user->id.'/edit');
+        $subject = Subject::factory()->create();
+        $response = $this->get('subjects/'.$subject->id.'/edit');
+        $response->assertViewIs('subject.update');
         $response->assertStatus(200);
-        $response->assertViewIs('user.update');
     }
 }

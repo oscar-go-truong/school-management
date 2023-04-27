@@ -6,9 +6,9 @@
                 toastr.error('{{ session('error') }}')
             </script>
         @endif
-        @if (session('store success'))
+        @if (session('success'))
             <script>
-                toastr.success('{{ session('store success') }}')
+                toastr.success('{{ session('success') }}')
             </script>
         @endif
         <div id="page-wrapper">

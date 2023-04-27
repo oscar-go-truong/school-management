@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusTypeContants;
+use App\Http\Requests\CreateUpdateSubjectRequest;
 use App\Services\CourseService;
 use App\Services\SubjectService;
 use Illuminate\Contracts\View\View;
@@ -40,9 +41,9 @@ class SubjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create() : View
     {
-        //
+       return view('subject.create');
     }
 
     /**
@@ -51,9 +52,14 @@ class SubjectController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateUpdateSubjectRequest $request)
     {
-        //
+        $input = $request->input();
+        $resp = $this->subjectService->store($input);
+        if($resp['data'] != null)
+            return redirect('/subjects')->with('success',$resp['message']);
+        else 
+            return redirect()->back()->with('error',$resp['message']);
     }
 
     /**
@@ -73,9 +79,10 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id) : View
     {
-        //
+        $subject = $this->subjectService->getById($id);
+        return view('subject.update', compact('subject'));
     }
 
     /**
@@ -85,9 +92,15 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CreateUpdateSubjectRequest $request, $id)
     {
-        //
+        $input = $request->input();
+        $subject = ['name' => $input['name'], 'descriptions'=>$input['descriptions']];
+        $resp = $this->subjectService->update($id,$subject);
+        if($resp['data'] != null)
+            return redirect('/subjects')->with('success',$resp['message']);
+        else 
+            return redirect()->back()->with('error',$resp['message']);
     }
 
     public function changeStatus(Request $request, $id)

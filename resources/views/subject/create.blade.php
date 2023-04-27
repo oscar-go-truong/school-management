@@ -10,7 +10,7 @@
             <div id="page-inner">
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold">
-                        Create Course
+                        Create Subject
                     </div>
 
                 </div>
@@ -18,46 +18,14 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action='{{ route('courses.store') }}' id="create">
+                    <form class="container" method="POST" action='{{ route('subjects.store') }}' id="create">
                         @csrf
                         <div class="form-group mt-3">
-                            <label for="name" class="font-bold mb-1">Course name <span
+                            <label for="name" class="font-bold mb-1">Subject name <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
                                 name="name" aria-describedby="nameHelp" placeholder="Enter course name">
                             @error('name')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="subjectSelect" class="font-bold mb-1">Subject <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-control select2" id="subjectSelect" name="subject_id">
-                                <option value="" id="selectDefault1">-- Select subject --</option>
-                                @foreach ($subjects as $subject)
-                                    <option value="{{ $subject->id }}" id="subject-{{ $subject->id }}">
-                                        {{ $subject->name }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-                            @error('subject_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="homeroomTeacherSelect" class="font-bold mb-1">Homeroom teacher <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-control select2" id="homeroomTeacherSelect" name="owner_id">
-                                <option value="" id="selectDefault2">-- Select Teacher --</option>
-                                @foreach ($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}" id="teacher-{{ $teacher->id }}">
-                                        {{ $teacher->fullname }} - {{ $teacher->email }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-                            @error('owner_id')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
@@ -80,9 +48,9 @@
     <script>
         $('.select2').select2();
         // validate form
-        const validate = (name, subject, teacher, descriptions) => {
+        const validate = (name, descriptions) => {
             $('.form-control').removeClass('is-invalid');
-            if (!name || !subject || !teacher || !descriptions) {
+            if (!name || !descriptions) {
                 // Missing name
                 if (!name) {
                     toastr.warning('Course name field is requried.');
@@ -90,20 +58,7 @@
                 } else {
                     $('#name').addClass('is-valid');
                 };
-                // Missing subject
-                if (!subject) {
-                    toastr.warning('Subject field is requried.');
-                    $('#subjectSelect').addClass('is-invalid');
-                } else {
-                    $('#subjectSelect').addClass('is-valid');
-                };
-                // Missing teacher
-                if (!teacher) {
-                    toastr.warning('Homeroom teacher field is requried.');
-                    $('#homeroomTeacherSelect').addClass('is-invalid');
-                } else {
-                    $('#homeroomTeacherSelect').addClass('is-valid');
-                };
+                // Missing descriptions
                 if (!descriptions) {
                     toastr.warning('Descriptions field is requried.');
                     $('#descriptions').addClass('is-invalid');
@@ -117,12 +72,11 @@
         // hanle submit form
         $(document).ready(function() {
             $('#submit').click(function() {
+                $(this).prop("disabled", true);
                 const _token = '{{ csrf_token() }}';
                 const name = $('#name').val();
                 const descriptions = $('#descriptions').val();
-                const subject = $('#subjectSelect').val();
-                const teacher = $('#homeroomTeacherSelect').val();
-                const isValid = validate(name, subject, teacher, descriptions);
+                const isValid = validate(name, descriptions);
                 if (isValid) {
                     $('#create').submit();
                 } else {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Feature\User;
+namespace Tests\Feature\Subject;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class GetCreatePageTest extends TestCase
+class GetIndexPageTest extends TestCase
 {
     use RefreshDatabase;
     /**
@@ -15,12 +15,12 @@ class GetCreatePageTest extends TestCase
      *
      * @return void
      */
-    public function testViewCreateOfUsersManagementSuccess()
+    public function testGetIndexPageSuccess()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        $response = $this->get('users/create');
+        $response = $this->get('subjects/');
+        $response->assertViewIs('subject.index');
         $response->assertStatus(200);
-        $response->assertViewIs('user.create');
     }
 }
