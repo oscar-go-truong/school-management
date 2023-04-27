@@ -7,6 +7,7 @@ use App\Models\Subject;
 use App\Models\User;
 use App\Services\CourseService;
 use App\Services\SubjectService;
+use App\Services\UserCourseService;
 use App\Services\UserService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -30,7 +31,8 @@ class GetAllTest extends TestCase
 
         $userService = new UserService();
         $subjectService = new SubjectService();
-        $courseService = new CourseService();
+        $userCourseService = new UserCourseService();
+      $courseService = new CourseService($userCourseService);
 
         $userResult = $userService->getAll();
         $subjectResult = $subjectService->getAll();

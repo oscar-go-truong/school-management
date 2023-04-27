@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRoleContants;
+use App\Http\Requests\CreateUpdateCourseRequest;
 use App\Services\CourseService;
 use App\Services\ExamService;
+use App\Services\SubjectService;
 use App\Services\UserCourseService;
+use App\Services\UserService;
 use Doctrine\DBAL\Types\JsonType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -16,12 +20,20 @@ class CourseController extends Controller
     protected $courseService;
     protected $userCourseService;
     protected $examService;
+    protected $userService;
+    protected $subjectService;
 
-    public function __construct(CourseService $courseService, UserCourseService $userCourseService,ExamService $examService)
+    public function __construct(CourseService $courseService, 
+                                UserCourseService $userCourseService,
+                                ExamService $examService, 
+                                UserService $userService, 
+                                SubjectService $subjectService)
     {
         $this->courseService = $courseService;
         $this->userCourseService = $userCourseService;
         $this->examService = $examService;
+        $this->userService = $userService;
+        $this->subjectService = $subjectService;
     }
     /**
      * Display a listing of the resource.
@@ -35,7 +47,8 @@ class CourseController extends Controller
 
     public function getTable(Request $request) 
     {
-        $courses = $this->courseService->getTable($request);
+        $input = $request->input();
+        $courses = $this->courseService->getTable($input);
         return response()->json($courses);
     }
     /**
@@ -43,9 +56,11 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create() : View
     {
-        //
+        $teachers = $this->userService->getByRole(UserRoleContants::TEACHER);
+        $subjects = $this->subjectService->getAll();
+        return view('course.create', compact('teachers','subjects'));
     }
 
     /**
@@ -54,9 +69,13 @@ class CourseController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateUpdateCourseRequest $request)
     {
-        //
+        $resp = $this->courseService->store($request->input());
+        if($resp['data'] != null)
+            return redirect('/courses')->with('store success',$resp['message']);
+        else 
+            return redirect()->back()->with('error',$resp['message']);
     }
 
     /**
@@ -77,9 +96,12 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id) : View
     {
-        //
+        $teachers = $this->userService->getByRole(UserRoleContants::TEACHER);
+        $subjects = $this->subjectService->getAll();
+        $course = $this->courseService->getById($id);
+        return view('course.update', compact('course','teachers','subjects'));
     }
 
     /**
@@ -89,9 +111,15 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CreateUpdateCourseRequest $request, $id)
     {
-        //
+        $input = $request->input();
+        $arg = array('name' => $input['name'], 'subject_id' => $input['subject_id'], 'owner_id'=>$input['owner_id'], 'descriptions' => $input['descriptions']);
+        $resp = $this->courseService->update($id, $arg);
+        if($resp['data'] != null)
+            return redirect('/courses')->with('store success',$resp['message']);
+        else 
+            return redirect()->back()->with('error',$resp['message']);
     }
 
     /**
