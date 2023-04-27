@@ -27,6 +27,7 @@
                                 </div><!-- / course-info-box -->
 
                                 <div class="course-info-box">
+                                    <p><b>Name: </b> {{ $course->name }}</p>
                                     <p><b>Subject: </b> {{ $course->subject->name }}</p>
                                     <p><b>Homeroom Teacher: </b>{{ $course->homeroomTeacher->fullname }}</p>
                                     <p><b>Date: </b> {{ $course->created_at }}</p>

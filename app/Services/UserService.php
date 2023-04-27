@@ -46,4 +46,8 @@ class UserService extends BaseService
         $users = $this->model->whereNotIn('id', $joinedUserId)->where('role',$role)->get();
         return $users;
     }
+
+    public function getByRole($role){
+        return $this->model->where('role',$role)->get();
+    }
 }

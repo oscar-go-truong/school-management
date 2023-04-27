@@ -21,5 +21,9 @@ class UserCourseService extends BaseService
         return $teachers;
     }
 
+    public function checkUserWasJoinedCourse($user_id, $course_id) 
+    {
+        return $this->model->where('user_id',$user_id)->where('course_id',$course_id)->count();
+    }
 }
 

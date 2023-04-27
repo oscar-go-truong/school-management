@@ -6,6 +6,11 @@
                 toastr.error('{{ session('error') }}')
             </script>
         @endif
+        @if (session('store success'))
+            <script>
+                toastr.success('{{ session('store success') }}')
+            </script>
+        @endif
         <div id="page-wrapper">
             <div id="page-inner">
                 <div class="row">
@@ -13,8 +18,10 @@
                         <div>
                             @if (request()->query('subjectId'))
                                 <span class="text-gray-400">Subject ></span>
-                            @endif Courses
+                            @endif
+                            Courses
                         </div>
+                        <div class="inline"> <a href="/courses/create"><i class="fa-solid fa-file-circle-plus"></i> </a></div>
                     </div>
                 </div>
                 <!-- /. ROW  -->
