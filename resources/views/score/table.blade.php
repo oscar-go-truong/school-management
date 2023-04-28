@@ -53,9 +53,6 @@
         //             </label>
         //             </div>
         //             </td>`);
-        if (isStudent)
-            row.append(
-                `<td class="text-primary text-center"><i class="fa-solid fa-up-right-from-square"></i> </td>`);
         return row;
     }
 </script>

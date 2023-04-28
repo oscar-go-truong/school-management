@@ -13,7 +13,6 @@
     =============================================*/
 body {
     font-family: 'Open Sans', sans-serif;
-    overflow-y: hidden;
 }
 
 #wrapper {
@@ -30,10 +29,10 @@ body {
 .table-content {
     height: 710px;
     overflow-y: scroll;
-    overflow-x: hidden;
 }
 
-.table-content::-webkit-scrollbar {
+.table-content::-webkit-scrollbar,
+body::-webkit-scrollbar {
     display: none;
 }
 
@@ -351,4 +350,8 @@ h5,
     font-size: 1rem;
     color: black;
     position: absolute;
+}
+
+.select2-container--default .select2-results__options {
+    z-index: 9999 !important;
 }
