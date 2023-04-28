@@ -11,8 +11,10 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div> Students</div>
-                        <div class="inline"> <i class="fa-solid fa-user-plus" data-bs-toggle="modal"
-                                data-bs-target="#addStudentModal"></i> </div>
+                        @if (Auth::user()->isAdministrator())
+                            <div class="inline"> <i class="fa-solid fa-user-plus" data-bs-toggle="modal"
+                                    data-bs-target="#addStudentModal"></i> </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /. ROW  -->

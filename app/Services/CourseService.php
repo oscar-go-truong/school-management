@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Enums\StatusTypeContants;
 use App\Models\Course;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CourseService extends BaseService
@@ -29,6 +30,10 @@ class CourseService extends BaseService
         $subjectId = isset($input['subjectId'])?$input['subjectId']:null;
         if($subjectId != null)
             $query = $query->where('subject_id', $subjectId);
+        if(!Auth::user()->isAdministrator())
+         $query = $query->whereHas('userCourse', function($query) {
+            $query->where('user_id', Auth::user()->id);
+         })->where('status', StatusTypeContants::ACTIVE);
         $courses = $this->orderNSearch($input, $query);
         return $courses;
     }

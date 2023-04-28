@@ -43,6 +43,11 @@ class Course extends Model
         return $this->belongsTo(User::class, "owner_id");
     }
 
+    public function userCourse() : HasMany
+    {
+        return $this->hasMany(UserCourse::class); 
+    }
+
     public function teachers()
     {
         return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {

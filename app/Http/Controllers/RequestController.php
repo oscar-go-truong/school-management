@@ -25,7 +25,8 @@ class RequestController extends Controller
 
     public function getTable(Request $request)
     {
-        $requests = $this->requestService->getTable($request);
+        $input = $request->input();
+        $requests = $this->requestService->getTable($input);
         return response()->json($requests);
     }
 

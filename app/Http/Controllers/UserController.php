@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         $user =$this->userService->getById(Auth::User()->id);
         $user->role = UserRoleContants::getKey($user->role);
-        return view('user.profile', compact('user'));
+        return view('auth.profile', compact('user'));
     }
 
     // Render all user

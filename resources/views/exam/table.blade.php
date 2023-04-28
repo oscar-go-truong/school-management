@@ -10,7 +10,9 @@
         @endif
         <th class="text-center">Scores</th>
         <th>Created at</th>
-        <th>Status</th>
+        @if (Auth::user()->isAdministrator())
+            <th>Status</th>
+        @endif
         @if (Auth::User()->isStudent())
             <th class="text-center">Request review score</th>
         @endif
@@ -23,6 +25,7 @@
     const courseId = '{{ request()->query('courseId') }}';
     const url = `/exams/table`;
     const isStudent = '{{ Auth::User()->isStudent() }}';
+    const isAdmin = '{{ Auth::User()->isAdministrator() }}';
     let queryData = {
         page: 1,
         orderBy: 'id',
@@ -44,14 +47,15 @@
         row.append(`<td>${ exam.course.name }</td>`);
         row.append(`<td>${ exam.type }</td>`);
         if (isStudent)
-            row.append(`<td></td>`);
+            row.append(`<td>${exam.score[0].total}</td>`);
         row.append(
             ` <td class="text-center text-secondary"><a href="/scores?examId=${exam.id}">${exam.score_count}</a></td>`
-            );
+        );
         row.append(
             `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
-        row.append(`<td><div class="form-check form-switch">
+        if (isAdmin)
+            row.append(`<td><div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="${ exam.id }"
                     data-id="${ exam.id }" ${ exam.status === 1 ? 'checked' : '' }>
                     <label class="form-check-label" for="${ exam.id }">

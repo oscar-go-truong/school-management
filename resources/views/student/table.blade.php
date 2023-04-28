@@ -5,12 +5,15 @@
         <th>Fullname</th>
         <th>Email</th>
         <th>Joined at</th>
-        <th>Status</th>
-        <th class="text-center">Remove</th>
+        @if (Auth::user()->isAdministrator())
+            <th>Status</th>
+            <th class="text-center">Remove</th>
+        @endif
     </tr>
 @endsection
 @section('tableId', 'course-studentsTable')
 <script>
+    const isAdmin = '{{ Auth::user()->isAdministrator() }}';
     const model = 'course-student';
     const tableId = '#course-studentsTable';
     const id = '{{ $courseId }}';
@@ -36,7 +39,8 @@
         row.append(
             `<td>${  new Date(student.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
-        row.append(`<td><div class="form-check form-switch">
+        if (isAdmin) {
+            row.append(`<td><div class="form-check form-switch">
                     <input class="form-check-input" type="checkbox" id="${ student.id }"
                     data-id="${ student.id }" ${ student.status === 1 ? 'checked' : '' }>
                     <label class="form-check-label" for="${ student.id }">
@@ -44,8 +48,9 @@
                     </label>
                     </div>
                     </td>`);
-        row.append(`<td class="text-danger text-center"><i class="fa-solid fa-user-xmark"
+            row.append(`<td class="text-danger text-center"><i class="fa-solid fa-user-xmark"
                                 ></i></i></td>`);
+        }
         return row;
     }
 </script>

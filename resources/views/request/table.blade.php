@@ -15,6 +15,7 @@
     const tableId = '#requestsTable';
     const url = `/requests/table`;
     const isStudent = '{{ Auth::User()->isStudent() }}';
+    const isAdmin = '{{ Auth::User()->isAdministrator() }}';
     let queryData = {
         page: 1,
         orderBy: 'id',

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\StatusTypeContants;
+use App\Enums\UserRoleContants;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -22,8 +24,30 @@ class UserSeeder extends Seeder
             'username' => 'admin',
             'fullname' => 'admin',
             'email' => 'admin@gmail.com',
-            'status' => 1,
-            'role' => 1,
+            'status' => StatusTypeContants::ACTIVE,
+            'role' => UserRoleContants::ADMIN,
+            'password' => Hash::make('password'),
+            'phone' => $faker->phoneNumber(),
+            'mobile' => $faker->phoneNumber(),
+            'address' => $faker->address()
+        ]);
+        DB::table('users')->insert([
+            'username' => 'teacher',
+            'fullname' => 'teacher',
+            'email' => 'teacher@gmail.com',
+            'status' => StatusTypeContants::ACTIVE,
+            'role' => UserRoleContants::TEACHER,
+            'password' => Hash::make('password'),
+            'phone' => $faker->phoneNumber(),
+            'mobile' => $faker->phoneNumber(),
+            'address' => $faker->address()
+        ]);
+        DB::table('users')->insert([
+            'username' => 'student',
+            'fullname' => 'student',
+            'email' => 'student@gmail.com',
+            'status' => StatusTypeContants::ACTIVE,
+            'role' => UserRoleContants::STUDENT,
             'password' => Hash::make('password'),
             'phone' => $faker->phoneNumber(),
             'mobile' => $faker->phoneNumber(),
