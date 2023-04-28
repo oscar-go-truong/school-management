@@ -16,7 +16,10 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div> Subject</div>
-                        <div class="inline"> <a href="/subjects/create"><i class="fa-solid fa-file-circle-plus"></i> </a></div>
+                        @if (Auth::User()->isAdministrator())
+                            <div class="inline"> <a href="/subjects/create"><i class="fa-solid fa-file-circle-plus"></i> </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /. ROW  -->

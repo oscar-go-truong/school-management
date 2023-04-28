@@ -21,7 +21,10 @@
                             @endif
                             Courses
                         </div>
-                        <div class="inline"> <a href="/courses/create"><i class="fa-solid fa-file-circle-plus"></i> </a></div>
+                        @if (Auth::User()->isAdministrator())
+                            <div class="inline"> <a href="/courses/create"><i class="fa-solid fa-file-circle-plus"></i> </a>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /. ROW  -->

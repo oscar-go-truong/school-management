@@ -33,7 +33,8 @@ class SubjectController extends Controller
 
     public function getTable(Request $request)
     {
-        $subjects = $this->subjectService->getTable($request);
+        $input = $request->input();
+        $subjects = $this->subjectService->getTable($input);
         return response()->json($subjects);
     }
     /**

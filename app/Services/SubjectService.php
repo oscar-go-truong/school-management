@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\StatusTypeContants;
 use App\Models\Subject;
+use Illuminate\Support\Facades\Auth;
 
 class SubjectService extends BaseService
 {
@@ -11,10 +13,21 @@ class SubjectService extends BaseService
         return Subject::class;
     }
 
-    public function getTable($request)
+    public function getTable($input)
     {
+        $user = Auth::user();
+        $query = $this->model;
+        if(!$user->isAdministrator())
+         $query = $query->whereHas('course.userCourse', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+         })->withCount(['course' => function($query) use ($user){
+            $query->whereHas('userCourse',function($query) use ($user){
+                $query = $query->where('user_id',$user->id);
+            });
+        }]);
+        else 
         $query = $this->model->withCount('course');
-        $subjects = $this->orderNSearch($request, $query);
+        $subjects = $this->orderNSearch($input, $query);
         return $subjects;
     }
 }
