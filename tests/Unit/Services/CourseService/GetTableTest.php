@@ -27,8 +27,6 @@ class GetTableTest extends TestCase
 
     public function testGetTableSuccess($input, $queryExpected)
     {
-        
-
       $user = User::insert([
         'username' => 'david kushner',
         'fullname' => 'david kushner',

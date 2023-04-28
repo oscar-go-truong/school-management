@@ -10,7 +10,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class getTableTest extends TestCase
+class GetTableTest extends TestCase
 {
     use RefreshDatabase;
     /**

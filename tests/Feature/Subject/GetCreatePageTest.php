@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\User;
+namespace Tests\Feature\Subject;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,12 +15,12 @@ class GetCreatePageTest extends TestCase
      *
      * @return void
      */
-    public function testViewCreateOfUsersManagementSuccess()
+    public function testGetCreatePageSuccess()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        $response = $this->get('users/create');
+        $response = $this->get('subjects/create');
+        $response->assertViewIs('subject.create');
         $response->assertStatus(200);
-        $response->assertViewIs('user.create');
     }
 }

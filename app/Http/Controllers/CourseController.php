@@ -73,7 +73,7 @@ class CourseController extends Controller
     {
         $resp = $this->courseService->store($request->input());
         if($resp['data'] != null)
-            return redirect('/courses')->with('store success',$resp['message']);
+            return redirect('/courses')->with('success',$resp['message']);
         else 
             return redirect()->back()->with('error',$resp['message']);
     }
@@ -117,7 +117,7 @@ class CourseController extends Controller
         $arg = array('name' => $input['name'], 'subject_id' => $input['subject_id'], 'owner_id'=>$input['owner_id'], 'descriptions' => $input['descriptions']);
         $resp = $this->courseService->update($id, $arg);
         if($resp['data'] != null)
-            return redirect('/courses')->with('store success',$resp['message']);
+            return redirect('/courses')->with('success',$resp['message']);
         else 
             return redirect()->back()->with('error',$resp['message']);
     }

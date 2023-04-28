@@ -172,8 +172,11 @@
                 const fullname = $('#fullname').val();
                 const role = $('#role').val();
                 const isValid = validate(email, username, password, repassword, fullname, role);
-                if (isValid)
+                if (isValid) {
                     $('#create').submit();
+                } else {
+                    $(this).prop("disabled", "");
+                }
             });
         });
     </script>
