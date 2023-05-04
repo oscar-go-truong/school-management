@@ -48,9 +48,20 @@
                             toastr.success(resp.message);
                             $('#student-' + studentId).remove();
                             getTable(createRow);
-                        } else
-                            toastr.error('Error, please try again later!');
+                        } else {
+                            if (resp.wait) {
+                                toastr.clear();
+                                toastr.options.timeOut = 0;
+                                toastr.options.extendedTimeOut = 0;
+                                toastr.options.closeButton = true;
+                                toastr.options.preventDuplicates = true;
+                            }
+                            toastr.warning(resp.message);
+                        }
                         $('#addStudentModal').modal('hide');
+                        toastr.options.timeOut = 600;
+                        toastr.options.extendedTimeOut = 600;
+
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');
@@ -59,5 +70,36 @@
                 })
             }
         })
+        $(document).on('click', '#changeCourse', function() {
+            // Handler code goes here
+            const id = $(this).data('id');
+            const newCourseId = $(this).data('newcourseid');
+            const userId = $(this).data('userid');
+
+            const data = {
+                id: id,
+                course_id: newCourseId,
+                user_id: userId
+            }
+
+            toastr.info('Updating!');
+            $.ajax({
+                type: "PATCH",
+                url: '/student/changeCourse',
+                data: data,
+                dataType: "json",
+                success: function(resp) {
+                    if (resp.data) {
+                        toastr.success(resp.message);
+                        $('#student-' + studentId).remove();
+                        getTable(createRow);
+                    } else
+                        toastr.warning(resp.message);
+                },
+                error: function() {
+                    toastr.error('Error, please try again later!');
+                }
+            });
+        });
     });
 </script>

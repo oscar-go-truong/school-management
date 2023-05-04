@@ -22,8 +22,7 @@
 <script>
     const model = 'course-exam';
     const tableId = '#course-examsTable';
-    const courseId = '{{ request()->query('courseId') }}';
-    const url = `/exams/table`;
+    const url = '/' + '{{ Request::path('/') }}' + '/table';
     const isStudent = '{{ Auth::User()->isStudent() }}';
     const isAdmin = '{{ Auth::User()->isAdministrator() }}';
     let queryData = {
@@ -33,8 +32,6 @@
         search: null,
         role: [],
         status: null,
-        courseId: !isNaN(courseId) && courseId ? courseId : null
-
     };
     let last_page = 1;
     // end config
@@ -49,7 +46,7 @@
         if (isStudent)
             row.append(`<td>${exam.score[0].total}</td>`);
         row.append(
-            ` <td class="text-center text-secondary"><a href="/scores?examId=${exam.id}">${exam.score_count}</a></td>`
+            ` <td class="text-center text-secondary"><a href="/exams/${exam.id}/scores">${exam.score_count}</a></td>`
         );
         row.append(
             `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`

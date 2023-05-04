@@ -32,6 +32,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('/', [UserController::class, 'profile'])->name('profile');
+    Route::patch('student/changeCourse', [StudentController::class, 'changeCourse'])->name('admin.change.user.course');
 
     Route::prefix('/users/')->middleware('auth.admin')->group(function () {
         Route::patch('status/{id}', [UserController::class, 'changeStatus'])->name('admin.change.user.status');
@@ -60,6 +61,8 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('{id}/students', [StudentController::class, 'index'])->name('user.get.course.students');
         Route::post('{id}/students', [StudentController::class, 'store'])->name('admin.store.course.students')->middleware('auth.admin');
         Route::get('{id}/students/table', [StudentController::class, 'getTable'])->name('user.get.course.students.table');
+        Route::get('{id}/exams', [ExamController::class, 'index'])->name('user.get.course.exams');
+        Route::get('{id}/exams/table', [ExamController::class, 'getTable'])->name('user.get.course.exams.table');
     });
   
     Route::prefix('/subjects/')->group(function () {
@@ -70,20 +73,17 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('{subject}', [SubjectController::class, 'show'])->name('user.get.subjects.show');
         Route::get('{subject}/edit', [SubjectController::class, 'edit'])->name('admin.get.subjects.edit')->middleware('auth.admin');
         Route::patch('{subject}', [SubjectController::class, 'update'])->name('admin.subjects.update')->middleware('auth.admin');
-        Route::get('{id}/courses', [SubjectController::class, 'getCourses'])->name('user.get.subject.courses');
-        Route::get('{id}/courses/table', [SubjectController::class, 'getCoursesTable'])->name('user.get.subject.courses.table');
+        Route::get('{id}/courses', [CourseController::class, 'index'])->name('user.get.subject.courses');
+        Route::get('{id}/courses/table', [CourseController::class, 'getTable'])->name('user.get.subject.courses.table');
         Route::patch('status/{id}', [SubjectController::class, 'changeStatus'])->name('admin.change.subject.status')->middleware('auth.admin');
     });
 
     Route::prefix('/exams/')->group(function () {
         Route::get('table', [ExamController::class, 'getTable'])->name('user.get.exam.table');
+        Route::get('{id}/scores', [ScoreController::class, 'index'])->name('user.get.score');
+        Route::get('{id}/scores/table', [ScoreController::class, 'getTable'])->name('user.get.score.table');
       });
     Route::resource('exams', ExamController::class);
-
-    Route::prefix('/scores/')->group(function () {
-        Route::get('table', [ScoreController::class, 'getTable'])->name('user.get.score.table');
-      });
-    Route::resource('scores', ScoreController::class);
 
     Route::prefix('/requests/')->group(function () {
         Route::get('table', [RequestController::class, 'getTable'])->name('user.get.request.table');

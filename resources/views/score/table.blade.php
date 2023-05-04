@@ -2,9 +2,6 @@
 @section('th')
     <tr>
         <th>#</th>
-        <th>Subject</th>
-        <th>Course</th>
-        <th>Exam type</th>
         <th>Fullname</th>
         <th>Email</th>
         <th class="text-center">Score</th>
@@ -16,8 +13,7 @@
 <script>
     const model = 'score';
     const tableId = '#scoresTable';
-    const examId = '{{ request()->query('examId') }}';
-    const url = `/scores/table`;
+    const url = '/' + '{{ Request::path('/') }}' + '/table';
     const isStudent = '{{ Auth::User()->isStudent() }}';
     let queryData = {
         page: 1,
@@ -26,8 +22,6 @@
         search: null,
         role: [],
         status: null,
-        examId: !isNaN(examId) && examId ? examId : null
-
     };
     let last_page = 1;
     // end config
@@ -36,9 +30,6 @@
     const createRow = (score) => {
         let row = $(`<tr id="score-${ score.id    }">`);
         row.append(`<td>${ score.id }</td>`);
-        row.append(`<td>${ score.exam.course.subject.name }</td>`);
-        row.append(`<td>${ score.exam.course.name }</td>`);
-        row.append(`<td>${ score.exam.type }</td>`);
         row.append(`<td>${ score.user.fullname }</td>`);
         row.append(`<td>${ score.user.email }</td>`);
         row.append(`<td>${ score.total }</td>`);

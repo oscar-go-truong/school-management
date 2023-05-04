@@ -18,7 +18,7 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action='{{ route('courses.store') }}' id="create">
+                    <form class="container" method="POST" action='{{ route('admin.courses.store') }}' id="create">
                         @csrf
                         <div class="form-group mt-3">
                             <label for="name" class="font-bold mb-1">Course name <span
@@ -62,6 +62,55 @@
                             @enderror
                         </div>
                         <div class="form-group mt-3">
+                            <label for="startTimeSelect" class="font-bold mb-1">Start time <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control select2" id="startTimeSelect" name="start_time">
+                                <option value="" id="selectDefault3">-- Select Time --</option>
+                                @foreach ($times as $time)
+                                    <option value="{{ $time }}" id="startTime-{{ $time }}">
+                                        {{ $time }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+                            @error('start_time')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="finishTimeSelect" class="font-bold mb-1">Finish time <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control select2" id="finishTimeSelect" name="finish_time">
+                                <option value="" id="selectDefault4">-- Select Time --</option>
+                                @foreach ($times as $time)
+                                    <option value="{{ $time }}" id="finishTime-{{ $time }}">
+                                        {{ $time }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+                            @error('finish_time')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group mt-3">
+                            <label for="weekdaySelect" class="font-bold mb-1">Weekday <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-control select2" id="weekdaySelect" name="weekday">
+                                <option value="" id="selectDefault5">-- Select weekday --</option>
+                                @foreach ($weekdays as $weekday)
+                                    <option value="{{ $weekday }}" id="weekday-{{ $weekday }}">
+                                        {{ $weekday }}
+                                    </option>
+                                @endforeach
+
+                            </select>
+                            @error('weekday')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group mt-3">
                             <label for="descriptions" class="font-bold mb-1">Descriptions <span
                                     class="text-danger">*</span></label>
                             <textarea class="form-control @error('descriptions') is-invalid @enderror" id="descriptions" name="descriptions"
@@ -80,9 +129,14 @@
     <script>
         $('.select2').select2();
         // validate form
-        const validate = (name, subject, teacher, descriptions) => {
+        const validate = (name, subject, teacher, start_time, finish_time, weekday, descriptions) => {
             $('.form-control').removeClass('is-invalid');
-            if (!name || !subject || !teacher || !descriptions) {
+            const date = new Date();
+            const dateString = `2001-10-11`
+            const time1 = new Date(`${dateString}T${start_time}`);
+            const time2 = new Date(`${dateString}T${finish_time}`);
+            if (!name || !subject || !teacher || !descriptions || !start_time || !finish_time || !weekday || time1 >=
+                time2) {
                 // Missing name
                 if (!name) {
                     toastr.warning('Course name field is requried.');
@@ -104,6 +158,33 @@
                 } else {
                     $('#homeroomTeacherSelect').addClass('is-valid');
                 };
+
+                if (!start_time) {
+                    toastr.warning('Start time field is requried.');
+                    $('#startTimeSelect').addClass('is-invalid');
+                } else {
+                    $('#startTimeSelect').addClass('is-valid');
+                };
+                if (!finish_time) {
+                    toastr.warning('Finish time field is requried.');
+                    $('#finishTimeSelect').addClass('is-invalid');
+                    $('#startTimeSelect').addClass('is-invalid');
+                } else {
+                    $('#finishTimeSelect').addClass('is-valid');
+                    $('#startTimeSelect').addClass('is-valid');
+                };
+                if (time1 >= time2) {
+                    toastr.warning('Start time must be less than finish time');
+                    $('#finishTimeSelect').addClass('is-invalid');
+                } else {
+                    $('#finishTimeSelect').addClass('is-valid');
+                };
+                if (!weekday) {
+                    toastr.warning('Weekday field is requried.');
+                    $('#weekdaySelect').addClass('is-invalid');
+                } else {
+                    $('#weekdaySelect').addClass('is-valid');
+                };
                 if (!descriptions) {
                     toastr.warning('Descriptions field is requried.');
                     $('#descriptions').addClass('is-invalid');
@@ -122,7 +203,11 @@
                 const descriptions = $('#descriptions').val();
                 const subject = $('#subjectSelect').val();
                 const teacher = $('#homeroomTeacherSelect').val();
-                const isValid = validate(name, subject, teacher, descriptions);
+                const start_time = $('#startTimeSelect').val();
+                const finish_time = $('#finishTimeSelect').val();
+                const weekday = $('#weekdaySelect').val();
+                const isValid = validate(name, subject, teacher, start_time, finish_time, weekday,
+                    descriptions);
                 if (isValid) {
                     $('#create').submit();
                 } else {

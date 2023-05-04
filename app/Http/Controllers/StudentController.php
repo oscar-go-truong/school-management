@@ -39,4 +39,11 @@ class StudentController extends Controller
         $resp = $this->userCourseService->store($input);
         return $resp;
     }
+
+    public function changeCourse(Request $request)
+    {
+        $input = $request->input();
+        $resp = $this->userCourseService->update($input['id'], $input);
+        return response()->json($resp);
+    }
 }

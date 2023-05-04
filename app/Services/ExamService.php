@@ -16,11 +16,10 @@ class ExamService extends BaseService
         return Exam::class;
     }
 
-    public function getTable($request)
+    public function getTable($input, $courseId)
     {
         $user = Auth::user();
         $query = $this->model->withCount('score')->with('course.subject');
-        $courseId = $request->query('courseId');
         if($courseId != null)
             $query = $query->where('course_id', $courseId);
         if(!$user->isAdministrator()){
@@ -33,7 +32,7 @@ class ExamService extends BaseService
             });
         }
         }
-        $exams = $this->orderNSearch($request, $query);
+        $exams = $this->orderNSearch($input, $query);
         foreach ($exams as $exam) {
             $exam->type = MyExamTypeConstants::getKey($exam->type);
         }

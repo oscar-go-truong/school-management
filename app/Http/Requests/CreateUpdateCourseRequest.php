@@ -28,6 +28,9 @@ class CreateUpdateCourseRequest extends FormRequest
             'name' => 'required|max:255',
             'subject_id' => 'required',
             'owner_id' => 'required',
+            'start_time' => 'required',
+            'finish_time' => 'required',
+            'weekday' => 'required',
             'descriptions' => 'required',
         ];
     }

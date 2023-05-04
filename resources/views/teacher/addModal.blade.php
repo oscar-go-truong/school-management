@@ -46,11 +46,13 @@
                     success: function(resp) {
                         if (resp.data) {
                             toastr.success(resp.message);
-                            $('#teacher-' + teacherId).remove();
+                            $('#student-' + studentId).remove();
                             getTable(createRow);
-                        } else
-                            toastr.error('Error, please try again later!');
+                        } else {
+                            toastr.warning(resp.message);
+                        }
                         $('#addTeacherModal').modal('hide');
+
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');

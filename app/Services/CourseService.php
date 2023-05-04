@@ -24,16 +24,15 @@ class CourseService extends BaseService
         return Course::class;
     }
 
-    public function getTable($input)
+    public function getTable($input, $subjectId)
     {
-        $query = $this->model->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
-        $subjectId = isset($input['subjectId'])?$input['subjectId']:null;
+        $query = $this->model->year($input)->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
         if($subjectId != null)
             $query = $query->where('subject_id', $subjectId);
         if(!Auth::user()->isAdministrator())
          $query = $query->whereHas('userCourse', function($query) {
             $query->where('user_id', Auth::user()->id);
-         })->where('status', StatusTypeContants::ACTIVE);
+         });
         $courses = $this->orderNSearch($input, $query);
         return $courses;
     }
@@ -71,5 +70,10 @@ class CourseService extends BaseService
             DB::rollBack();
             return  ['data'=> null, 'message'=>"Error, please try again later!"];
         }
+    }
+
+    public function getById($id)
+    {
+        return $this->model->with('subject')->find($id);
     }
 }

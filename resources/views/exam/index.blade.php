@@ -11,9 +11,11 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div>
-                            @if (request()->query('courseId'))
-                                <span class="text-gray-400"> Course > </span>
-                            @endif Exams
+                            Exams
+                            @if ($course)
+                                <span class="text-2xl font-normal"> - {{ $course->subject->name }}
+                                    {{ $course->name }}</span>
+                            @endif
                         </div>
                         @if (request()->query('courseId'))
                             <div class="inline"> <i class="fa-solid fa-file-circle-plus" data-bs-toggle="modal"

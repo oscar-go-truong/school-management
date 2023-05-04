@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeConstants;
 use App\Enums\UserRoleContants;
 use App\Http\Requests\CreateUpdateCourseRequest;
 use App\Services\CourseService;
@@ -42,13 +43,15 @@ class CourseController extends Controller
      */
     public function index() : View
     {
-        return view('course.index');
+        $current_year = date('Y');
+        $years = range(2020, $current_year);
+        return view('course.index', compact('years'));
     }
 
-    public function getTable(Request $request) 
+    public function getTable(Request $request, $subjectId = null) 
     {
         $input = $request->input();
-        $courses = $this->courseService->getTable($input);
+        $courses = $this->courseService->getTable($input, $subjectId);
         return response()->json($courses);
     }
     /**
@@ -60,7 +63,9 @@ class CourseController extends Controller
     {
         $teachers = $this->userService->getByRole(UserRoleContants::TEACHER);
         $subjects = $this->subjectService->getAll();
-        return view('course.create', compact('teachers','subjects'));
+        $times = TimeConstants::TIMES;
+        $weekdays = TimeConstants::WEEKDAY;
+        return view('course.create', compact('teachers','subjects','times','weekdays'));
     }
 
     /**
@@ -71,7 +76,8 @@ class CourseController extends Controller
      */
     public function store(CreateUpdateCourseRequest $request)
     {
-        $resp = $this->courseService->store($request->input());
+        $input =$request->input();
+        $resp = $this->courseService->store($input);
         if($resp['data'] != null)
             return redirect('/courses')->with('success',$resp['message']);
         else 
