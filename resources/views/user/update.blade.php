@@ -13,7 +13,8 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action="{{ route('users.update', $user->id) }}" id="update">
+                    <form class="container" method="POST" action="{{ route('admin.users.update', $user->id) }}"
+                        id="update">
                         @csrf
                         {{ method_field('PATCH') }}
                         <input type="hidden" value={{ $user->id }} name="id" id="id" />

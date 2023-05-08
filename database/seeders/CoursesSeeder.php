@@ -31,9 +31,6 @@ class CoursesSeeder extends Seeder
                         'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                         'status'=>StatusTypeContants::ACTIVE,
                         'created_at'=> Carbon::createFromDate(2020),
-                        'start_time' => Carbon::createFromFormat('H:i:s','9:30:00'),
-                        'finish_time' => Carbon::createFromFormat('H:i:s','11:30:00'),
-                        'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Begginer 2021',
@@ -42,9 +39,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2021),
-                             'start_time' => Carbon::createFromFormat('H:i:s','9:30:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','11:30:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Begginer 2022',
@@ -53,9 +47,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2022),
-                             'start_time' => Carbon::createFromFormat('H:i:s','9:30:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','11:30:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Basic 2020',
@@ -64,9 +55,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2020),
-                             'start_time' => Carbon::createFromFormat('H:i:s','13:00:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','15:00:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Basic 2021',
@@ -75,9 +63,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2021),
-                             'start_time' => Carbon::createFromFormat('H:i:s','13:00:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','15:00:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Basic 2022',
@@ -86,9 +71,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2022),
-                             'start_time' => Carbon::createFromFormat('H:i:s','13:00:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','15:00:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Advanced 2022',
@@ -97,9 +79,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Advanced subjects are designed for students who have a lot of knowledge and skills in computers or technology and are ready for more challenging coursework.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2022),
-                             'start_time' => Carbon::createFromFormat('H:i:s','15:00:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','17:00:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ],
                         [
                             'name'=> 'Advanced 2023',
@@ -108,9 +87,6 @@ class CoursesSeeder extends Seeder
                             'descriptions' => 'Advanced subjects are designed for students who have a lot of knowledge and skills in computers or technology and are ready for more challenging coursework.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2023),
-                             'start_time' => Carbon::createFromFormat('H:i:s','15:00:00'),
-                            'finish_time' => Carbon::createFromFormat('H:i:s','17:00:00'),
-                            'weekday' => collect(['Mon', 'Tue','Wed','Thu','Fri'])->random()
                         ]
                 ]
         );

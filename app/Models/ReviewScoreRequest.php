@@ -4,21 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Room extends Model
+class ReviewScoreRequest extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'name',
-        'status'
+        "exam_id"
     ];
 
-    public function bookingRoomRequest() : HasMany
+    public function exam() : BelongsTo
     {
-        return $this->hasMany(BookingRoomRequest::class);
+        return $this->belongsTo(Exam::class);
     }
 }

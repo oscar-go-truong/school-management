@@ -18,7 +18,7 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action='{{ route('subjects.update', $subject->id) }}'
+                    <form class="container" method="POST" action='{{ route('admin.subjects.update', $subject->id) }}'
                         id="update">
                         @csrf
                         {{ method_field('PATCH') }}

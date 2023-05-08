@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\RequestTypeContants;
-use App\Enums\StatusTypeContants;
 use App\Models\User;
 
 class RequestFactory extends Factory
@@ -18,8 +17,8 @@ class RequestFactory extends Factory
     {
         return [
             'type' => RequestTypeContants::getRandomValue(),
-            'status' => StatusTypeContants::getRandomValue(),
-            'user_request_id' => User::all()->random()->id,
+            'status' => RequestTypeContants::getRandomValue(),
+            'user_request_id' => collect([2,3])->random(),
             'user_approve_id' => 1,
         ];
     }

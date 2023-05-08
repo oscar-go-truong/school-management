@@ -1,11 +1,11 @@
 @extends('components.tableLayout')
 @section('th')
     <tr>
-        <th class="sort sorting sorting_asc" data-column="id">#</th>
+        <th class="sort sorting" data-column="id">#</th>
         <th class="sort sorting" data-column="name">Name</th>
         <th class="sort sorting" data-column="subject_id">Subject</th>
         <th>Time</th>
-        <th class="sort sorting" data-column="created_at">Year</th>
+        <th class="sort sorting sorting_desc" data-column="created_at">Year</th>
         <th>Teachers</th>
         <th>Students</th>
         <th>Exams</th>
@@ -24,12 +24,12 @@
     const url = '/' + '{{ Request::path('/') }}' + '/table';
     let queryData = {
         page: 1,
-        orderBy: 'id',
-        orderDirect: 'asc',
+        orderBy: 'created_at',
+        orderDirect: 'desc',
         search: null,
         role: [],
         status: null,
-        year: null
+        year: new Date().getFullYear()
     };
     let last_page = 1;
     // end config
@@ -40,7 +40,13 @@
         row.append(`<td>${ course.id }</td>`);
         row.append(`<td>${ course.name }</td>`);
         row.append(`<td>${ course.subject.name}</td>`);
-        row.append(`<td>${ course.start_time+' - '+course.finish_time+', '+course.weekday }</td>`);
+        let schedules = $(`<td>`);
+        for (let i = 0; i < course.schedules.length; i++) {
+            schedules.append(
+                `<div class="mt-2">${course.schedules[i].start_time + '-' + course.schedules[i].finish_time +', '+ course.schedules[i].weekday}</div>`
+            );
+        }
+        row.append(schedules);
         row.append(`<td>${ new Date(course.created_at).getFullYear() }</td>`);
         row.append(
             `<td class="dark-link text-center"><a href="/courses/${course.id}/teachers">${course.teachers_count}</a></td>`

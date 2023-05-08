@@ -71,4 +71,14 @@ class Course extends Model
             $query->where('role', UserRoleContants::STUDENT);
         });
     }
+
+    public function schedules() : HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function bookingRoomRequest() : HasMany
+    {
+        return $this->hasMany(BookingRoomRequest::class);
+    }
 }

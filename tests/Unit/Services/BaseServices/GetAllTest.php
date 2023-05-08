@@ -32,7 +32,7 @@ class GetAllTest extends TestCase
         $userService = new UserService();
         $subjectService = new SubjectService();
         $userCourseService = new UserCourseService();
-      $courseService = new CourseService($userCourseService);
+        $courseService = new CourseService($userCourseService);
 
         $userResult = $userService->getAll();
         $subjectResult = $subjectService->getAll();

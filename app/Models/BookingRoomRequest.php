@@ -8,29 +8,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Exam extends Model
+class BookingRoomRequest extends Model
 {
     use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
-        'type',
-        'course_id',
-        'status'
+        "course_id",
+        "room_id",
+        "booking_date_start",
+        "booking_date_finish"
     ];
 
-    public function course(): BelongsTo
+    public function course() : BelongsTo
     {
-        return $this->belongsTo(Course::class, "course_id");
+        return $this->belongsTo(Course::class);
     }
 
-    public function score(): HasMany
+    public function room() : BelongsTo 
     {
-        return $this->hasMany(Score::class);
-    }
-
-    public function reviewScoreRequest() : HasMany
-    {
-        return $this->hasMany(ReviewScoreRequest::class);
+        return $this->belongsTo(Room::class);
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTimeToCoursesTable extends Migration
+class CreateSchedulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,18 @@ class AddTimeToCoursesTable extends Migration
      */
     public function up()
     {
-        Schema::table('courses', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
+            $table->id();
             $table->time('start_time');
             $table->time('finish_time');
             $table->string('weekday');
+            $table->unsignedBigInteger('course_id');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::table('schedules', function (Blueprint $table) {
+          $table->foreign('course_id')->references('id')->on('courses');
         });
     }
 
@@ -27,10 +35,6 @@ class AddTimeToCoursesTable extends Migration
      */
     public function down()
     {
-        Schema::table('courses', function (Blueprint $table) {
-            $table->dropColumn('start_time');
-            $table->dropColumn('finish_time');
-            $table->dropColumn('weekday');
-        });
+        Schema::dropIfExists('schedule');
     }
 }

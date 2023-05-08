@@ -19,10 +19,6 @@ class Request extends Model
         'status'
     ];
 
-    public function bookingRoom(): BelongsTo
-    {
-        return $this->belongsTo(BookingRoom::class);
-    }
 
     public function userRequest(): BelongsTo
     {
@@ -32,5 +28,11 @@ class Request extends Model
     public function userApprove(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_approve_id');
+    }
+
+    public function scopeStatus($query, $input){
+        if($input['status'])
+            return $query->where('status', $input['status']);
+        return $query;
     }
 }

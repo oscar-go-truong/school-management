@@ -74,12 +74,14 @@
             // Handler code goes here
             const id = $(this).data('id');
             const newCourseId = $(this).data('newcourseid');
+            const oldCourseId = $(this).data('oldcourseid');
             const userId = $(this).data('userid');
 
             const data = {
                 id: id,
-                course_id: newCourseId,
-                user_id: userId
+                newCourseId: newCourseId,
+                oldCourseId: oldCourseId,
+                user_request_id: userId
             }
 
             toastr.info('Updating!');

@@ -18,7 +18,8 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action='{{ route('courses.update', $course->id) }}' id="update">
+                    <form class="container" method="POST" action='{{ route('admin.courses.update', $course->id) }}'
+                        id="update">
                         @csrf
                         {{ method_field('PATCH') }}
                         <input type="hidden" value="{{ $course->id }}" />

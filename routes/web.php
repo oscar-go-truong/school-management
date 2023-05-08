@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -87,7 +88,12 @@ Route::prefix('/')->middleware('auth')->group(function () {
 
     Route::prefix('/requests/')->group(function () {
         Route::get('table', [RequestController::class, 'getTable'])->name('user.get.request.table');
+        Route::patch('status/{id}',[RequestController::class, 'changeStatus'])->name('admin.change.request.status')->middleware('auth.admin');
       });
     Route::resource('requests', RequestController::class);
+
+    Route::prefix('/schedules/')->group(function () {
+        Route::get('/', [ScheduleController::class, 'index'])->name('user.get.schedule.index');
+      });
 
 });

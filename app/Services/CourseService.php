@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Enums\StatusTypeContants;
+use App\Enums\TimeConstants;
 use App\Models\Course;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,9 @@ class CourseService extends BaseService
 
     public function getTable($input, $subjectId)
     {
-        $query = $this->model->year($input)->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
+        $query = $this->model->year($input)->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject')->with('schedules', function($query){
+            $query->orderByRaw("FIELD(weekday, '".implode("', '", TimeConstants::WEEKDAY)."')");
+        });
         if($subjectId != null)
             $query = $query->where('subject_id', $subjectId);
         if(!Auth::user()->isAdministrator())

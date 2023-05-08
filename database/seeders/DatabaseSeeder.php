@@ -24,6 +24,10 @@ class DatabaseSeeder extends Seeder
             RequestSeeder::class,
             UserCourseSeeder::class,
             ExamSeeder::class,
+            ScheduleSeeder::class,
+            BookingRoomRequestSeeder::class,
+            ReviewScoreRequestSeeder::class,
+            SwitchCourseRequestSeeder::class
             ]
         );
     }

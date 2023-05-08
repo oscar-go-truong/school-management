@@ -10,11 +10,9 @@ use App\Services\ExamService;
 use App\Services\SubjectService;
 use App\Services\UserCourseService;
 use App\Services\UserService;
-use Doctrine\DBAL\Types\JsonType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PHPUnit\Util\Json;
 
 class CourseController extends Controller
 {
@@ -43,8 +41,8 @@ class CourseController extends Controller
      */
     public function index() : View
     {
-        $current_year = date('Y');
-        $years = range(2020, $current_year);
+        $currentYear = date('Y');
+        $years = range($currentYear, 2020);
         return view('course.index', compact('years'));
     }
 
@@ -63,9 +61,7 @@ class CourseController extends Controller
     {
         $teachers = $this->userService->getByRole(UserRoleContants::TEACHER);
         $subjects = $this->subjectService->getAll();
-        $times = TimeConstants::TIMES;
-        $weekdays = TimeConstants::WEEKDAY;
-        return view('course.create', compact('teachers','subjects','times','weekdays'));
+        return view('course.create', compact('teachers','subjects'));
     }
 
     /**

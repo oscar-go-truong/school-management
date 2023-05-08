@@ -29,7 +29,8 @@
                                         All years
                                     </option>
                                     @foreach ($years as $year)
-                                        <option value="{{ $year }}">
+                                        <option value="{{ $year }}"
+                                            @if ($year == date('Y')) selected @endif>
                                             {{ $year }}
                                         </option>
                                     @endforeach
