@@ -59,7 +59,7 @@ class StudentController extends Controller
                                 'old_course_id' => $input['oldCourseId'], 
                                 'new_course_id' => $input['newCourseId'] 
                               ];
-        $createRequestResp = $this->requestService->storeSwitchClassRequest($switchClassRequest);
+        $createRequestResp = $this->requestService->storeApprovedSwitchClassRequest($switchClassRequest);
         if($createRequestResp['data'] === null)
             return response()->json(['data' => null, 'message' => "Error, please try again later!"]);
         $arg = ['id' => $input['id'], 'course_id' => $input['newCourseId'],'user_id' => $input['user_request_id']];

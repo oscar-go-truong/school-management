@@ -89,6 +89,9 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::prefix('/requests/')->group(function () {
         Route::get('table', [RequestController::class, 'getTable'])->name('user.get.request.table');
         Route::patch('status/{id}',[RequestController::class, 'changeStatus'])->name('admin.change.request.status')->middleware('auth.admin');
+        Route::patch('{id}/reject', [RequestController::class, 'reject'])->name('admin.reject.request')->middleware('auth.admin');
+        Route::patch('{id}/approve', [RequestController::class, 'approve'])->name('admin.approve.request')->middleware('auth.admin');
+        Route::post('reviewScore', [RequestController::class, 'storerReviewScoreRequest'])->name('student.creae.review.score.request');
       });
     Route::resource('requests', RequestController::class);
 

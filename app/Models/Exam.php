@@ -29,8 +29,4 @@ class Exam extends Model
         return $this->hasMany(Score::class);
     }
 
-    public function reviewScoreRequest() : HasMany
-    {
-        return $this->hasMany(ReviewScoreRequest::class);
-    }
 }

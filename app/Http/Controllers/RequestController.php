@@ -23,7 +23,8 @@ class RequestController extends Controller
     public function index() : View
     {
         $status = RequestStatusContants::asArray();
-        return view('request.index', compact('status'));
+        $types = RequestTypeContants::asArray();
+        return view('request.index', compact('status','types'));
     }
 
     public function getTable(Request $request)
@@ -69,7 +70,7 @@ class RequestController extends Controller
     public function show($id) 
     {
         $request = $this->requestService->getById($id);
-        $content = $this->requestService->getContent($request);
+        $content = (object) $this->requestService->getContent($id);
         $status = RequestStatusContants::asArray();
         if($request->type === RequestTypeContants::BOOK_ROOM_OR_LAB)
             return view('request.bookingRoomRequestDetail', compact('request', 'content','status'));
@@ -79,6 +80,25 @@ class RequestController extends Controller
             return view('request.switchCourseRequestDetail', compact('request', 'content','status'));
         else 
             return redirect()->back();
+    }
+
+    public function reject($id)
+    {
+        $resp = $this->requestService->reject($id);
+        return response()->json($resp);
+    }
+
+    public function approve($id)
+    {
+        $resp = $this->requestService->approve($id);
+        return response()->json($resp);
+    }
+
+    public function storerReviewScoreRequest(Request $request)
+    {
+        $input = $request->input();
+        $resp = $this->requestService->storerReviewScoreRequest($input);
+        return response()->json($resp);
     }
 
     /**

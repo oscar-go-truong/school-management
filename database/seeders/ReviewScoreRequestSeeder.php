@@ -20,10 +20,9 @@ class ReviewScoreRequestSeeder extends Seeder
         $requests = Request::where('type', RequestTypeContants::REVIEW_GRADES)->get();
         foreach($requests as $request)
         {
-           $content =  ReviewScoreRequest::create([
-               'exam_id' => Exam::all()->random()->id
-            ]);
-            Request::where('id',$request->id)->update( ['content_id' => $content->id]);
+           $content =  '{"exam_id":'.Exam::all()->random()->id.'}';
+           
+            Request::where('id',$request->id)->update( ['content' => $content]);
         }
     }
 }

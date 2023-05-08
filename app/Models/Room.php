@@ -16,9 +16,4 @@ class Room extends Model
         'name',
         'status'
     ];
-
-    public function bookingRoomRequest() : HasMany
-    {
-        return $this->hasMany(BookingRoomRequest::class);
-    }
 }

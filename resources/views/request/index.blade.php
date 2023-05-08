@@ -15,13 +15,26 @@
                             <select
                                 class="form-select
                                                     w-40 text-sm filter inline-block"
+                                data-column="status" id="filter-type">
+                                <option value="">
+                                    All types
+                                </option>
+                                @foreach ($types as $key => $value)
+                                    <option value="{{ $value }}" @if (Auth::User()->isAdministrator() && $key === 'PENDING') selected @endif>
+                                        {{ ucfirst(strtolower(str_replace('_', ' ', $key))) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <select
+                                class="form-select
+                                                    w-40 text-sm filter inline-block"
                                 data-column="status" id="filter-status">
                                 <option value="">
                                     All status
                                 </option>
                                 @foreach ($status as $key => $value)
-                                    <option value="{{ $value }}">
-                                        {{ $key }}
+                                    <option value="{{ $value }}" @if (Auth::User()->isAdministrator() && $key === 'PENDING') selected @endif>
+                                        {{ ucfirst(strtolower($key)) }}
                                     </option>
                                 @endforeach
                             </select>

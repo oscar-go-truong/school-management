@@ -77,8 +77,4 @@ class Course extends Model
         return $this->hasMany(Schedule::class);
     }
 
-    public function bookingRoomRequest() : HasMany
-    {
-        return $this->hasMany(BookingRoomRequest::class);
-    }
 }

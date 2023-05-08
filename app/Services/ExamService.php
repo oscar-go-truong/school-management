@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Enums\MyExamTypeConstants;
+use App\Enums\RequestStatusContants;
 use App\Enums\UserRoleContants;
 use App\Models\Exam;
+use App\Models\Request;
 use App\Models\Score;
 use App\Models\UserCourse;
 use Illuminate\Support\Facades\Auth;
@@ -35,6 +37,7 @@ class ExamService extends BaseService
         $exams = $this->orderNSearch($input, $query);
         foreach ($exams as $exam) {
             $exam->type = MyExamTypeConstants::getKey($exam->type);
+            $exam->wasRequestedByUser = Request::where('user_request_id', $user->id)->where('status',RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
         }
         return $exams;
     }

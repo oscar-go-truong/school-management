@@ -22,7 +22,8 @@
         orderDirect: 'desc',
         search: null,
         role: [],
-        status: null,
+        status: isAdmin ? 1 : null,
+        type: null
     };
     let last_page = 1;
     // end config
@@ -33,9 +34,9 @@
         row.append(`<td>${ request.id }</td>`);
         row.append(`<td>${ request.type }</td>`);
         row.append(`<td>${ request.user_request.fullname }</td>`);
-        row.append(`<td>${ request.user_approve.fullname }</td>`);
+        row.append(`<td>${ request.user_approve ? request.user_approve.fullname : "---" }</td>`);
         row.append(
-            `<td>${  new Date(request.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
+            `<td>${  new Date(request.created_at).toLocaleString('en-us')  }</td>`
         );
         row.append(` <td class="text-info text-2xl text-center">
                         <a href='/requests/${request.id}'><i class="fa-sharp fa-solid fa-circle-info"></i></a>
@@ -52,6 +53,16 @@
                     queryData.status = $(this).val();
                 else
                     queryData.status = null;
+                getTable(createRow);
+            });
+        })
+
+        $(document).ready(function() {
+            $('#filter-type').change(function() {
+                if ($(this).val())
+                    queryData.type = $(this).val();
+                else
+                    queryData.type = null;
                 getTable(createRow);
             });
         })

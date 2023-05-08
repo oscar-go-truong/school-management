@@ -4,7 +4,7 @@
         <th class="sort sorting" data-column="id">#</th>
         <th class="sort sorting" data-column="name">Name</th>
         <th class="sort sorting" data-column="subject_id">Subject</th>
-        <th>Time</th>
+        <th>Schedules</th>
         <th class="sort sorting sorting_desc" data-column="created_at">Year</th>
         <th>Teachers</th>
         <th>Students</th>

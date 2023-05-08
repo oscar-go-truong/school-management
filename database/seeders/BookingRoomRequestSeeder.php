@@ -19,17 +19,16 @@ class BookingRoomRequestSeeder extends Seeder
      */
     public function run()
     {
+
         $faker = Faker::create();
         $requests = Request::where('type', RequestTypeContants::BOOK_ROOM_OR_LAB)->get();
         foreach($requests as $request)
         {
-           $content =  BookingRoomRequest::create([
-                'room_id' => Room::all()->random()->id,
-                'course_id' => Course::all()->random()->id,
-                'booking_date_start' =>   $faker->dateTimeBetween('2021-01-01', '2021-12-31')->format('Y-m-d'),
-                'booking_date_finish' =>  $faker->dateTimeBetween('2022-01-01', '2023-12-31')->format('Y-m-d'),
-            ]);
-            Request::where('id',$request->id)->update( ['content_id' => $content->id]);
+           $content =   '{"room_id":'.Room::all()->random()->id.
+                        ',"course_id":'.Course::all()->random()->id.
+                        ',"booking_date_start":"'.$faker->dateTimeBetween('2021-01-01', '2021-12-31')->format('Y-m-d').
+                        '","booking_date_finish":"'.$faker->dateTimeBetween('2022-01-01', '2023-12-31')->format('Y-m-d').'"}';
+            Request::where('id',$request->id)->update( ['content' => $content]);
         }
     }
 }
