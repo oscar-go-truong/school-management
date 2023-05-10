@@ -19,6 +19,9 @@ class Course extends Model
         'descriptions',
         'status',
         'owner_id',
+        'start_time',
+        'finish_time',
+        'weekday',
         'subject_id'
     ];
 
@@ -38,6 +41,13 @@ class Course extends Model
         return $this->belongsTo(Subject::class, "subject_id");
     }
 
+    public function scopeYear($query, $input)
+    {
+        if($input['year']!==null)
+            return $query->whereRaw('Year(created_at) = '.$input['year']);
+        else
+            return $query;
+    }
     public function homeroomTeacher(): BelongsTo
     {
         return $this->belongsTo(User::class, "owner_id");
@@ -61,4 +71,10 @@ class Course extends Model
             $query->where('role', UserRoleContants::STUDENT);
         });
     }
+
+    public function schedules() : HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
 }

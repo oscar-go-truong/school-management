@@ -13,7 +13,7 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action="{{ route('users.store') }}" id="create">
+                    <form class="container" method="POST" action="{{ route('admin.users.store') }}" id="create">
                         @csrf
                         <div class="form-group mt-3">
                             <label for="email" class="font-bold mb-1">Email address <span

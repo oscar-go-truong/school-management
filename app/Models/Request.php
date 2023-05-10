@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Request extends Model
@@ -16,13 +17,10 @@ class Request extends Model
         'user_request_id',
         'user_approve_id',
         'type',
-        'status'
+        'status',
+        'content'
     ];
 
-    public function bookingRoom(): BelongsTo
-    {
-        return $this->belongsTo(BookingRoom::class);
-    }
 
     public function userRequest(): BelongsTo
     {
@@ -32,5 +30,18 @@ class Request extends Model
     public function userApprove(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_approve_id');
+    }
+
+
+    public function scopeStatus($query, $input){
+        if($input['status'])
+            return $query->where('status', $input['status']);
+        return $query;
+    }
+
+    public function scopeType($query, $input){
+        if($input['type'])
+            return $query->where('type', $input['type']);
+        return $query;
     }
 }

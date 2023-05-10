@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\RequestStatusContants;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\RequestTypeContants;
-use App\Enums\StatusTypeContants;
 use App\Models\User;
 
 class RequestFactory extends Factory
@@ -16,11 +16,13 @@ class RequestFactory extends Factory
      */
     public function definition()
     {
+        $status = RequestStatusContants::getRandomValue();
+        $type = RequestTypeContants::getRandomValue();
         return [
-            'type' => RequestTypeContants::getRandomValue(),
-            'status' => StatusTypeContants::getRandomValue(),
-            'user_request_id' => User::all()->random()->id,
-            'user_approve_id' => 1,
+            'type' => $type,
+            'status' => $status,
+            'user_request_id' => $type === RequestTypeContants::BOOK_ROOM_OR_LAB ? 2 : 3,
+            'user_approve_id' => $status === RequestStatusContants::PENDING ? null : 1,
         ];
     }
 }

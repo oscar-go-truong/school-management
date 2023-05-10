@@ -31,9 +31,12 @@
         $('#submit').click(function() {
             const teacherId = $('#addTeacherSelects').val();
             const courseId = '{{ $course->id }}';
-            if (!teacherId)
+            let btn = $(this);
+            btn.attr('disabled', true);
+            if (!teacherId) {
+                btn.attr('disabled', false);
                 toastr.warning('Please select teacher!');
-            else {
+            } else {
                 toastr.info('Adding teacher!');
                 $.ajax({
                     type: "POST",
@@ -48,13 +51,17 @@
                             toastr.success(resp.message);
                             $('#teacher-' + teacherId).remove();
                             getTable(createRow);
-                        } else
-                            toastr.error('Error, please try again later!');
+                        } else {
+                            toastr.warning(resp.message);
+                        }
                         $('#addTeacherModal').modal('hide');
+                        btn.attr('disabled', false);
+
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');
                         $('#addTeacherModal').modal('hide');
+                        btn.attr('disabled', false);
                     }
                 })
             }

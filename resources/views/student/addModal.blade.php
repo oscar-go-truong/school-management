@@ -31,9 +31,12 @@
         $('#submit').click(function() {
             const studentId = $('#addStudentSelects').val();
             const courseId = '{{ $course->id }}';
-            if (!studentId)
+            let btn = $(this);
+            btn.attr('disabled', true);
+            if (!studentId) {
+                btn.attr('disabled', false);
                 toastr.warning('Please select student!');
-            else {
+            } else {
                 toastr.info('Adding student!');
                 $.ajax({
                     type: "POST",
@@ -48,16 +51,60 @@
                             toastr.success(resp.message);
                             $('#student-' + studentId).remove();
                             getTable(createRow);
-                        } else
-                            toastr.error('Error, please try again later!');
+                        } else {
+                            if (resp.wait) {
+                                toastr.clear();
+                                toastr.options.timeOut = 0;
+                                toastr.options.closeButton = true;
+                            }
+                            toastr.warning(resp.message);
+                        }
                         $('#addStudentModal').modal('hide');
+                        btn.attr('disabled', false);
+                        toastr.options.timeOut = 600;
+                        toastr.options.extendedTimeOut = 600;
+
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');
+                        btn.attr('disabled', false);
                         $('#addStudentModal').modal('hide');
                     }
                 })
             }
         })
+        $(document).on('click', '#changeCourse', function() {
+            // Handler code goes here
+            const id = $(this).data('id');
+            const newCourseId = $(this).data('newcourseid');
+            const oldCourseId = $(this).data('oldcourseid');
+            const userId = $(this).data('userid');
+
+            const data = {
+                id: id,
+                newCourseId: newCourseId,
+                oldCourseId: oldCourseId,
+                user_request_id: userId
+            }
+
+            toastr.info('Updating!');
+            $.ajax({
+                type: "PATCH",
+                url: '/student/change-course',
+                data: data,
+                dataType: "json",
+                success: function(resp) {
+                    if (resp.data) {
+                        toastr.success(resp.message);
+                        $('#student-' + studentId).remove();
+                        getTable(createRow);
+                    } else
+                        toastr.warning(resp.message);
+                },
+                error: function() {
+                    toastr.error('Error, please try again later!');
+                }
+            });
+        });
     });
 </script>

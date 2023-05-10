@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRoleContants;
+use App\Exports\StudentsListExport;
 use App\Http\Requests\CreateUpdateCourseRequest;
 use App\Services\CourseService;
 use App\Services\ExamService;
+use App\Services\RoomService;
 use App\Services\SubjectService;
 use App\Services\UserCourseService;
 use App\Services\UserService;
-use Doctrine\DBAL\Types\JsonType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use PHPUnit\Util\Json;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CourseController extends Controller
 {
@@ -23,17 +25,21 @@ class CourseController extends Controller
     protected $userService;
     protected $subjectService;
 
+    protected $roomService;
+
     public function __construct(CourseService $courseService, 
                                 UserCourseService $userCourseService,
                                 ExamService $examService, 
                                 UserService $userService, 
-                                SubjectService $subjectService)
+                                SubjectService $subjectService,
+                                RoomService $roomService )
     {
         $this->courseService = $courseService;
         $this->userCourseService = $userCourseService;
         $this->examService = $examService;
         $this->userService = $userService;
         $this->subjectService = $subjectService;
+        $this->roomService = $roomService;
     }
     /**
      * Display a listing of the resource.
@@ -42,13 +48,15 @@ class CourseController extends Controller
      */
     public function index() : View
     {
-        return view('course.index');
+        $currentYear = date('Y');
+        $years = range($currentYear, 2020);
+        return view('course.index', compact('years'));
     }
 
-    public function getTable(Request $request) 
+    public function getTable(Request $request, $subjectId = null) 
     {
         $input = $request->input();
-        $courses = $this->courseService->getTable($input);
+        $courses = $this->courseService->getTable($input, $subjectId);
         return response()->json($courses);
     }
     /**
@@ -71,7 +79,8 @@ class CourseController extends Controller
      */
     public function store(CreateUpdateCourseRequest $request)
     {
-        $resp = $this->courseService->store($request->input());
+        $input =$request->input();
+        $resp = $this->courseService->store($input);
         if($resp['data'] != null)
             return redirect('/courses')->with('success',$resp['message']);
         else 
@@ -87,7 +96,9 @@ class CourseController extends Controller
     public function show($id) : View
     {
         $course = $this->courseService->getById($id);
-        return view('course.detail', compact('course'));
+        $coursesAvailableSwitch = $this->courseService->coursesAvailableSwicth($course->id, Auth::user()->id);
+        $rooms = $this->roomService->getAll();
+        return view('course.detail', compact('course', 'coursesAvailableSwitch','rooms'));
     }
 
     /**
@@ -140,5 +151,12 @@ class CourseController extends Controller
         $status = $request->status;
         $resp = $this->courseService->changeStatus($id, $status);
         return response()->json($resp);
+    }
+
+    public function exportStudentList($id)
+    {
+      $student =$this->userCourseService->getUsersByRole($id, UserRoleContants::STUDENT);
+      $course = $this->courseService->getById($id);
+      return Excel::download(new StudentsListExport($student), $course->subject->name.' '.$course->name.' '.'students.csv');
     }
 }

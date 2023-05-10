@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Enums\StatusTypeContants;
+use App\Enums\TimeConstants;
 use App\Models\Course;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -24,16 +25,17 @@ class CourseService extends BaseService
         return Course::class;
     }
 
-    public function getTable($input)
+    public function getTable($input, $subjectId)
     {
-        $query = $this->model->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject');
-        $subjectId = isset($input['subjectId'])?$input['subjectId']:null;
+        $query = $this->model->year($input)->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject')->with('schedules', function($query){
+            $query->orderByRaw("FIELD(weekday, '".implode("', '", TimeConstants::WEEKDAY)."')");
+        });
         if($subjectId != null)
             $query = $query->where('subject_id', $subjectId);
         if(!Auth::user()->isAdministrator())
          $query = $query->whereHas('userCourse', function($query) {
             $query->where('user_id', Auth::user()->id);
-         })->where('status', StatusTypeContants::ACTIVE);
+         });
         $courses = $this->orderNSearch($input, $query);
         return $courses;
     }
@@ -53,6 +55,16 @@ class CourseService extends BaseService
             return ['data'=> null, 'message'=>"Error, please try again later!"];
         }
     }
+
+    public function coursesAvailableSwicth($courseId, $userId)
+    {
+        $course = $this->model->find($courseId);
+        return $this->model->where('id', '!=', $courseId)->where('subject_id', $course->subject_id)->where('status', StatusTypeContants::ACTIVE)->whereDoesntHave('userCourse', function($query) use($userId)
+        {
+                $query->where('user_id', $userId);
+        })->get();
+    }
+
     public function update($id, $arg){
         try{
             DB::beginTransaction();
@@ -71,5 +83,10 @@ class CourseService extends BaseService
             DB::rollBack();
             return  ['data'=> null, 'message'=>"Error, please try again later!"];
         }
+    }
+
+    public function getById($id)
+    {
+        return $this->model->with('subject')->find($id);
     }
 }

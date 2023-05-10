@@ -53,8 +53,8 @@
                                     </ul>
                                 </div>
                             </div>
-                            <a href='{{ route('users.create') }}' class="text-gray-400"><i
-                                    class="fa-solid fa-user-plus inline"></i></a>
+                            <a class="btn btn-primary rounded pb-2" href='{{ route('admin.get.users.create') }}'
+                                class="text-gray-400">New <i class="fa-solid fa-user-plus inline"></i></a>
                         </div>
                     </div>
                 </div>

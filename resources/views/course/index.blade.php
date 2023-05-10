@@ -16,15 +16,32 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div>
-                            @if (request()->query('subjectId'))
-                                <span class="text-gray-400">Subject ></span>
-                            @endif
                             Courses
                         </div>
-                        @if (Auth::User()->isAdministrator())
-                            <div class="inline"> <a href="/courses/create"><i class="fa-solid fa-file-circle-plus"></i> </a>
+                        <div class="inline">
+                            <div class='inline-block  mr-3'>
+                                {{-- filter by year --}}
+                                <select
+                                    class="form-select
+                                                    w-40 text-sm filter inline-block"
+                                    data-column="year" id="filter-year">
+                                    <option value="">
+                                        All years
+                                    </option>
+                                    @foreach ($years as $year)
+                                        <option value="{{ $year }}"
+                                            @if ($year == date('Y')) selected @endif>
+                                            {{ $year }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-                        @endif
+                            @if (Auth::User()->isAdministrator())
+                                <a href="/courses/create" class="inline btn btn-primary rounded pb-2">New <i
+                                        class="fa-solid fa-file-circle-plus"></i>
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <!-- /. ROW  -->

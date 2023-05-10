@@ -64,7 +64,7 @@ abstract class BaseService
     {
         $result = $this->model->where('id', $id)->update($arg);
         if ($result) 
-            return ['data'=>$this->model->find($id), 'message'=>"Update status successful!"];
+            return ['data'=>$this->model->find($id), 'message'=>"Update successful!"];
         return  ['data'=> null, 'message'=>"Error, please try again later!"];
     }
 

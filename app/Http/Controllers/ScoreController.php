@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MyExamTypeConstants;
+use App\Models\Exam;
 use App\Services\ScoreService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -19,14 +21,17 @@ class ScoreController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : View
+    public function index(Request $request, $examId) : View
     {
-        return view('score.index');
+        $exam = Exam::with('course.subject')->find($examId);
+        $exam->type = ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type)));
+        return view('score.index', compact('exam'));
     }
 
-    public function getTable(Request $request)
+    public function getTable(Request $request, $examId)
     {
-        $scores = $this->scoreService->getTable($request);
+        $input = $request->input();
+        $scores = $this->scoreService->getTable($input, $examId);
         return response()->json($scores);
     }
 

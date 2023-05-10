@@ -4,32 +4,40 @@ namespace App\Http\Controllers;
 
 use App\Enums\MyExamTypeConstants;
 use App\Enums\StatusTypeContants;
+use App\Services\CourseService;
 use App\Services\ExamService;
+use App\Services\ScoreService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
     protected $examService;
+    protected $courseService;
+    protected $scoreService;
 
-    public function __construct(ExamService $examService)
+    public function __construct(ExamService $examService, CourseService $courseService,ScoreService $scoreService)
     {
         $this->examService = $examService;
+        $this->courseService = $courseService;
+        $this->scoreService  = $scoreService;
     }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) :View
+    public function index(Request $request, $courseId = null) :View
     {
+        $course = $courseId===null? null :$this->courseService->getById($courseId);
         $examTypes = MyExamTypeConstants::asArray();
-        return view('exam.index', compact('examTypes'));
+        return view('exam.index', compact('examTypes','course'));
     }
 
-    public function getTable(Request $request)
+    public function getTable(Request $request, $courseId = null)
     {
-        $exams = $this->examService->getTable($request);
+        $input = $request->input();
+        $exams = $this->examService->getTable($input, $courseId);
         return response()->json($exams);
     }
 
@@ -100,5 +108,12 @@ class ExamController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function importScores(Request $request,$id)
+    {
+        $file = $request->file('file');
+        $result = $this->scoreService->importScores($id, $file);
+        return $result;
     }
 }

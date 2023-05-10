@@ -18,7 +18,7 @@
                 <hr class="mt-2 mb-3" />
                 <!-- /. ROW  -->
                 <div class="table-content relative">
-                    <form class="container" method="POST" action='{{ route('courses.store') }}' id="create">
+                    <form class="container" method="POST" action='{{ route('admin.courses.store') }}' id="create">
                         @csrf
                         <div class="form-group mt-3">
                             <label for="name" class="font-bold mb-1">Course name <span
@@ -61,6 +61,7 @@
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="form-group mt-3">
                             <label for="descriptions" class="font-bold mb-1">Descriptions <span
                                     class="text-danger">*</span></label>
@@ -80,8 +81,9 @@
     <script>
         $('.select2').select2();
         // validate form
-        const validate = (name, subject, teacher, descriptions) => {
+        const validate = (name, subject, teacher, start_time, finish_time, weekday, descriptions) => {
             $('.form-control').removeClass('is-invalid');
+
             if (!name || !subject || !teacher || !descriptions) {
                 // Missing name
                 if (!name) {

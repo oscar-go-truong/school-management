@@ -7,6 +7,7 @@ use App\Enums\UserRoleContants;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Carbon\Carbon;
 
 class CourseFactory extends Factory
 {
@@ -17,6 +18,7 @@ class CourseFactory extends Factory
      */
     public function definition()
     {
+
         return [
             'name' => $this->faker->userName(),
            'status' => StatusTypeContants::ACTIVE,

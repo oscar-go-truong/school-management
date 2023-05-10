@@ -19,6 +19,6 @@ class EnsureUserIsTeacher
     {
         if(Auth::user()->isTeacher() || Auth::user()->isAdministrator())
             return $next($request);
-        return redirect()->back();
+        return abort(404);
     }
 }

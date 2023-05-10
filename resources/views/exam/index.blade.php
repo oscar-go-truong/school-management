@@ -11,13 +11,17 @@
                 <div class="row">
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div>
-                            @if (request()->query('courseId'))
-                                <span class="text-gray-400"> Course > </span>
-                            @endif Exams
+                            Exams
+                            @if ($course)
+                                <span class="text-2xl font-normal"> - {{ $course->subject->name }}
+                                    {{ $course->name }}</span>
+                            @endif
                         </div>
-                        @if (request()->query('courseId'))
-                            <div class="inline"> <i class="fa-solid fa-file-circle-plus" data-bs-toggle="modal"
-                                    data-bs-target="#addExamModal"></i> </div>
+                        @if (
+                            (Auth::user()->isTeacher() || Auth::user()->isAdministrator()) &&
+                                Route::currentRouteName() === 'user.get.course.exams')
+                            <div class="inline btn btn-primary rounded pb-2" data-bs-toggle="modal"
+                                data-bs-target="#addExamModal">New <i class="fa-solid fa-file-circle-plus"></i> </div>
                         @endif
                     </div>
                 </div>

@@ -16,7 +16,7 @@ class CreateRequestsTable extends Migration
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_request_id');
-            $table->unsignedBigInteger('user_approve_id');
+            $table->unsignedBigInteger('user_approve_id')->nullable();
             $table->integer('type');
             $table->integer('status');
             $table->timestamps();

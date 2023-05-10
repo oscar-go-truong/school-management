@@ -31,8 +31,7 @@ class ExamSeeder extends Seeder
                 Score::insert(
                 [
                 'student_id'=> $student->user_id, 
-                'exam_id'=>$exam->id ,
-                'total' =>collect([null,1,2,3,4,5,6,7,8,9,10])->random(), 
+                'exam_id' => $exam->id,
                 'created_at'=>$course->created_at
                 ]
             );
