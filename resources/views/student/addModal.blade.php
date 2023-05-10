@@ -31,9 +31,12 @@
         $('#submit').click(function() {
             const studentId = $('#addStudentSelects').val();
             const courseId = '{{ $course->id }}';
-            if (!studentId)
+            let btn = $(this);
+            btn.attr('disabled', true);
+            if (!studentId) {
+                btn.attr('disabled', false);
                 toastr.warning('Please select student!');
-            else {
+            } else {
                 toastr.info('Adding student!');
                 $.ajax({
                     type: "POST",
@@ -52,19 +55,19 @@
                             if (resp.wait) {
                                 toastr.clear();
                                 toastr.options.timeOut = 0;
-                                toastr.options.extendedTimeOut = 0;
                                 toastr.options.closeButton = true;
-                                toastr.options.preventDuplicates = true;
                             }
                             toastr.warning(resp.message);
                         }
                         $('#addStudentModal').modal('hide');
+                        btn.attr('disabled', false);
                         toastr.options.timeOut = 600;
                         toastr.options.extendedTimeOut = 600;
 
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');
+                        btn.attr('disabled', false);
                         $('#addStudentModal').modal('hide');
                     }
                 })
@@ -87,7 +90,7 @@
             toastr.info('Updating!');
             $.ajax({
                 type: "PATCH",
-                url: '/student/changeCourse',
+                url: '/student/change-course',
                 data: data,
                 dataType: "json",
                 success: function(resp) {

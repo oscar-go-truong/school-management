@@ -17,9 +17,11 @@
                                     {{ $course->name }}</span>
                             @endif
                         </div>
-                        @if (request()->query('courseId'))
-                            <div class="inline"> <i class="fa-solid fa-file-circle-plus" data-bs-toggle="modal"
-                                    data-bs-target="#addExamModal"></i> </div>
+                        @if (
+                            (Auth::user()->isTeacher() || Auth::user()->isAdministrator()) &&
+                                Route::currentRouteName() === 'user.get.course.exams')
+                            <div class="inline btn btn-primary rounded pb-2" data-bs-toggle="modal"
+                                data-bs-target="#addExamModal">New <i class="fa-solid fa-file-circle-plus"></i> </div>
                         @endif
                     </div>
                 </div>

@@ -33,7 +33,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::prefix('/')->middleware('auth')->group(function () {
     Route::get('/', [UserController::class, 'profile'])->name('profile');
-    Route::patch('student/changeCourse', [StudentController::class, 'changeCourse'])->name('admin.change.user.course');
+    Route::patch('student/change-course', [StudentController::class, 'changeCourse'])->name('admin.change.user_course');
 
     Route::prefix('/users/')->middleware('auth.admin')->group(function () {
         Route::patch('status/{id}', [UserController::class, 'changeStatus'])->name('admin.change.user.status');
@@ -49,8 +49,8 @@ Route::prefix('/')->middleware('auth')->group(function () {
     
     Route::prefix('/courses/')->group(function () {
         Route::get('/', [CourseController::class, 'index'])->name('user.get.courses.index');
+        Route::post('/', [CourseController::class, 'store'])->name('admin.courses.store')->middleware('auth.admin');
         Route::get('create', [CourseController::class, 'create'])->name('admin.get.courses.create')->middleware('auth.admin');
-        Route::post('/courses', [CourseController::class, 'store'])->name('admin.courses.store')->middleware('auth.admin');
         Route::get('table', [CourseController::class, 'getTable'])->name('user.get.courses.table');
         Route::get('{course}', [CourseController::class, 'show'])->name('user.get.courses.show');
         Route::get('{course}/edit', [CourseController::class, 'edit'])->name('admin.get.courses.edit')->middleware('auth.admin');
@@ -64,6 +64,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('{id}/students/table', [StudentController::class, 'getTable'])->name('user.get.course.students.table');
         Route::get('{id}/exams', [ExamController::class, 'index'])->name('user.get.course.exams');
         Route::get('{id}/exams/table', [ExamController::class, 'getTable'])->name('user.get.course.exams.table');
+        Route::get('{id}/students-list/export', [CourseController::class, 'exportStudentList'])->name('export.student.list');
     });
   
     Route::prefix('/subjects/')->group(function () {
@@ -83,6 +84,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('table', [ExamController::class, 'getTable'])->name('user.get.exam.table');
         Route::get('{id}/scores', [ScoreController::class, 'index'])->name('user.get.score');
         Route::get('{id}/scores/table', [ScoreController::class, 'getTable'])->name('user.get.score.table');
+        Route::post('{id}/scores/import-file', [ExamController::class, 'importScores'])->name('user.import.data.score');
       });
     Route::resource('exams', ExamController::class);
 
@@ -91,12 +93,13 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::patch('status/{id}',[RequestController::class, 'changeStatus'])->name('admin.change.request.status')->middleware('auth.admin');
         Route::patch('{id}/reject', [RequestController::class, 'reject'])->name('admin.reject.request')->middleware('auth.admin');
         Route::patch('{id}/approve', [RequestController::class, 'approve'])->name('admin.approve.request')->middleware('auth.admin');
-        Route::post('reviewScore', [RequestController::class, 'storerReviewScoreRequest'])->name('student.creae.review.score.request');
+        Route::post('review-score', [RequestController::class, 'storeReviewScoreRequest'])->name('student.create.review_score_request');
+        Route::post('switch-course', [RequestController::class, 'storeSwitchCourseRequest'])->name('student.create.switch_course_request');
+        Route::post('booking-room', [RequestController::class, 'storeBookingRoomRequest'])->name('hoomroom_teacher.create.booking_room.request');
       });
     Route::resource('requests', RequestController::class);
 
     Route::prefix('/schedules/')->group(function () {
         Route::get('/', [ScheduleController::class, 'index'])->name('user.get.schedule.index');
       });
-
 });

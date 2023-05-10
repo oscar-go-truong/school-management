@@ -55,6 +55,16 @@ class CourseService extends BaseService
             return ['data'=> null, 'message'=>"Error, please try again later!"];
         }
     }
+
+    public function coursesAvailableSwicth($courseId, $userId)
+    {
+        $course = $this->model->find($courseId);
+        return $this->model->where('id', '!=', $courseId)->where('subject_id', $course->subject_id)->where('status', StatusTypeContants::ACTIVE)->whereDoesntHave('userCourse', function($query) use($userId)
+        {
+                $query->where('user_id', $userId);
+        })->get();
+    }
+
     public function update($id, $arg){
         try{
             DB::beginTransaction();

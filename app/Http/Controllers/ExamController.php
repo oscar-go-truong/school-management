@@ -6,6 +6,7 @@ use App\Enums\MyExamTypeConstants;
 use App\Enums\StatusTypeContants;
 use App\Services\CourseService;
 use App\Services\ExamService;
+use App\Services\ScoreService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -13,11 +14,13 @@ class ExamController extends Controller
 {
     protected $examService;
     protected $courseService;
+    protected $scoreService;
 
-    public function __construct(ExamService $examService, CourseService $courseService)
+    public function __construct(ExamService $examService, CourseService $courseService,ScoreService $scoreService)
     {
         $this->examService = $examService;
         $this->courseService = $courseService;
+        $this->scoreService  = $scoreService;
     }
     /**
      * Display a listing of the resource.
@@ -105,5 +108,12 @@ class ExamController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function importScores(Request $request,$id)
+    {
+        $file = $request->file('file');
+        $result = $this->scoreService->importScores($id, $file);
+        return $result;
     }
 }

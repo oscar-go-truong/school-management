@@ -19,6 +19,6 @@ class EnsureUserIsAdmin
     {
         if(Auth::user()->isAdministrator())
             return $next($request);
-        return redirect()->back();
+        return abort(404);
     }
 }

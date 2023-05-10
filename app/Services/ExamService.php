@@ -9,7 +9,9 @@ use App\Models\Exam;
 use App\Models\Request;
 use App\Models\Score;
 use App\Models\UserCourse;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExamService extends BaseService
 {
@@ -38,14 +40,14 @@ class ExamService extends BaseService
         foreach ($exams as $exam) {
             $exam->type = MyExamTypeConstants::getKey($exam->type);
             $exam->wasRequestedByUser = Request::where('user_request_id', $user->id)->where('status',RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
+            $exam->wasApprovedRequestedByAdmin = Request::where('user_request_id', $user->id)->where('status',RequestStatusContants::APPROVED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
         }
         return $exams;
     }
     public function store($input) {
-        $exam= $this->model->create($input);
-        $resp = ['data' => $exam,'message' => ''];
-        if($exam)
-        {
+        try{
+            DB::beginTransaction();
+            $exam= $this->model->create($input);
             $userCourses = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
                 $query->where('role', UserRoleContants::STUDENT);
             })->get();;
@@ -55,9 +57,12 @@ class ExamService extends BaseService
                     'exam_id' => $exam->id
                 ]);
             }
-            $resp['message'] = 'Create successful!';  
+            DB::commit();
+        return ['data' => $exam,'message' => 'Create successful!'];
+        } catch(Exception $e) 
+        {
+            DB::rollBack();
+            return ['data' => null,'message' => 'Error, please try again later!'];
         }
-        $resp['error'] = 'Error, please try again later!'; 
-        return $resp;
     }
 }

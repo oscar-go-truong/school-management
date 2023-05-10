@@ -37,9 +37,9 @@
                                 </select>
                             </div>
                             @if (Auth::User()->isAdministrator())
-                                <div class="inline"> <a href="/courses/create"><i class="fa-solid fa-file-circle-plus"></i>
-                                    </a>
-                                </div>
+                                <a href="/courses/create" class="inline btn btn-primary rounded pb-2">New <i
+                                        class="fa-solid fa-file-circle-plus"></i>
+                                </a>
                             @endif
                         </div>
                     </div>

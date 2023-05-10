@@ -31,9 +31,12 @@
         $('#submit').click(function() {
             const examtypeId = $('#addExamSelects').val();
             const courseId = '{{ request()->query('courseId') }}';
-            if (!examtypeId)
+            let btn = $(this);
+            btn.attr('disabled', true);
+            if (!examtypeId) {
                 toastr.warning('Please select exam!');
-            else {
+                btn.attr('disabled', false);
+            } else {
                 toastr.info('Adding exam!');
                 $.ajax({
                     type: "POST",
@@ -50,10 +53,12 @@
                         } else
                             toastr.error('Error, please try again later!');
                         $('#addExamModal').modal('hide');
+                        btn.attr('disabled', false);
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');
                         $('#addExamModal').modal('hide');
+                        btn.attr('disabled', false);
                     }
                 })
             }

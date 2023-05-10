@@ -37,20 +37,48 @@
                                     </p>
                                     </span>
                                 </div>
+                                @if ($course->status === 1)
+                                    <div id="btns">
+                                        @if (Auth::user()->isTeacher() || Auth::user()->isAdministrator())
+                                            <button type="button" class="btn bg-info" id="export">Export student list
+                                            </button>
+                                        @endif
+                                        @if (Auth::user()->isStudent())
+                                            <button type="button" class="btn bg-primary" id="switch"
+                                                data-bs-toggle="modal" data-bs-target="#switchCourseModal">Switch
+                                                course</button>
+                                            @include('course.switchCourseModal')
+                                        @elseif (Auth::user()->id === $course->owner_id)
+                                            <button type="button" class="btn bg-primary" id="bookingRoom"
+                                                data-bs-toggle="modal" data-bs-target="#bookingRoomModal">Booking
+                                                room</button>
+                                            @include('course.bookingRoomModal')
+                                        @endif
+                                    </div>
+                                @endif
                             </div><!-- / column -->
-
-
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
-
-
             <!-- /. PAGE INNER  -->
         </div>
         <!-- /. PAGE WRAPPER  -->
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#export').click(function() {
+                const id = '{{ $course->id }}';
+                toastr.clear();
+                toastr.options.timeOut = 0;
+                toastr.options.closeButton = true;
+                toastr.info(`<div class="z-10">
+                    <div class="mb-10">Are you sure is you want to export students list!</b></div>
+                    <div class="d-flex justify-content-center">
+                        <button class="btn btn-secondary mr-3">No</button> 
+                        <a href="/courses/${id}/students-list/export"><button class="btn btn-success ml-3" '>Yes</button></div><a/>
+                    </div>`);
+            })
+        })
+    </script>
 @endsection

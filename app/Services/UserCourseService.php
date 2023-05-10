@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StatusTypeContants;
 use App\Enums\UserRoleContants;
 use App\Models\Course;
 use App\Models\Schedule;
@@ -20,10 +21,17 @@ class UserCourseService extends BaseService
         $query = $this->model->where('course_id', $courseId)->whereHas('user', function ($query) use ($role) {
             $query->where('role', $role);
         })->with('user');
-        $teachers = $this->orderNSearch($request, $query);
-        return $teachers;
+        $data = $this->orderNSearch($request, $query);
+        return $data;
     }
 
+    public function getUsersByRole($courseId, $role)
+    {
+        $data = $this->model->where('course_id', $courseId)->whereHas('user', function ($query) use ($role) {
+            $query->where('role', $role);
+        })->with('user')->get();
+        return $data;
+    }
     public function checkUserWasJoinedCourse($user_id, $course_id) 
     {
         return $this->model->where('user_id',$user_id)->where('course_id',$course_id)->count();
@@ -42,7 +50,9 @@ class UserCourseService extends BaseService
         $courseSchedules = Schedule::where('course_id', $course->id)->get();
         foreach($userCourses as $userCourse)
         {
-            $schedules = Schedule::where('course_id', $userCourse->course_id)->get();
+            $schedules = Schedule::where('course_id', $userCourse->course_id)->whereHas('course',function($query){
+                $query->where('status', StatusTypeContants::ACTIVE);
+            })->get();
             foreach($schedules as $schedule)
             {
                 foreach($courseSchedules as $courseSchedule)

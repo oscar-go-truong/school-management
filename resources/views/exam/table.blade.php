@@ -62,7 +62,7 @@
                     </td>`);
         if (isStudent)
             row.append(
-                `<td class="${exam.wasRequestedByUser !== 0 ? "":"text-primary"} text-center request-btn">${exam.wasRequestedByUser !== 0 ? 'Pending' : `<i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course.name}' data-subjectName='${exam.course.subject.name}' data-type='${exam.type}'></i>` }</td>`
+                `<td class="${exam.wasRequestedByUser !== 0 ? "":exam.wasApprovedRequestedByAdmin !==0 ? "text-success":"text-primary"} text-center request-btn">${exam.wasRequestedByUser !== 0 ? 'Request pending' :exam.wasApprovedRequestedByAdmin?"Aprroved": `<i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course.name}' data-subjectName='${exam.course.subject.name}' data-type='${exam.type}'></i>` }</td>`
             );
         return row;
     }
@@ -71,9 +71,9 @@
         toastr.info('Creating request!');
         $.ajax({
             method: 'POST',
-            url: '/requests/reviewScore',
+            url: '/requests/review-score',
             data: {
-                examId: examId
+                exam_id: examId
             },
             dataType: 'json',
             success: function(resp) {
@@ -99,9 +99,7 @@
         const type = btn.data('type');
         toastr.clear();
         toastr.options.timeOut = 0;
-        toastr.options.extendedTimeOut = 0;
         toastr.options.closeButton = true;
-        toastr.options.preventDuplicates = true;
         toastr.info(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to create request reivew ${subjectName + " " + courseName + " " + type}  exam score!</b></div>
                     <div class="d-flex justify-content-center">

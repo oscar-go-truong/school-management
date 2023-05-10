@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
+use App\Http\Requests\CreateBookingRoomRequestRequest;
+use App\Http\Requests\CreateReviewScoreRequestRequest;
+use App\Http\Requests\CreateSwitchCourseRequestRequest;
 use App\Services\RequestService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -94,12 +97,27 @@ class RequestController extends Controller
         return response()->json($resp);
     }
 
-    public function storerReviewScoreRequest(Request $request)
+    public function storeReviewScoreRequest(CreateReviewScoreRequestRequest $request)
     {
         $input = $request->input();
-        $resp = $this->requestService->storerReviewScoreRequest($input);
+        $resp = $this->requestService->storeReviewScoreRequest($input);
         return response()->json($resp);
     }
+
+    public function storeSwitchCourseRequest(CreateSwitchCourseRequestRequest $request)
+    {
+        $input = $request->input();
+        $resp = $this->requestService->storeSwitchcCourseRequest($input);
+        return response()->json($resp);
+    }
+
+    public function storeBookingRoomRequest(CreateBookingRoomRequestRequest $request)
+    {
+        $input = $request->input();
+        $resp = $this->requestService->storeBookingRoomRequest($input);
+        return response()->json($resp);
+    }
+
 
     /**
      * Show the form for editing the specified resource.

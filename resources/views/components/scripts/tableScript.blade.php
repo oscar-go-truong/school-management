@@ -223,9 +223,7 @@
             const id = $(this).data('id');
             toastr.clear();
             toastr.options.timeOut = 0;
-            toastr.options.extendedTimeOut = 0;
             toastr.options.closeButton = true;
-            toastr.options.preventDuplicates = true;
             toastr.warning(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to delete ${model} <b>${name}!</b></div>
                     <div class="d-flex justify-content-center">

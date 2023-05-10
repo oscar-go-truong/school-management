@@ -12,9 +12,9 @@
                     <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
                         <div class="inline"> Teachers <span class="text-2xl font-normal"> - {{ $course->subject->name }}
                                 {{ $course->name }}</span></div>
-                        @if (Auth::user()->isAdministrator())
-                            <div class="inline"> <i class="fa-solid fa-user-plus" data-bs-toggle="modal"
-                                    data-bs-target="#addTeacherModal"></i> </div>
+                        @if (Auth::user()->isAdministrator() && $course->status === 1)
+                            <div class="inline btn btn-primary rounded pb-2" data-bs-toggle="modal"
+                                data-bs-target="#addTeacherModal">New <i class="fa-solid fa-user-plus"></i> </div>
                         @endif
                     </div>
                 </div>
