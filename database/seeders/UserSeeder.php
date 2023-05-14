@@ -20,42 +20,48 @@ class UserSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        DB::table('users')->insert([
+        $admin = User::create([
             'username' => 'admin',
             'fullname' => 'admin',
             'email' => 'admin@gmail.com',
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::ADMIN,
             'password' => Hash::make('password'),
             'phone' => $faker->phoneNumber(),
             'mobile' => $faker->phoneNumber(),
             'address' => $faker->address()
         ]);
-        DB::table('users')->insert([
+        $admin->assignRole('admin');
+        $teacher = User::create([
             'username' => 'teacher',
             'fullname' => 'teacher',
             'email' => 'teacher@gmail.com',
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::TEACHER,
             'password' => Hash::make('password'),
             'phone' => $faker->phoneNumber(),
             'mobile' => $faker->phoneNumber(),
             'address' => $faker->address()
         ]);
-        DB::table('users')->insert([
+        $teacher->assignRole('teacher');
+        $student = User::create([
             'username' => 'student',
             'fullname' => 'student',
             'email' => 'student@gmail.com',
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT,
             'password' => Hash::make('password'),
             'phone' => $faker->phoneNumber(),
             'mobile' => $faker->phoneNumber(),
             'address' => $faker->address()
         ]);
-        
+        $student->assignRole('student');
     User::factory()
             ->count(100)
             ->create();
+    $users = User::whereNotIn('id',[1,2,3])->get();
+    foreach($users as $user)
+    {
+        $role = collect(['admin', 'teacher', 'student'])->random();
+        $user->assignRole($role);
     }
+    }
+    
 }

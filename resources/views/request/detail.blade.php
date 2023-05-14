@@ -1,60 +1,51 @@
 @extends('components.layout')
 @section('content')
-    <div id="wrapper">
-        <div id="page-wrapper">
-            <div id="page-inner">
-                <div class="row">
-                    <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-                        <div> Request - <span class="text-2xl font-normal">Booking room</span></div>
-                    </div>
-                </div>
-                <!-- /. ROW  -->
-                <hr class="mt-2 mb-3" />
-                <!-- /. ROW  -->
-                <div class="table-content">
+    <div class="row">
+        <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
+            <div> Request - <span class="text-2xl font-normal">@yield('type-name')</span></div>
+        </div>
+    </div>
+    <!-- /. ROW  -->
+    <hr class="mt-2 mb-3" />
+    <!-- /. ROW  -->
+    <div class="table-content">
 
-                    <div class="container mt-3">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="{{ asset('img/request.jpg') }}" alt="request-image" class="rounded">
-                                <div class="request-info-box">
-                                </div><!-- / request-info-box -->
-                            </div><!-- / column -->
-                            <div class="col-md">
-                                <div class="request-info-box mt-0 mb-3">
-                                    <h5 class="pb-1"><b>REQUEST DETAILS</b></h5>
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="{{ asset('img/request.jpg') }}" alt="request-image" class="rounded">
+                    <div class="request-info-box">
+                    </div><!-- / request-info-box -->
+                </div><!-- / column -->
+                <div class="col-md">
+                    <div class="request-info-box mt-0 mb-3">
+                        <h5 class="pb-1"><b>REQUEST DETAILS</b></h5>
 
-                                </div><!-- / request-info-box -->
+                    </div><!-- / request-info-box -->
 
-                                @yield('request-content')
-                                @if ($request->status === $status['PENDING'])
-                                    @if (Auth::User()->isAdministrator())
-                                        <div id="btns">
-                                            <button type="button" class="btn bg-success" id="approve"
-                                                data-id="{{ $request->id }}">Aprrove</button>
-                                            <button type="button" class="btn bg-danger" id="reject"
-                                                data-id="{{ $request->id }}">Reject</button>
-                                        </div>
-                                    @else
-                                        <div class="bg-primary text-white text-center"> Pending</div>
-                                    @endif
-                                @elseif ($request->status === $status['APPROVED'])
-                                    <div class="bg-success text-white text-center"> Approved</div>
-                                @elseif ($request->status === $status['REJECTED'])
-                                    <div class="bg-danger text-white text-center">Rejected</div>
-                                @endif
+                    @yield('request-content')
+                    @if ($request->status === $status['PENDING'])
+                        @role('admin')
+                            <div id="btns">
+                                <button type="button" class="btn bg-success" id="approve"
+                                    data-id="{{ $request->id }}">Aprrove</button>
+                                <button type="button" class="btn bg-danger" id="reject"
+                                    data-id="{{ $request->id }}">Reject</button>
                             </div>
-
-
-                        </div>
-                    </div>
-
+                        @else
+                            <div class="bg-primary text-white text-center"> Pending</div>
+                        @endrole
+                    @elseif ($request->status === $status['APPROVED'])
+                        <div class="bg-success text-white text-center"> Approved</div>
+                    @elseif ($request->status === $status['REJECTED'])
+                        <div class="bg-danger text-white text-center">Rejected</div>
+                    @endif
                 </div>
+
 
             </div>
-            <!-- /. PAGE INNER  -->
         </div>
-        <!-- /. PAGE WRAPPER  -->
+
     </div>
     <script>
         const reject = (id) => {
@@ -103,6 +94,7 @@
                 const id = $(this).data('id');
                 toastr.clear();
                 toastr.options.timeOut = 0;
+                toastr.options.extendedTimeOut = 0;
                 toastr.options.closeButton = true;
                 toastr.warning(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to reject this request!</b></div>
@@ -118,6 +110,7 @@
                 const id = $(this).data('id');
                 toastr.clear();
                 toastr.options.timeOut = 0;
+                toastr.options.extendedTimeOut = 0;
                 toastr.options.closeButton = true;
                 toastr.info(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to approve this request!</b></div>

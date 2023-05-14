@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
 use App\Http\Requests\CreateBookingRoomRequestRequest;
+use App\Http\Requests\CreateEditExamsScoresRequesRequest;
 use App\Http\Requests\CreateReviewScoreRequestRequest;
 use App\Http\Requests\CreateSwitchCourseRequestRequest;
 use App\Services\RequestService;
@@ -75,12 +76,12 @@ class RequestController extends Controller
         $request = $this->requestService->getById($id);
         $content = (object) $this->requestService->getContent($id);
         $status = RequestStatusContants::asArray();
-        if($request->type === RequestTypeContants::BOOK_ROOM_OR_LAB)
-            return view('request.bookingRoomRequestDetail', compact('request', 'content','status'));
-        else if($request->type === RequestTypeContants::REVIEW_GRADES)
+        if($request->type === RequestTypeContants::REVIEW_GRADES)
             return view('request.reviewScoreRequestDetail', compact('request', 'content','status'));
         else if($request->type === RequestTypeContants::SWITCH_COURSE)
             return view('request.switchCourseRequestDetail', compact('request', 'content','status'));
+        else if($request->type === RequestTypeContants::EDIT_EXAMS_SCORES)
+            return view('request.editExamScoresRequestDetail', compact('request', 'content','status'));
         else 
             return redirect()->back();
     }
@@ -111,14 +112,12 @@ class RequestController extends Controller
         return response()->json($resp);
     }
 
-    public function storeBookingRoomRequest(CreateBookingRoomRequestRequest $request)
+    public function storeEditExamScoresRequest(CreateEditExamsScoresRequesRequest $request)
     {
         $input = $request->input();
-        $resp = $this->requestService->storeBookingRoomRequest($input);
+        $resp = $this->requestService->storeEditExamScoresRequest($input);
         return response()->json($resp);
     }
-
-
     /**
      * Show the form for editing the specified resource.
      *

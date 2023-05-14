@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\PaginationContants;
+use App\Enums\StatusTypeContants;
 
 abstract class BaseService
 {
@@ -18,6 +19,11 @@ abstract class BaseService
     public function getAll()
     {
         return $this->model->all();
+    }
+
+    public function getAllActive()
+    {
+        return $this->model->where('status', StatusTypeContants::ACTIVE)->get();
     }
 
     public function changeStatus($id, $status)

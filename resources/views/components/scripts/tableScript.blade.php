@@ -7,6 +7,7 @@
         // hidden data on table
         toastr.clear();
         toastr.info('Loading, please wait...');
+        $('#loading').attr('hidden', false);
         $(tableId).hide();
         $('#paginations').hide();
         // active current page 
@@ -77,12 +78,13 @@
                                         </span>`);
                 }
                 toastr.clear();
-                toastr.success('Done!');
+                $('#loading').attr('hidden', true);
             },
             error: function() {
                 $(tableId).show();
                 toastr.clear();
                 toastr.error('Error, Please try again later!');
+                $('#loading').attr('hidden', true);
             }
         });
     }
@@ -223,6 +225,7 @@
             const id = $(this).data('id');
             toastr.clear();
             toastr.options.timeOut = 0;
+            toastr.options.extendedTimeOut = 0;
             toastr.options.closeButton = true;
             toastr.warning(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to delete ${model} <b>${name}!</b></div>

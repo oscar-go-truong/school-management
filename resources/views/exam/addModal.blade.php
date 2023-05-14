@@ -30,7 +30,7 @@
     $(document).ready(function() {
         $('#submit').click(function() {
             const examtypeId = $('#addExamSelects').val();
-            const courseId = '{{ request()->query('courseId') }}';
+            const courseId = "{{ request()->query('courseId') }}";
             let btn = $(this);
             btn.attr('disabled', true);
             if (!examtypeId) {

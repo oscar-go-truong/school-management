@@ -61,14 +61,14 @@ class Course extends Model
     public function teachers()
     {
         return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {
-            $query->where('role', UserRoleContants::TEACHER);
+            $query->role('teacher');
         });
     }
 
     public function students()
     {
         return $this->hasMany(UserCourse::class)->whereHas('user', function ($query) {
-            $query->where('role', UserRoleContants::STUDENT);
+            $query->role('student');
         });
     }
 

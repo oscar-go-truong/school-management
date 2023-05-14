@@ -23,13 +23,13 @@ class TeacherController extends Controller
         $this->userService = $userService;
     }
     public function index($courseId){
-        $teachers = $this->userService->getUserCanJoinToCourseByRole($courseId,UserRoleContants::TEACHER);
+        $teachers = $this->userService->getUserCanJoinToCourseByRole($courseId,'teacher');
         $course = $this->courseService->getById($courseId);
         return view('teacher.index', compact('courseId','course','teachers'));
     }
 
     public function getTable(Request $request, $courseId){
-        $teachers = $this->userCourseService->getTable($request, $courseId, UserRoleContants::TEACHER);
+        $teachers = $this->userCourseService->getTable($request, $courseId, 'teacher');
         return $teachers;
     }
 

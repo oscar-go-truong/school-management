@@ -5,8 +5,8 @@
         <th class="sort sorting" data-column="username">Username</th>
         <th class="sort sorting" data-column="fullname">Full name</th>
         <th class="sort sorting" data-column="email">Email</th>
-        <th class="sort sorting" data-column="role">Role</th>
-        <th class="sort sorting" data-column="status">Status</th>
+        <th>Role</th>
+        <th>Status</th>
         <th>Update</th>
         <th>Delete</th>
     </tr>

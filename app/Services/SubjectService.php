@@ -17,7 +17,7 @@ class SubjectService extends BaseService
     {
         $user = Auth::user();
         $query = $this->model;
-        if(!$user->isAdministrator())
+        if(!$user->hasRole('admin'))
          $query = $query->whereHas('course.userCourse', function($query) use ($user) {
             $query->where('user_id', $user->id);
          })->withCount(['course' => function($query) use ($user){

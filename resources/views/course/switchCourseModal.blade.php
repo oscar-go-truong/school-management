@@ -10,9 +10,9 @@
                     <label for="switchCourseFormControlSelect1">Select courses:</label>
                     <select class="form-control select2" id="switchCourseSelects">
                         <option value="" id="selectDefault">-- Select course --</option>
-                        @foreach ($coursesAvailableSwitch as $course)
-                            <option value="{{ $course->id }}" id="course-{{ $course->id }}">
-                                {{ $course->name }}
+                        @foreach ($coursesAvailableSwitch as $availableCourse)
+                            <option value="{{ $availableCourse->id }}" id="course-{{ $availableCourse->id }}">
+                                {{ $availableCourse->name }}
                             </option>
                         @endforeach
 
@@ -48,8 +48,12 @@
                     success: function(resp) {
                         if (resp.data) {
                             toastr.success(resp.message);
+                            $('#modal-trigger').hide();
+                            $('#switch-course-btn').empty().append(
+                                '<div class="text-white bg-primary p-2">Requesting to change course...</div>'
+                            )
                         } else {
-                            toastr.warning(resp.message);
+                            toastr.error(resp.message);
                         }
                         $('#switchCourseModal').modal('hide');
                         btn.attr('disabled', false);

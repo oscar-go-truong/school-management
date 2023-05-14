@@ -10,6 +10,7 @@ use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -23,18 +24,17 @@ class UserController extends Controller
     // Render profile view.
     public function profile()
     {
-        $user =$this->userService->getById(Auth::User()->id);
-        $user->role = UserRoleContants::getKey($user->role);
+        $user =$this->userService->getById(Auth::User()->id);;
         return view('auth.profile', compact('user'));
     }
 
     // Render all user
     public function index()
     {
-        $role = UserRoleContants::asArray();
+        $roles = Role::all();
         $status = StatusTypeContants::asArray();
         $searchColumns = SearchColumnContants::USER;
-        return view('user.index', compact('role', 'status', 'searchColumns'));
+        return view('user.index', compact('roles', 'status', 'searchColumns'));
     }
     // Get table data
     public function getTable(Request $request)
@@ -59,7 +59,7 @@ class UserController extends Controller
     // Render create user form
     public function create()
     {
-        return view('user.create', ['role' => UserRoleContants::asArray()]);
+        return view('user.create', ['roles' => Role::all()]);
     }
     // Store user
     public function store(CreateUpdateUserRequest $request)
@@ -72,7 +72,7 @@ class UserController extends Controller
     {
         $user = $this->userService->getById($id);
         if ($user) 
-            return view('user.update', ['role' => UserRoleContants::asArray(), 'user' => $user]);
+            return view('user.update', ['roles' => Role::all(), 'user' => $user]);
        return redirect()->back()->with('error', "User was deleted!");
         
     }

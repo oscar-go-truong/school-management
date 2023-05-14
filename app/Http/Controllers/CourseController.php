@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TimeConstants;
 use App\Enums\UserRoleContants;
 use App\Exports\StudentsListExport;
 use App\Http\Requests\CreateUpdateCourseRequest;
@@ -53,10 +54,10 @@ class CourseController extends Controller
         return view('course.index', compact('years'));
     }
 
-    public function getTable(Request $request, $subjectId = null) 
+    public function getTable(Request $request) 
     {
         $input = $request->input();
-        $courses = $this->courseService->getTable($input, $subjectId);
+        $courses = $this->courseService->getTable($input);
         return response()->json($courses);
     }
     /**
@@ -66,9 +67,10 @@ class CourseController extends Controller
      */
     public function create() : View
     {
-        $teachers = $this->userService->getByRole(UserRoleContants::TEACHER);
+        $teachers = $this->userService->getByRole('teacher');
         $subjects = $this->subjectService->getAll();
-        return view('course.create', compact('teachers','subjects'));
+        $weekdays = TimeConstants::WEEKDAY;
+        return view('course.create', compact('teachers','subjects','weekdays'));
     }
 
     /**
@@ -109,7 +111,7 @@ class CourseController extends Controller
      */
     public function edit($id) : View
     {
-        $teachers = $this->userService->getByRole(UserRoleContants::TEACHER);
+        $teachers = $this->userService->getByRole('teacher');
         $subjects = $this->subjectService->getAll();
         $course = $this->courseService->getById($id);
         return view('course.update', compact('course','teachers','subjects'));
@@ -155,7 +157,7 @@ class CourseController extends Controller
 
     public function exportStudentList($id)
     {
-      $student =$this->userCourseService->getUsersByRole($id, UserRoleContants::STUDENT);
+      $student =$this->userCourseService->getUsersByRole($id, 'student');
       $course = $this->courseService->getById($id);
       return Excel::download(new StudentsListExport($student), $course->subject->name.' '.$course->name.' '.'students.csv');
     }

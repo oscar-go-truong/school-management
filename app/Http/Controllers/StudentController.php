@@ -31,12 +31,12 @@ class StudentController extends Controller
     }
     public function index($courseId){
         $course = $this->courseService->getById($courseId);
-        $students = $this->userService->getUserCanJoinToCourseByRole($courseId, UserRoleContants::STUDENT);
+        $students = $this->userService->getUserCanJoinToCourseByRole($courseId, 'student');
         return view('student.index', compact('courseId','course','students'));
     }
 
     public function getTable(Request $request, $courseId){
-        $students = $this->userCourseService->getTable($request, $courseId, UserRoleContants::STUDENT);
+        $students = $this->userCourseService->getTable($request, $courseId, 'student');
         return $students;
     }
 

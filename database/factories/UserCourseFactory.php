@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\UserCourse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\StatusTypeContants;
 use App\Enums\UserRoleContants;
@@ -16,9 +17,13 @@ class UserCourseFactory extends Factory
      */
     public function definition()
     {
+        do{
+            $userId = User::role('student')->inRandomOrder()->first()->id;
+            $courseId = Course::all()->random()->id;
+        } while(UserCourse::where('user_id', $userId)->where('course_id', $courseId)->count());
         return [
-            'user_id' => User::where('role',UserRoleContants::STUDENT)->inRandomOrder()->first()->id,
-            'course_id' => Course::all()->random()->id,
+            'user_id' => $userId,
+            'course_id' => $courseId,
             'status' => StatusTypeContants::getRandomValue(),
         ];
     }

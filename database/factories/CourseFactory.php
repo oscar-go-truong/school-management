@@ -23,7 +23,7 @@ class CourseFactory extends Factory
             'name' => $this->faker->userName(),
            'status' => StatusTypeContants::ACTIVE,
             'descriptions' => $this->faker->sentence(),
-          'owner_id' => User::where('role', UserRoleContants::TEACHER)
+          'owner_id' => User::role('teacher')
           ->get()->random()->id,
           'subject_id' => Subject::all()->random()->id,
         ];

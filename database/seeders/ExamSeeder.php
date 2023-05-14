@@ -23,7 +23,7 @@ class ExamSeeder extends Seeder
         foreach($exams as $exam) 
         {
             $students = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
-                $query->where('role', UserRoleContants::STUDENT);
+                $query->role('student');
             })->get();
             foreach($students as $student)
             {

@@ -5,26 +5,24 @@
         <th>Subject</th>
         <th>Course</th>
         <th>Exam type</th>
-        @if (Auth::User()->isStudent())
+        @role('student')
             <th>My score</th>
-        @endif
+        @endrole
         <th class="text-center">Scores</th>
         <th>Created at</th>
-        @if (Auth::user()->isAdministrator())
-            <th>Status</th>
-        @endif
-        @if (Auth::User()->isStudent())
+        @role('student')
             <th class="text-center">Request review score</th>
-        @endif
+        @endrole
     </tr>
 @endsection
 @section('tableId', 'course-examsTable')
 <script>
     const model = 'course-exam';
     const tableId = '#course-examsTable';
-    const url = '/' + '{{ Request::path('/') }}' + '/table';
-    const isStudent = '{{ Auth::User()->isStudent() }}';
-    const isAdmin = '{{ Auth::User()->isAdministrator() }}';
+    const courseId = "{{ Request::get('courseId') }}";
+    const url = '/exams/table';
+    const isStudent = '{{ Auth::User()->hasRole('student') }}';
+    const isAdmin = '{{ Auth::User()->hasRole('admin') }}';
     let queryData = {
         page: 1,
         orderBy: 'id',
@@ -32,6 +30,7 @@
         search: null,
         role: [],
         status: null,
+        courseId: courseId ? courseId : null
     };
     let last_page = 1;
     // end config
@@ -44,25 +43,16 @@
         row.append(`<td>${ exam.course.name }</td>`);
         row.append(`<td>${ exam.type }</td>`);
         if (isStudent)
-            row.append(`<td>${exam.score[0] ? exam.score[0].total : ""}</td>`);
+            row.append(`<td>${exam.score[0].total}</td>`);
         row.append(
-            ` <td class="text-center text-secondary"><a href="/exams/${exam.id}/scores">${exam.score_count}</a></td>`
+            ` <td class="text-center text-secondary"><a href="/exams/${exam.id}/scores"><i class="fa-sharp fa-solid fa-circle-info"></i></a></td>`
         );
         row.append(
             `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
-        if (isAdmin)
-            row.append(`<td><div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="${ exam.id }"
-                    data-id="${ exam.id }" ${ exam.status === 1 ? 'checked' : '' }>
-                    <label class="form-check-label" for="${ exam.id }">
-                    ${ exam.status === 1 ? 'active' : 'blocked' }
-                    </label>
-                    </div>
-                    </td>`);
         if (isStudent)
             row.append(
-                `<td class="${exam.wasRequestedByUser !== 0 ? "":exam.wasApprovedRequestedByAdmin !==0 ? "text-success":"text-primary"} text-center request-btn">${exam.wasRequestedByUser !== 0 ? 'Request pending' :exam.wasApprovedRequestedByAdmin?"Aprroved": `<i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course.name}' data-subjectName='${exam.course.subject.name}' data-type='${exam.type}'></i>` }</td>`
+                `<td class="${exam.wasApprovedRequestedByAdmin !==0 ? "text-success":"text-primary"} text-center" id="request-btn-${exam.id}">${exam.wasRequestedByUser !== 0 ? 'Request pending' :exam.wasApprovedRequestedByAdmin?"Aprroved": `<i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course.name}' data-subjectName='${exam.course.subject.name}' data-type='${exam.type}'></i>` }</td>`
             );
         return row;
     }
@@ -79,7 +69,7 @@
             success: function(resp) {
                 if (resp.data) {
                     toastr.success(resp.message);
-                    $('#exam-' + examId + '.request-btn').html('Requested');
+                    $('#request-btn-' + examId).html('Request pending');
                 } else {
                     toastr.error(resp.message);
                 }
@@ -99,6 +89,7 @@
         const type = btn.data('type');
         toastr.clear();
         toastr.options.timeOut = 0;
+        toastr.options.extendedTimeOut = 0;
         toastr.options.closeButton = true;
         toastr.info(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to create request reivew ${subjectName + " " + courseName + " " + type}  exam score!</b></div>

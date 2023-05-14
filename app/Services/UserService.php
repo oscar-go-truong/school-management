@@ -17,37 +17,50 @@ class UserService extends BaseService
     public function getTable($input)
     {
         $query = $this->model;
-        $query = $query->status($input)->role($input);
-
+        $query = $query->status($input)->inRole($input);
         $users = $this->orderNSearch($input, $query);
-        foreach ($users as $user) {
-            $user->role = UserRoleContants::getKey($user->role);
-        }
+        foreach($users as $user)
+            $user->role = $user->getRoleNames()[0];
         return $users;
     }
 
-    public function store($user)
+    public function store($data)
     {
-        $user['password'] = Hash::make($user['password']);
-        parent::store($user);
+        $data['password'] = Hash::make($data['password']);
+        $user =  $this->model->create($data);
+        if ($user) 
+            {
+                $user->assignRole($data['role']);
+                return ['data'=> $user, 'message'=>"Create successful!"];
+            }
+        return  ['data'=> null, 'message'=>"Error, please try again later!"];
     }
 
 
-    public function update($id, $user)
+    public function update($id, $data)
     {
-        if (array_key_exists("password", $user)) {
-            $user['password'] = Hash::make($user['password']);
+        $user = $this->model->find($id);
+        $oldRole = $user->getRoleNames();
+        if(count($oldRole)!=0)
+            $user->roles()->detach();
+        $user->assignRole($data['role']);
+        unset($data['role']);
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
         }
-        parent::update($id, $user);
+        $result = $this->model->where('id', $id)->update($data);
+            if ($result) 
+                return ['data'=> $this->model->find($id), 'message'=>"Update successful!"];
+            return  ['data'=> null, 'message'=>"Error, please try again later!"];
     }
 
     public function getUserCanJoinToCourseByRole($courseId, $role) {
         $joinedUserId = UserCourse::select('user_id')->where('course_id', $courseId)->get();
-        $users = $this->model->whereNotIn('id', $joinedUserId)->where('role',$role)->get();
+        $users = $this->model->whereNotIn('id', $joinedUserId)->role($role)->get();
         return $users;
     }
 
     public function getByRole($role){
-        return $this->model->where('role',$role)->get();
+        return $this->model->role($role);
     }
 }

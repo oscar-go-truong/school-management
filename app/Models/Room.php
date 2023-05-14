@@ -16,4 +16,15 @@ class Room extends Model
         'name',
         'status'
     ];
+
+    public function schedules() : HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function events() : HasMany
+    {
+        return $this->hasMany(Event::class);
+    }
 }
+

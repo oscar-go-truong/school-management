@@ -5,15 +5,15 @@
         <th>Fullname</th>
         <th>Email</th>
         <th>Joined at</th>
-        @if (Auth::user()->isAdministrator())
+        @role('admin')
             <th>Status</th>
             <th class="text-center">Remove</th>
-        @endif
+        @endrole
     </tr>
 @endsection
 @section('tableId', 'course-studentsTable')
 <script>
-    const isAdmin = '{{ Auth::user()->isAdministrator() }}';
+    const isAdmin = '{{ Auth::user()->hasRole('admin') }}';
     const model = 'course-student';
     const tableId = '#course-studentsTable';
     const id = '{{ $courseId }}';

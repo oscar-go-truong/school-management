@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\RequestController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScoreController;
 use App\Http\Controllers\StudentController;
@@ -43,7 +45,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::post('/', [UserController::class, 'store'])->name('admin.users.store');
         Route::get('{user}', [UserController::class, 'show'])->name('admin.get.users.show');
         Route::get('{user}/edit', [UserController::class, 'edit'])->name('admin.get.users.edit');
-        Route::put('{user}', [UserController::class, 'update'])->name('admin.users.update');
+        Route::patch('{user}', [UserController::class, 'update'])->name('admin.users.update');
         Route::delete('{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
     
@@ -85,6 +87,8 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('{id}/scores', [ScoreController::class, 'index'])->name('user.get.score');
         Route::get('{id}/scores/table', [ScoreController::class, 'getTable'])->name('user.get.score.table');
         Route::post('{id}/scores/import-file', [ExamController::class, 'importScores'])->name('user.import.data.score');
+        Route::get('{id}/scores/detach-file', [ExamController::class, 'detachFile'])->name('user.detach.data.score');
+        Route::get('missing-user', [ExamController::class, 'getMissingUser'])->name('user.get.missing_user');
       });
     Route::resource('exams', ExamController::class);
 
@@ -96,10 +100,18 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::post('review-score', [RequestController::class, 'storeReviewScoreRequest'])->name('student.create.review_score_request');
         Route::post('switch-course', [RequestController::class, 'storeSwitchCourseRequest'])->name('student.create.switch_course_request');
         Route::post('booking-room', [RequestController::class, 'storeBookingRoomRequest'])->name('hoomroom_teacher.create.booking_room.request');
+        Route::post('edit-exam-scores', [RequestController::class, 'storeEditExamScoresRequest'])->name('hoomroom_teacher.create.edit_exam_scores.request');
       });
     Route::resource('requests', RequestController::class);
 
     Route::prefix('/schedules/')->group(function () {
         Route::get('/', [ScheduleController::class, 'index'])->name('user.get.schedule.index');
+        Route::get('/table', [ScheduleController::class, 'getTable'])->name('user.get.schedule.table');
+        Route::get('events/create', [EventController::class, 'create'])->name('user.get.event.create')->middleware('auth.teacher');
+        Route::post('events', [EventController::class, 'store'])->name('user.get.event.store')->middleware('auth.teacher');
+      });
+
+    Route::prefix('/rooms/')->group(function () {
+        Route::get('/available', [RoomController::class, 'getAvailable'])->name('user.get.rooms.available');
       });
 });

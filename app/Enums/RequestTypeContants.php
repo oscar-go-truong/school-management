@@ -12,6 +12,6 @@ use BenSampo\Enum\Enum;
 final class RequestTypeContants extends Enum
 {
     const REVIEW_GRADES =   1;
-    const BOOK_ROOM_OR_LAB =  2;
-    const  SWITCH_COURSE = 3;
+    const  SWITCH_COURSE = 2;
+    const EDIT_EXAMS_SCORES = 3;
 }

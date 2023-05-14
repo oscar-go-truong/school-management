@@ -1,48 +1,68 @@
 @include('components.plugin')
 @include('components.topbar')
-<div class="container" style="margin-top:50px">
-    <div class="row">
-        <div class="col-md-3 offset-md-3">
-        </div>
-        <div class="col-md-6 offset-md-3">
+<div id="login">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 order-md-2">
+                <img src="{{ asset('img/undraw_file_sync_ot38.svg') }}" alt="Image" class="img-fluid">
+            </div>
+            <div class="col-md-6 logins">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="mb-4">
+                            <h3>Sign In to <strong>XSchool</strong></h3>
+                            <p class="mb-4">Unlock a world of possibilities: Login to your account now.</p>
+                        </div>
+                        <form action="{{ route('login') }}" method="POST" id="login-form">
+                            @csrf
+                            <div class="form-group first" id="label-email">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control login-input" id="email" name="email"
+                                    data-label="label-email">
 
+                            </div>
+                            <div class="form-group last mb-4" id="label-password">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control login-input" id="password" name="password"
+                                    data-label="label-password">
 
-            <div class="card bg-slate-300 p-lg-5 p-8 rounded-lg pb-32">
+                            </div>
 
-                <form class="card-body " method="POST" action="{{ route('login') }}" id="login">
-                    @csrf
-                    <div class="text-center">
-                        <div class="text-center text-5xl">Login</div>
-                        <img src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"
-                            class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3" width="200px"
-                            style="margin:0 auto" alt="profile">
+                            @if ($errors->any())
+                                <div class="text-red-500 mt-3 mb-1" id="error">
+                                    <h4>{{ $errors->first() }}</h4>
+                                </div>
+                            @endif
+
+                            <div class="d-flex mb-5 align-items-center">
+                                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
+                                    <input type="checkbox" checked="checked" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
+                            </div>
+
+                            <button type="submit" class="btn text-white btn-block bg-sky-800 w-100 rounded"
+                                id="submit">Log
+                                in</button>
+
+                            <span class="d-block text-left my-4 text-muted"> or sign in with</span>
+
+                            <div class="social-login">
+                                <a href="#" class="facebook">
+                                    <span class="mr-3"><i class="fa-brands fa-facebook text-white"></i></span>
+                                </a>
+                                <a href="#" class="twitter">
+                                    <span class="mr-3"><i class="fa-brands fa-twitter text-white"></i></span>
+                                </a>
+                                <a href="#" class="google">
+                                    <span class="mr-3"><i class="fa-brands fa-google text-white"></i></span>
+                                </a>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="mb-3">
-                        <input type="email" class="form-control" id="email" name="email"
-                            aria-describedby="emailHelp" placeholder="email">
-                    </div>
-                    <div class="mb-3">
-                        <input type="password" class="form-control" id="password" name="password"
-                            placeholder="password">
-                    </div>
-
-                    <div class="text-red-500 ml-1 mt-5" id="error">
-                        @if ($errors->any())
-                            <h4>{{ $errors->first() }}</h4>
-                        @endif
-                    </div>
-
-
-                </form>
-                <div class="text-center mt-5">
-                    <button type="submit" class=" bg-black text-white w-full p-3 rounded-sm mb-5"
-                        id="submit">Login</button>
                 </div>
-                <div id="emailHelp" class="form-text text-center mb-5 text-dark">Not
-                    Registered? <a href="#" class="text-dark fw-bold"> Create an
-                        Account</a>
-                </div>
+
             </div>
 
         </div>
@@ -52,6 +72,36 @@
 <script>
     $(document).ready(function() {
 
+
+        $('#login-form').submit(function(e) {
+
+            const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+            let email = $('#email').val();
+            let password = $("#password").val();
+            if (!email) {
+                e.preventDefault();
+                toastr.error("The email field is required.");
+            } else if (!password) {
+                e.preventDefault();
+                toastr.error("The password field is required.");
+            } else if (!email.match(validRegex)) {
+                e.preventDefault();
+                toastr.error("The email is invalid.");
+            } else {
+                $(this).submit();
+            }
+
+        });
+
+        $('.login-input').on('input', function() {
+            let label = $('#' + $(this).data('label'));
+            if ($(this).val()) {
+                label.addClass('field--not-empty');
+            } else {
+                label.removeClass('field--not-empty');
+            }
+        });
         $('#submit').click(function(e) {
 
             const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

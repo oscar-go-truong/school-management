@@ -5,8 +5,7 @@
         <th>Fullname</th>
         <th>Email</th>
         <th class="text-center">Score</th>
-        <th>Created at</th>
-        {{-- <th>Status</th> --}}
+        <th hidden id="demo-remove-user"></th>
     </tr>
 @endsection
 @section('tableId', 'scoresTable')
@@ -14,7 +13,7 @@
     const model = 'score';
     const tableId = '#scoresTable';
     const url = '/' + '{{ Request::path('/') }}' + '/table';
-    const isStudent = '{{ Auth::User()->isStudent() }}';
+    const isStudent = '{{ Auth::User()->hasRole('student') }}';
     let queryData = {
         page: 1,
         orderBy: 'id',
@@ -33,17 +32,6 @@
         row.append(`<td>${ score.user.fullname }</td>`);
         row.append(`<td>${ score.user.email }</td>`);
         row.append(`<td>${ score.total }</td>`);
-        row.append(
-            `<td>${  new Date(score.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
-        );
-        // row.append(`<td><div class="form-check form-switch">
-        //             <input class="form-check-input" type="checkbox" id="${ score.id }"
-        //             data-id="${ score.id }" ${ score.status === 1 ? 'checked' : '' }>
-        //             <label class="form-check-label" for="${ score.id }">
-        //             ${ score.status === 1 ? 'Open' : 'Close' }
-        //             </label>
-        //             </div>
-        //             </td>`);
         return row;
     }
 </script>

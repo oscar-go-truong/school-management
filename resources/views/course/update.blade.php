@@ -5,83 +5,72 @@
             toastr.error('{{ session('error') }}')
         </script>
     @endif
-    <div id="wrapper">
-        <div id="page-wrapper">
-            <div id="page-inner">
-                <div class="row">
-                    <div class="col-md-12 text-3xl font-bold">
-                        Create Course
-                    </div>
-
-                </div>
-                <!-- /. ROW  -->
-                <hr class="mt-2 mb-3" />
-                <!-- /. ROW  -->
-                <div class="table-content relative">
-                    <form class="container" method="POST" action='{{ route('admin.courses.update', $course->id) }}'
-                        id="update">
-                        @csrf
-                        {{ method_field('PATCH') }}
-                        <input type="hidden" value="{{ $course->id }}" />
-                        <div class="form-group mt-3">
-                            <label for="name" class="font-bold mb-1">Course name <span
-                                    class="text-danger">*</span></label>
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                                name="name" aria-describedby="nameHelp" placeholder="Enter course name"
-                                value='{{ $course->name }}'>
-                            @error('name')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="subjectSelect" class="font-bold mb-1">Subject <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-control select2" id="subjectSelect" name="subject_id">
-                                <option value="" id="selectDefault1">-- Select subject --</option>
-                                @foreach ($subjects as $subject)
-                                    <option value="{{ $subject->id }}" @if ($subject->id === $course->subject_id) selected @endif
-                                        id="subject-{{ $subject->id }}">
-                                        {{ $subject->name }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-                            @error('subject_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="homeroomTeacherSelect" class="font-bold mb-1">Homeroom teacher <span
-                                    class="text-danger">*</span></label>
-                            <select class="form-control select2" id="homeroomTeacherSelect" name="owner_id">
-                                <option value="" id="selectDefault2">-- Select Teacher --</option>
-                                @foreach ($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}" id="teacher-{{ $teacher->id }}"
-                                        @if ($teacher->id === $course->owner_id) selected @endif>
-                                        {{ $teacher->fullname }} - {{ $teacher->email }}
-                                    </option>
-                                @endforeach
-
-                            </select>
-                            @error('owner_id')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="form-group mt-3">
-                            <label for="descriptions" class="font-bold mb-1">Descriptions <span
-                                    class="text-danger">*</span></label>
-                            <textarea class="form-control @error('descriptions') is-invalid @enderror" id="descriptions" name="descriptions"
-                                placeholder="Enter course descriptions" rows="8">{{ $course->descriptions }}</textarea>
-                            @error('descriptions')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </form>
-                    <button type="submit" class=" btn bg-black text-white p-3 rounded-lg w-32 mb-5 float-right"
-                        id="submit">submit</button>
-                </div>
-            </div>
+    <div class="row">
+        <div class="col-md-12 text-3xl font-bold">
+            Create Course
         </div>
+
+    </div>
+    <!-- /. ROW  -->
+    <hr class="mt-2 mb-3" />
+    <!-- /. ROW  -->
+    <div class="table-content relative">
+        <form class="container" method="POST" action='{{ route('admin.courses.update', $course->id) }}' id="update">
+            @csrf
+            {{ method_field('PATCH') }}
+            <input type="hidden" value="{{ $course->id }}" />
+            <div class="form-group mt-3">
+                <label for="name" class="font-bold mb-1">Course name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
+                    aria-describedby="nameHelp" placeholder="Enter course name" value='{{ $course->name }}'>
+                @error('name')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group mt-3">
+                <label for="subjectSelect" class="font-bold mb-1">Subject <span class="text-danger">*</span></label>
+                <select class="form-control select2" id="subjectSelect" name="subject_id">
+                    <option value="" id="selectDefault1">-- Select subject --</option>
+                    @foreach ($subjects as $subject)
+                        <option value="{{ $subject->id }}" @if ($subject->id === $course->subject_id) selected @endif
+                            id="subject-{{ $subject->id }}">
+                            {{ $subject->name }}
+                        </option>
+                    @endforeach
+
+                </select>
+                @error('subject_id')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group mt-3">
+                <label for="homeroomTeacherSelect" class="font-bold mb-1">Homeroom teacher <span
+                        class="text-danger">*</span></label>
+                <select class="form-control select2" id="homeroomTeacherSelect" name="owner_id">
+                    <option value="" id="selectDefault2">-- Select Teacher --</option>
+                    @foreach ($teachers as $teacher)
+                        <option value="{{ $teacher->id }}" id="teacher-{{ $teacher->id }}"
+                            @if ($teacher->id === $course->owner_id) selected @endif>
+                            {{ $teacher->fullname }} - {{ $teacher->email }}
+                        </option>
+                    @endforeach
+
+                </select>
+                @error('owner_id')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="form-group mt-3">
+                <label for="descriptions" class="font-bold mb-1">Descriptions <span class="text-danger">*</span></label>
+                <textarea class="form-control @error('descriptions') is-invalid @enderror" id="descriptions" name="descriptions"
+                    placeholder="Enter course descriptions" rows="8">{{ $course->descriptions }}</textarea>
+                @error('descriptions')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+        </form>
+        <button type="submit" class=" btn bg-black text-white p-3 rounded-lg w-32 mb-5 float-right"
+            id="submit">submit</button>
     </div>
     <script>
         $('.select2').select2();
