@@ -3,11 +3,10 @@
 namespace Database\Factories;
 
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Carbon\Carbon;
 
 class CourseFactory extends Factory
 {
@@ -23,7 +22,7 @@ class CourseFactory extends Factory
             'name' => $this->faker->userName(),
            'status' => StatusTypeContants::ACTIVE,
             'descriptions' => $this->faker->sentence(),
-          'owner_id' => User::where('role', UserRoleContants::TEACHER)
+          'owner_id' => User::role(UserRoleNameContants::TEACHER)
           ->get()->random()->id,
           'subject_id' => Subject::all()->random()->id,
         ];

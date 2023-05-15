@@ -18,6 +18,7 @@ class CreateSchedulesTable extends Migration
             $table->time('start_time');
             $table->time('finish_time');
             $table->string('weekday');
+            $table->unsignedBigInteger('room_id');
             $table->unsignedBigInteger('course_id');
             $table->timestamps();
             $table->softDeletes();
@@ -25,6 +26,7 @@ class CreateSchedulesTable extends Migration
 
         Schema::table('schedules', function (Blueprint $table) {
           $table->foreign('course_id')->references('id')->on('courses');
+          $table->foreign('room_id')->references('id')->on('rooms');
         });
     }
 

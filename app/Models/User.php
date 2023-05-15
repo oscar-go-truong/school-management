@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\UserRoleContants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -16,7 +16,7 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
-
+    use HasRoles;
     /**
      * The attributes that are mass assignable.
      *
@@ -27,8 +27,10 @@ class User extends Authenticatable
         'email',
         'password',
         'fullname',
-        'role',
-        'status'
+        'status',
+        'phone',
+        'mobile', 
+        'address'
     ];
 
     /**
@@ -40,10 +42,12 @@ class User extends Authenticatable
         'password'
     ];
 
-    public function scopeRole($query, $input)
+    public function scopeInRole($query, $input)
     {
         if (isset($input['role']) && count($input['role']) > 0) {
-            return $query->whereIn('role', $input['role']);
+            return $query->orWhereHas('roles', function ($query) use($input) {
+                $query->whereIn('name', $input['role']);
+            });
         }
         return $query;
     }
@@ -56,21 +60,6 @@ class User extends Authenticatable
         return $query;
     }
 
-
-    public function isAdministrator(): bool
-    {
-        return $this->role === UserRoleContants::ADMIN;
-    }
-
-    public function isTeacher(): bool
-    {
-        return $this->role === UserRoleContants::TEACHER;
-    }
-
-    public function isStudent(): bool
-    {
-        return $this->role === UserRoleContants::STUDENT;
-    }
     public function requestUser(): HasMany
     {
         return $this->hasMany(Request::class);
@@ -94,5 +83,10 @@ class User extends Authenticatable
     public function userCourse(): HasMany
     {
         return $this->hasMany(UserCourse::class);
+    }
+
+    public function eventParticipants() : HasMany
+    {
+        return $this->hasMany(EventParticipant::class);
     }
 }

@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Enums\MyExamTypeConstants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Models\Score;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -22,35 +23,60 @@ class ScoreService extends BaseService {
         if($examId!=null)
             $query=$query->where('exam_id',$examId);
         $scores = $this->orderNSearch($input,$query);
-        if(!$user->isAdministrator()){
+        if(!$user->hasRole(UserRoleNameContants::ADMIN)){
             $query = $query->whereHas('exam.course.userCourse', function ($query) use($user){
                 $query->where('user_id', $user->id);
             });
         }
         return $scores;
     }
-    public function importScores($examId, $file)
+    public function importScores($examId, $input)
     {
         try{
-        $path = $file->store('csv');
-        $data = array_map('str_getcsv', file(storage_path("app/$path")));
-        $columns = array_shift($data);
-        if(in_array('#', $columns) && in_array('Score', $columns)){
-            $userIdIndex = array_search('#', $columns);
-            $scoreIndex = array_search('Score', $columns);
+            $user = Auth::user();
+            $data = $input['formData'];
             DB::beginTransaction();
             foreach($data as $row){
-                $this->model->where('exam_id', $examId)->where('student_id', $row[$userIdIndex])->update(['total'=>$row[$scoreIndex]?$row[$scoreIndex]:null]);
+                if($row['score'])
+                    $this->model->where('exam_id', $examId)->where('student_id', $row['user_id'])->update(['total' => $row['score'], "updated_by" => $user->id]);
             }
             DB::commit();
-            return ['data'=> ['exam_id'=>$examId, 'status'=>'success'], 'message'=>'File import successful!'];
-        } else {
-            return ['data'=> null, 'message'=>'File import is invalid format!'];
-        }
+            return ['data' => ['exam_id' => $examId, 'status' => 'success'], 'message' => Message::importFileSuccessfully()];
     } catch(Exception $e) 
     {
         DB::rollBack();
-        return ['data'=> null, 'message'=>$e->getMessage()];
+        return ['data' => null, 'message' => Message::error()];
     }
+    }
+
+    public function detachFile($examId, $input)
+    {
+        try{
+        $fileContent = $input['fileContent'];
+        $validContent = [];
+        foreach($fileContent as $content) {
+            if($this->model->where('student_id', $content['user_id'])->where('exam_id', $examId)->count())
+                array_push($validContent, $content);
+        }
+        if(count($validContent))
+            return ['data' => $validContent];
+        else 
+            return ['data' => null, 'message' => Message::fileUploadIsInvalid()];
+    }
+     catch(Exception $e)  
+    {
+        return ['data' => null, 'message' => Message::fileUploadIsInvalid()];
+    }
+}
+
+    public function getMissingUser($input)
+    {
+        $examId = $input['exam_id'];
+        $userIdList = $input['user_id_list'];
+        if($userIdList !== null)
+            $users = $this->model->whereNotIn('student_id',$userIdList)->where('exam_id', $examId)->with('user')->get();
+        else 
+            $users = $this->model->where('exam_id', $examId)->with('user')->get();
+        return ['data' => $users];
     }
 }

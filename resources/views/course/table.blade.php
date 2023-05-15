@@ -10,18 +10,19 @@
         <th>Students</th>
         <th>Exams</th>
         <th class="text-center">Detail</th>
-        @if (Auth::User()->isAdministrator())
+        @role('admin')
             <th>Status</th>
             <th class="text-center">Update</th>
-        @endif
+        @endrole
     </tr>
 @endsection
 @section('tableId', 'coursesTable')
 <script>
     const model = 'course';
-    const isAdmin = '{{ Auth::User()->isAdministrator() }}';
+    const isAdmin = '{{ Auth::User()->hasRole('admin') }}';
+    const subjectId = "{{ Request::get('subjectId') }}";
     const tableId = '#coursesTable';
-    const url = '/' + '{{ Request::path('/') }}' + '/table';
+    const url = '/courses/table';
     let queryData = {
         page: 1,
         orderBy: 'created_at',
@@ -29,7 +30,8 @@
         search: null,
         role: [],
         status: null,
-        year: new Date().getFullYear()
+        year: new Date().getFullYear(),
+        subjectId: subjectId ? subjectId : null
     };
     let last_page = 1;
     // end config
@@ -55,7 +57,7 @@
             `<td class="dark-link text-center"><a href="/courses/${course.id}/students">${course.students_count}</a></td>`
         );
         row.append(
-            `<td class="dark-link text-center"><a href="/courses/${course.id}/exams">${course.exam_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/exams?courseId=${course.id}">${course.exam_count}</a></td>`
         );
         row.append(` <td class="text-info text-2xl text-center">
                         <a href='/courses/${ course.id }'><i class="fa-sharp fa-solid fa-circle-info"></i></a>

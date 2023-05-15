@@ -27,29 +27,21 @@ class ExamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $courseId = null) :View
+    public function index(Request $request) :View
     {
+        $courseId = $request->query('courseId', null);
         $course = $courseId===null? null :$this->courseService->getById($courseId);
         $examTypes = MyExamTypeConstants::asArray();
         return view('exam.index', compact('examTypes','course'));
     }
 
-    public function getTable(Request $request, $courseId = null)
+    public function getTable(Request $request)
     {
         $input = $request->input();
-        $exams = $this->examService->getTable($input, $courseId);
+        $exams = $this->examService->getTable($input);
         return response()->json($exams);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -62,58 +54,28 @@ class ExamController extends Controller
        $input = $request->input();
        $input['status'] = StatusTypeContants::ACTIVE;
        $resp = $this->examService->store($input);
-       return $resp;
+       return response()->json($resp);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 
     public function importScores(Request $request,$id)
     {
-        $file = $request->file('file');
-        $result = $this->scoreService->importScores($id, $file);
-        return $result;
+        $input = $request->input();
+        $result = $this->scoreService->importScores($id, $input);
+        return response()->json($result);
+    }
+
+    public function detachFile(Request $request, $id)
+    {
+        $input = $request->input();
+        $result = $this->scoreService->detachFile($id, $input);
+        return response()->json($result);
+    }
+
+    public function getMissingUser(Request $request)
+    {
+        $input = $request->input();
+        $result = $this->scoreService->getMissingUser($input);
+        return response()->json($result);
     }
 }

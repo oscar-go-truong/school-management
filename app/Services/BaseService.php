@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Enums\PaginationContants;
+use App\Enums\StatusTypeContants;
+use App\Helpers\Message;
 
 abstract class BaseService
 {
@@ -20,12 +22,17 @@ abstract class BaseService
         return $this->model->all();
     }
 
+    public function getAllActive()
+    {
+        return $this->model->where('status', StatusTypeContants::ACTIVE)->get();
+    }
+
     public function changeStatus($id, $status)
     {
         $update = $this->model->where('id', $id)->update(['status' => $status]);
         if ($update) 
-            return ['data'=>$this->model->find($id), 'message'=>"Update status successful!"];
-        return  ['data'=> null, 'message'=>"Error, please try again later!"];
+            return ['data' => $this->model->find($id), 'message' => Message::updateStatusSuccessfully("")];
+        return  ['data' => null, 'message' => Message::error()];
     }
 
     protected function orderNSearch($input, $query)
@@ -56,16 +63,16 @@ abstract class BaseService
     {
         $result =  $this->model->create($arg);
         if ($result) 
-            return ['data'=> $result, 'message'=>"Create successful!"];
-        return  ['data'=> null, 'message'=>"Error, please try again later!"];
+            return ['data' => $result, 'message' => Message::createSuccessfully("")];
+        return  ['data' => null, 'message' => Message::error()];
     }
 
     public function update($id, $arg)
     {
         $result = $this->model->where('id', $id)->update($arg);
         if ($result) 
-            return ['data'=>$this->model->find($id), 'message'=>"Update successful!"];
-        return  ['data'=> null, 'message'=>"Error, please try again later!"];
+            return ['data' => $this->model->find($id), 'message' => Message::updateStatusSuccessfully("")];
+        return  ['data' => null, 'message' => Message::error()];
     }
 
     public function destroy($id)
@@ -73,8 +80,8 @@ abstract class BaseService
         $item = $this->model->find($id);
         if ($item) {
             $this->model->destroy($id);
-            return ['data'=>$item, 'message'=>"Delete successful!"];
+            return ['data' => $item, 'message' => Message::deleteSuccessfully("")];
         }
-        return ['data'=>null, 'message'=>"Error, please try again later!"];
+        return ['data' => null, 'message' => Message::error()];
     }
 }

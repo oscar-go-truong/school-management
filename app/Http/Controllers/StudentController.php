@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Services\CourseService;
 use App\Services\RequestService;
 use App\Services\UserCourseService;
@@ -31,12 +32,12 @@ class StudentController extends Controller
     }
     public function index($courseId){
         $course = $this->courseService->getById($courseId);
-        $students = $this->userService->getUserCanJoinToCourseByRole($courseId, UserRoleContants::STUDENT);
+        $students = $this->userService->getUserCanJoinToCourseByRole($courseId, UserRoleNameContants::STUDENT);
         return view('student.index', compact('courseId','course','students'));
     }
 
     public function getTable(Request $request, $courseId){
-        $students = $this->userCourseService->getTable($request, $courseId, UserRoleContants::STUDENT);
+        $students = $this->userCourseService->getTable($request, $courseId, UserRoleNameContants::STUDENT);
         return $students;
     }
 
@@ -49,19 +50,10 @@ class StudentController extends Controller
 
     public function changeCourse(Request $request)
     {
-        $user = Auth::user();
         $input = $request->input();
-        $switchClassRequest = [
-                                'user_request_id' =>  $input['user_request_id'], 
-                                'user_approve_id' => $user->id, 
-                                'type' => RequestTypeContants::SWITCH_COURSE, 
-                                'status' => RequestStatusContants::APPROVED, 
-                                'old_course_id' => $input['oldCourseId'], 
-                                'new_course_id' => $input['newCourseId'] 
-                              ];
-        $createRequestResp = $this->requestService->storeApprovedSwitchClassRequest($switchClassRequest);
+        $createRequestResp = $this->requestService->storeApprovedSwitchClassRequest($input);
         if($createRequestResp['data'] === null)
-            return response()->json(['data' => null, 'message' => "Error, please try again later!"]);
+            return response()->json(['data' => null, 'message' => Message::error()]);
         $arg = ['id' => $input['id'], 'course_id' => $input['newCourseId'],'user_id' => $input['user_request_id']];
         $resp = $this->userCourseService->update($input['id'], $arg);
         return response()->json($resp);

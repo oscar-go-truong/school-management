@@ -55,6 +55,7 @@
                             if (resp.wait) {
                                 toastr.clear();
                                 toastr.options.timeOut = 0;
+                                toastr.options.extendedTimeOut = 0
                                 toastr.options.closeButton = true;
                             }
                             toastr.warning(resp.message);

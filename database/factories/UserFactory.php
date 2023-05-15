@@ -21,7 +21,6 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // Hash('password')
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::getRandomValue(),
             'phone' => $this->faker->phoneNumber(),
             'mobile' => $this->faker->phoneNumber(),
             'address' => $this->faker->address()

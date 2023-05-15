@@ -26,7 +26,8 @@ class CreateSwitchCourseRequestRequest extends FormRequest
     {
         return [
             'old_course_id' => 'required',
-            'new_course_id' => 'required'
+            'new_course_id' => 'required',
+            'reason' => 'required'
         ];
     }
 }

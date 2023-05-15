@@ -1,4 +1,5 @@
 @extends('request.detail')
+@section('type-name', 'Booking room')
 @section('request-content')
     <div class="request-info-box">
         <p><b>User request name: </b> {{ $request->userRequest->fullname }}</p>

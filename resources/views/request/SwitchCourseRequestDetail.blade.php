@@ -1,4 +1,5 @@
 @extends('request.detail')
+@section('type-name', 'Switch course')
 @section('request-content')
     <div class="course-info-box">
         <p><b>User request name: </b> {{ $request->userRequest->fullname }}</p>

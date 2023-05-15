@@ -7,17 +7,17 @@
         <th class="sort sorting" data-column="descriptions">Descriptions</th>
         <th>Courses</th>
         <th class="text-center">Detail</th>
-        @if (Auth::User()->isAdministrator())
+        @role('admin')
             <th>Status</th>
             <th class="text-center">Update</th>
-        @endif
+        @endrole
     </tr>
 @endsection
 @section('tableId', 'subjectsTable')
 <script>
     const model = 'subject';
     const tableId = '#subjectsTable';
-    const isAdmin = '{{ Auth::User()->isAdministrator() }}';
+    const isAdmin = '{{ Auth::User()->hasRole('admin') }}';
     const url = '/subjects/table';
     let queryData = {
         page: 1,
@@ -38,7 +38,7 @@
         row.append(`<td>${ subject.name }</td>`);
         row.append(`<td>${ subject.descriptions }</td>`);
         row.append(
-            `<td class="dark-link text-center"><a href="/subjects/${subject.id}/courses">${subject.course_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/courses?subjectId=${subject.id}">${subject.course_count}</a></td>`
         );
         row.append(` <td class="text-info text-2xl text-center">
                         <a href='/subjects/${ subject.id }'><i class="fa-sharp fa-solid fa-circle-info"></i></a>

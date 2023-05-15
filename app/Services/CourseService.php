@@ -3,9 +3,14 @@
 namespace App\Services;
 
 
+use App\Enums\RequestStatusContants;
+use App\Enums\RequestTypeContants;
 use App\Enums\StatusTypeContants;
 use App\Enums\TimeConstants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Models\Course;
+use App\Models\Request;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,11 +18,13 @@ use Illuminate\Support\Facades\DB;
 class CourseService extends BaseService
 {
     protected $userCourseService;
+    protected $requestModel;
 
-    public function __construct(UserCourseService $userCourseService)
+    public function __construct(UserCourseService $userCourseService, Request $requestModel)
     {
         parent::__construct();
         $this->userCourseService = $userCourseService;
+        $this->requestModel = $requestModel;
 
     }
     public function getModel()
@@ -25,14 +32,15 @@ class CourseService extends BaseService
         return Course::class;
     }
 
-    public function getTable($input, $subjectId)
+    public function getTable($input)
     {
+        $subjectId = isset($input['subjectId'])?$input['subjectId']:null;
         $query = $this->model->year($input)->with('homeroomTeacher')->withCount('exam')->withCount('teachers')->withCount('students')->with('subject')->with('schedules', function($query){
             $query->orderByRaw("FIELD(weekday, '".implode("', '", TimeConstants::WEEKDAY)."')");
         });
         if($subjectId != null)
             $query = $query->where('subject_id', $subjectId);
-        if(!Auth::user()->isAdministrator())
+        if(!Auth::user()->hasRole(UserRoleNameContants::ADMIN))
          $query = $query->whereHas('userCourse', function($query) {
             $query->where('user_id', Auth::user()->id);
          });
@@ -49,10 +57,10 @@ class CourseService extends BaseService
                     'course_id' => $course->id,
                     'status' => StatusTypeContants::ACTIVE]);
             DB::commit();
-            return ['data'=> $course, 'message'=>"Create successful!"];
+            return ['data'=> $course, 'message' => "Create successful!"];
         } catch(Exception $e) {
             DB::rollBack();
-            return ['data'=> null, 'message'=>"Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
     }
 
@@ -78,15 +86,24 @@ class CourseService extends BaseService
                     'status' => StatusTypeContants::ACTIVE
                 ]);
             DB::commit();
-            return ['data'=>$course, 'message'=>"Update successful!"];
+            return ['data' => $course, 'message' => "Update successful!"];
         }catch(Exception $e){
             DB::rollBack();
-            return  ['data'=> null, 'message'=>"Error, please try again later!"];
+            return  ['data'=> null, 'message' => Message::error()];
         }
     }
 
     public function getById($id)
     {
-        return $this->model->with('subject')->find($id);
+        $user = Auth::user();
+        $course = $this->model->with('subject')->find($id);
+        if($user->hasRole(UserRoleNameContants::STUDENT))
+            $course->isRequestSwitch =  $this->requestModel->where('user_request_id', $user->id)->where('content->old_course_id', $id)->where('type',RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
+        return $course;
+    }
+
+    public function getAllActive()
+    {
+        return $this->model->where('status', StatusTypeContants::ACTIVE)->with('subject')->get();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
 use App\Http\Requests\CreateBookingRoomRequestRequest;
+use App\Http\Requests\CreateEditExamsScoresRequesRequest;
 use App\Http\Requests\CreateReviewScoreRequestRequest;
 use App\Http\Requests\CreateSwitchCourseRequestRequest;
 use App\Services\RequestService;
@@ -43,26 +44,6 @@ class RequestController extends Controller
         $resp = $this->requestService->changeStatus($id, $status);
         return response()->json($resp);
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
@@ -75,14 +56,19 @@ class RequestController extends Controller
         $request = $this->requestService->getById($id);
         $content = (object) $this->requestService->getContent($id);
         $status = RequestStatusContants::asArray();
-        if($request->type === RequestTypeContants::BOOK_ROOM_OR_LAB)
-            return view('request.bookingRoomRequestDetail', compact('request', 'content','status'));
-        else if($request->type === RequestTypeContants::REVIEW_GRADES)
-            return view('request.reviewScoreRequestDetail', compact('request', 'content','status'));
-        else if($request->type === RequestTypeContants::SWITCH_COURSE)
-            return view('request.switchCourseRequestDetail', compact('request', 'content','status'));
-        else 
+        switch($request->type){
+        case(RequestTypeContants::REVIEW_GRADES):
+            $viewName ='request.reviewScoreRequestDetail';
+            break;
+        case(RequestTypeContants::SWITCH_COURSE):
+            $viewName = 'request.switchCourseRequestDetail';
+            break;
+        case(RequestTypeContants::EDIT_EXAMS_SCORES):
+            $viewName = 'request.editExamScoresRequestDetail';
+        default: 
             return redirect()->back();
+        }
+        return view($viewName, compact('request', 'content','status'));
     }
 
     public function reject($id)
@@ -111,45 +97,10 @@ class RequestController extends Controller
         return response()->json($resp);
     }
 
-    public function storeBookingRoomRequest(CreateBookingRoomRequestRequest $request)
+    public function storeEditExamScoresRequest(CreateEditExamsScoresRequesRequest $request)
     {
         $input = $request->input();
-        $resp = $this->requestService->storeBookingRoomRequest($input);
+        $resp = $this->requestService->storeEditExamScoresRequest($input);
         return response()->json($resp);
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

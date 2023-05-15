@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRoleNameContants;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class EnsureUserIsTeacher
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->isTeacher() || Auth::user()->isAdministrator())
+        if(Auth::user()->hasRole(UserRoleNameContants::TEACHER) || Auth::user()->hasRole(UserRoleNameContants::ADMIN))
             return $next($request);
         return abort(404);
     }

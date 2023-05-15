@@ -29,7 +29,7 @@ class CreateUpdateUserRequest extends FormRequest
 
         $rules = array(
             'fullname' => 'required',
-            'role' => 'required|integer|between:1,3',
+            'role' => 'required',
             'email' => 'required|unique:users,email|max:255',
             'username' => 'required|unique:users,username|max:255',
             'password' => 'required|min:8|max:32',

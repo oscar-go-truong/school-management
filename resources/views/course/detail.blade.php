@@ -1,69 +1,66 @@
 @extends('components.layout')
 @section('content')
-    <div id="wrapper">
-        <div id="page-wrapper">
-            <div id="page-inner">
-                <div class="row">
-                    <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-                        <div> Course details</div>
+
+    <div class="row">
+        <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
+            <div> Course details</div>
+        </div>
+    </div>
+    <!-- /. ROW  -->
+    <hr class="mt-2 mb-3" />
+    <!-- /. ROW  -->
+    <div class="table-content">
+
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="{{ asset('img/course.png') }}" alt="course-image" class="rounded">
+                    <div class="course-info-box">
+                    </div><!-- / course-info-box -->
+                </div><!-- / column -->
+                <div class="col-md">
+                    <div class="course-info-box mt-0 mb-3">
+                        <h5 class="pb-1"><b>COURSE DETAILS</b></h5>
+                        <p>{{ $course->descriptions }}</p>
+                    </div><!-- / course-info-box -->
+
+                    <div class="course-info-box">
+                        <p><b>Name: </b> {{ $course->name }}</p>
+                        <p><b>Subject: </b> {{ $course->subject->name }}</p>
+                        <p><b>Homeroom Teacher: </b>{{ $course->homeroomTeacher->fullname }}</p>
+                        <p><b>Date: </b> {{ $course->created_at }}</p>
+                        <p><b>Status: </b>
+                            <span class="{{ $course->status === 1 ? 'text-success' : 'text-danger' }}">
+                                {{ $course->status === 1 ? 'Active' : 'Inactive' }}
+                        </p>
+                        </span>
                     </div>
-                </div>
-                <!-- /. ROW  -->
-                <hr class="mt-2 mb-3" />
-                <!-- /. ROW  -->
-                <div class="table-content">
-
-                    <div class="container mt-3">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="{{ asset('img/course.png') }}" alt="course-image" class="rounded">
-                                <div class="course-info-box">
-                                </div><!-- / course-info-box -->
-                            </div><!-- / column -->
-                            <div class="col-md">
-                                <div class="course-info-box mt-0 mb-3">
-                                    <h5 class="pb-1"><b>COURSE DETAILS</b></h5>
-                                    <p>{{ $course->descriptions }}</p>
-                                </div><!-- / course-info-box -->
-
-                                <div class="course-info-box">
-                                    <p><b>Name: </b> {{ $course->name }}</p>
-                                    <p><b>Subject: </b> {{ $course->subject->name }}</p>
-                                    <p><b>Homeroom Teacher: </b>{{ $course->homeroomTeacher->fullname }}</p>
-                                    <p><b>Date: </b> {{ $course->created_at }}</p>
-                                    <p><b>Status: </b>
-                                        <span class="{{ $course->status === 1 ? 'text-success' : 'text-danger' }}">
-                                            {{ $course->status === 1 ? 'Active' : 'Inactive' }}
-                                    </p>
-                                    </span>
-                                </div>
-                                @if ($course->status === 1)
-                                    <div id="btns">
-                                        @if (Auth::user()->isTeacher() || Auth::user()->isAdministrator())
-                                            <button type="button" class="btn bg-info" id="export">Export student list
-                                            </button>
-                                        @endif
-                                        @if (Auth::user()->isStudent())
-                                            <button type="button" class="btn bg-primary" id="switch"
-                                                data-bs-toggle="modal" data-bs-target="#switchCourseModal">Switch
-                                                course</button>
-                                            @include('course.switchCourseModal')
-                                        @elseif (Auth::user()->id === $course->owner_id)
-                                            <button type="button" class="btn bg-primary" id="bookingRoom"
-                                                data-bs-toggle="modal" data-bs-target="#bookingRoomModal">Booking
-                                                room</button>
-                                            @include('course.bookingRoomModal')
-                                        @endif
+                    @if ($course->status === 1)
+                        <div id="btns">
+                            @hasanyrole('admin|teacher')
+                                <button type="button" class="btn bg-info" id="export">Export student list
+                                </button>
+                            @endhasanyrole
+                            @role('student')
+                                @if ($course->isRequestSwitch)
+                                    <div class="text-white bg-primary p-2">Requesting to change course...
+                                    </div>
+                                @else
+                                    <div id="switch-course-btn">
+                                    </div>
+                                    <div id="modal-trigger">
+                                        <button type="button" class="btn bg-primary" data-bs-toggle="modal"
+                                            data-bs-target="#switchCourseModal">Switch
+                                            course</button>
+                                        @include('course.switchCourseModal')
                                     </div>
                                 @endif
-                            </div><!-- / column -->
+                            @endrole
                         </div>
-                    </div>
-                </div>
+                    @endif
+                </div><!-- / column -->
             </div>
-            <!-- /. PAGE INNER  -->
         </div>
-        <!-- /. PAGE WRAPPER  -->
     </div>
     <script>
         $(document).ready(function() {
@@ -71,6 +68,7 @@
                 const id = '{{ $course->id }}';
                 toastr.clear();
                 toastr.options.timeOut = 0;
+                toastr.options.extendedTimeOut = 0
                 toastr.options.closeButton = true;
                 toastr.info(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to export students list!</b></div>

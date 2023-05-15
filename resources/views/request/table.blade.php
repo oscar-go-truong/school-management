@@ -15,7 +15,7 @@
     const model = 'request';
     const tableId = '#requestsTable';
     const url = `/requests/table`;
-    const isAdmin = '{{ Auth::User()->isAdministrator() }}';
+    const isAdmin = '{{ Auth::User()->hasRole('admin') }}';
     let queryData = {
         page: 1,
         orderBy: 'created_at',

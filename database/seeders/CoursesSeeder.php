@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use Illuminate\Database\Seeder;
 use App\Models\Course;
 use App\Models\Subject;
@@ -27,7 +27,7 @@ class CoursesSeeder extends Seeder
                         [
                         'name'=> 'Begginer 2020',
                         'subject_id' => $subject->id,
-                        'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                        'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                         'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                         'status'=>StatusTypeContants::INACTIVE,
                         'created_at'=> Carbon::createFromDate(2020),
@@ -35,7 +35,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Begginer 2021',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                             'status'=>StatusTypeContants::INACTIVE,
                             'created_at'=> Carbon::createFromDate(2021),
@@ -43,7 +43,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Begginer 2022',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                             'status'=>StatusTypeContants::INACTIVE,
                             'created_at'=> Carbon::createFromDate(2022),
@@ -51,7 +51,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Begginer 2023',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Beginner subjects in IT college are designed for students who have little to no experience with computers or technology.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2023),
@@ -59,7 +59,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Basic 2020',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::INACTIVE,
                             'created_at'=> Carbon::createFromDate(2020),
@@ -67,7 +67,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Basic 2021',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::INACTIVE,
                             'created_at'=> Carbon::createFromDate(2021),
@@ -75,7 +75,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Basic 2022',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::INACTIVE,
                             'created_at'=> Carbon::createFromDate(2022),
@@ -83,7 +83,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Basic 2023',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Basic subjects are designed for students who have some experience with computers or technology but may not have a lot of knowledge or skills.',
                             'status'=>StatusTypeContants::ACTIVE,
                             'created_at'=> Carbon::createFromDate(2023),
@@ -91,7 +91,7 @@ class CoursesSeeder extends Seeder
                         [
                             'name'=> 'Advanced 2022',
                             'subject_id' => $subject->id,
-                            'owner_id' => User::where('role', UserRoleContants::TEACHER)->inRandomOrder()->first()->id,
+                            'owner_id' => User::role(UserRoleNameContants::TEACHER)->inRandomOrder()->first()->id,
                             'descriptions' => 'Advanced subjects are designed for students who have a lot of knowledge and skills in computers or technology and are ready for more challenging coursework.',
                             'status'=>StatusTypeContants::INACTIVE,
                             'created_at'=> Carbon::createFromDate(2022),
