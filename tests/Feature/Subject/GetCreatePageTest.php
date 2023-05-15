@@ -1,0 +1,26 @@
+<?php
+
+namespace Tests\Feature\Subject;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class GetCreatePageTest extends TestCase
+{
+    use RefreshDatabase;
+    /**
+     * A basic feature test example.
+     *
+     * @return void
+     */
+    public function testGetCreatePageSuccess()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $response = $this->get('subjects/create');
+        $response->assertViewIs('subject.create');
+        $response->assertStatus(200);
+    }
+}
