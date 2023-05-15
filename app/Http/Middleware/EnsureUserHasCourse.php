@@ -3,11 +3,13 @@
 namespace App\Http\Middleware;
 
 use App\Enums\UserRoleNameContants;
+use App\Models\Course;
+use App\Models\UserCourse;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class EnsureUserIsTeacher
+class EnsureUserHasCourse
 {
     /**
      * Handle an incoming request.
@@ -16,10 +18,14 @@ class EnsureUserIsTeacher
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request,Closure $next)
     {
-        if(Auth::user()->hasRole(UserRoleNameContants::TEACHER) || Auth::user()->hasRole(UserRoleNameContants::ADMIN))
-            return $next($request);
+        $id = $request->route('id');
+        $user =Auth::user();
+        if(Course::where('id',$id)->count() === 0)
+            return abort(404);
+        if($user->hasRole(UserRoleNameContants::ADMIN) || UserCourse::where('user_id', $user->id)->where('course_id',$id)->count() !== 0)
+            return $next($request, $id);
         return abort(404);
     }
 }

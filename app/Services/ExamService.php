@@ -5,7 +5,8 @@ namespace App\Services;
 use App\Enums\MyExamTypeConstants;
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Jobs\PreventUpdateExamScores;
 use App\Models\Exam;
 use App\Models\Request;
@@ -43,11 +44,11 @@ class ExamService extends BaseService
         $query = $this->model->withCount('score')->with('course.subject');
         if($courseId != null)
             $query = $query->where('course_id', $courseId);
-        if(!$user->hasRole('admin')){
+        if(!$user->hasRole(UserRoleNameContants::ADMIN)){
             $query = $query->whereHas('course.userCourse', function ($query) use($user){
                 $query->where('user_id', $user->id);
             });
-        if($user->hasRole('student')){
+        if($user->hasRole(UserRoleNameContants::STUDENT)){
             $query = $query->with('score', function ($query) use($user) {
                 $query->where('student_id', $user->id);
             });
@@ -67,7 +68,7 @@ class ExamService extends BaseService
             $exam= $this->model->create($input);
             PreventUpdateExamScores::dispatch($exam->id)->delay(now()->addDay());
             $userCourses = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
-                $query->role('student');
+                $query->role(UserRoleNameContants::STUDENT);
             })->get();;
             foreach($userCourses as $userCourse){
                 Score::insert([
@@ -76,11 +77,11 @@ class ExamService extends BaseService
                 ]);
             }
             DB::commit();
-        return ['data' => $exam,'message' => 'Create successful!'];
+        return ['data' => $exam,'message' => Message::createSuccessfully('exam')];
         } catch(Exception $e) 
         {
             DB::rollBack();
-            return ['data' => null,'message' => 'Error, please try again later!'];
+            return ['data' => null,'message' => Message::error()];
         }
     }
 }

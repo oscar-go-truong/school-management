@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-use App\Enums\MyExamTypeConstants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Models\Score;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class ScoreService extends BaseService {
         if($examId!=null)
             $query=$query->where('exam_id',$examId);
         $scores = $this->orderNSearch($input,$query);
-        if(!$user->hasRole('admin')){
+        if(!$user->hasRole(UserRoleNameContants::ADMIN)){
             $query = $query->whereHas('exam.course.userCourse', function ($query) use($user){
                 $query->where('user_id', $user->id);
             });
@@ -37,14 +38,14 @@ class ScoreService extends BaseService {
             DB::beginTransaction();
             foreach($data as $row){
                 if($row['score'])
-                    $this->model->where('exam_id', $examId)->where('student_id', $row['user_id'])->update(['total'=>$row['score'], "updated_by" => $user->id]);
+                    $this->model->where('exam_id', $examId)->where('student_id', $row['user_id'])->update(['total' => $row['score'], "updated_by" => $user->id]);
             }
             DB::commit();
-            return ['data'=> ['exam_id'=>$examId, 'status'=>'success'], 'message'=>'File import successful!'];
+            return ['data' => ['exam_id' => $examId, 'status' => 'success'], 'message' => Message::importFileSuccessfully()];
     } catch(Exception $e) 
     {
         DB::rollBack();
-        return ['data'=> null, 'message'=>$e->getMessage()];
+        return ['data' => null, 'message' => Message::error()];
     }
     }
 
@@ -58,13 +59,13 @@ class ScoreService extends BaseService {
                 array_push($validContent, $content);
         }
         if(count($validContent))
-            return ['data' => $validContent, 'message' => 'ok'];
+            return ['data' => $validContent];
         else 
-            return ['data' => null, 'message' => 'File upload is invalid!'];
+            return ['data' => null, 'message' => Message::fileUploadIsInvalid()];
     }
      catch(Exception $e)  
     {
-        return ['data' => null, 'message' => 'File upload is invalid!'];
+        return ['data' => null, 'message' => Message::fileUploadIsInvalid()];
     }
 }
 
@@ -76,6 +77,6 @@ class ScoreService extends BaseService {
             $users = $this->model->whereNotIn('student_id',$userIdList)->where('exam_id', $examId)->with('user')->get();
         else 
             $users = $this->model->where('exam_id', $examId)->with('user')->get();
-        return ['data'=>$users, 'message' => 'ok'];
+        return ['data' => $users];
     }
 }

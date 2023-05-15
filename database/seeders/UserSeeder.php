@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\StatusTypeContants;
 use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -30,7 +31,7 @@ class UserSeeder extends Seeder
             'mobile' => $faker->phoneNumber(),
             'address' => $faker->address()
         ]);
-        $admin->assignRole('admin');
+        $admin->assignRole(UserRoleNameContants::ADMIN);
         $teacher = User::create([
             'username' => 'teacher',
             'fullname' => 'teacher',
@@ -41,7 +42,7 @@ class UserSeeder extends Seeder
             'mobile' => $faker->phoneNumber(),
             'address' => $faker->address()
         ]);
-        $teacher->assignRole('teacher');
+        $teacher->assignRole(UserRoleNameContants::TEACHER);
         $student = User::create([
             'username' => 'student',
             'fullname' => 'student',
@@ -52,14 +53,14 @@ class UserSeeder extends Seeder
             'mobile' => $faker->phoneNumber(),
             'address' => $faker->address()
         ]);
-        $student->assignRole('student');
+        $student->assignRole(UserRoleNameContants::STUDENT);
     User::factory()
             ->count(100)
             ->create();
     $users = User::whereNotIn('id',[1,2,3])->get();
     foreach($users as $user)
     {
-        $role = collect(['admin', 'teacher', 'student'])->random();
+        $role = collect(UserRoleNameContants::getValues())->random();
         $user->assignRole($role);
     }
     }

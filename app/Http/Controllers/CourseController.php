@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TimeConstants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use App\Exports\StudentsListExport;
 use App\Http\Requests\CreateUpdateCourseRequest;
 use App\Services\CourseService;
@@ -67,7 +67,7 @@ class CourseController extends Controller
      */
     public function create() : View
     {
-        $teachers = $this->userService->getByRole('teacher');
+        $teachers = $this->userService->getByRole(UserRoleNameContants::TEACHER);
         $subjects = $this->subjectService->getAll();
         $weekdays = TimeConstants::WEEKDAY;
         return view('course.create', compact('teachers','subjects','weekdays'));
@@ -98,7 +98,7 @@ class CourseController extends Controller
     public function show($id) : View
     {
         $course = $this->courseService->getById($id);
-        $coursesAvailableSwitch = $this->courseService->coursesAvailableSwicth($course->id, Auth::user()->id);
+        $coursesAvailableSwitch = Auth::user()->hasRole(UserRoleNameContants::STUDENT) ? $this->courseService->coursesAvailableSwicth($course->id, Auth::user()->id) : null;
         $rooms = $this->roomService->getAll();
         return view('course.detail', compact('course', 'coursesAvailableSwitch','rooms'));
     }
@@ -111,7 +111,7 @@ class CourseController extends Controller
      */
     public function edit($id) : View
     {
-        $teachers = $this->userService->getByRole('teacher');
+        $teachers = $this->userService->getByRole(UserRoleNameContants::TEACHER);
         $subjects = $this->subjectService->getAll();
         $course = $this->courseService->getById($id);
         return view('course.update', compact('course','teachers','subjects'));
@@ -157,7 +157,7 @@ class CourseController extends Controller
 
     public function exportStudentList($id)
     {
-      $student =$this->userCourseService->getUsersByRole($id, 'student');
+      $student =$this->userCourseService->getUsersByRole($id, UserRoleNameContants::STUDENT);
       $course = $this->courseService->getById($id);
       return Excel::download(new StudentsListExport($student), $course->subject->name.' '.$course->name.' '.'students.csv');
     }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\StatusTypeContants;
+use App\Enums\UserRoleNameContants;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -20,7 +21,7 @@ class UserCourseSeeder extends Seeder
        for($i = 0;$i<300;$i++)
        {
         do{
-            $userId = User::role('student')->inRandomOrder()->first()->id;
+            $userId = User::role(UserRoleNameContants::STUDENT)->inRandomOrder()->first()->id;
             $courseId = Course::all()->random()->id;
         } while(UserCourse::where('user_id', $userId)->where('course_id', $courseId)->count());
         UserCourse::insert([

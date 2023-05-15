@@ -25,6 +25,6 @@ class RoomService extends BaseService {
                 $query->where('status', StatusTypeContants::ACTIVE);
             })->whereRaw('((start_time <="'.$startTime.'" and "'.$startTime.'"<= finish_time) or (start_time <= "'.$endTime.'" and "'.$endTime.'" <= finish_time) or (start_time >= "'.$startTime.'" and "'.$endTime.'" >= finish_time))')->where('weekday',$weekday); 
         })->get();
-        return ['data' => ['rooms' => $rooms], 'message' => 'OK'];
+        return ['data' => ['rooms' => $rooms]];
     }
 }

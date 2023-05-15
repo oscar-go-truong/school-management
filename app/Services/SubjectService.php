@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\StatusTypeContants;
+use App\Enums\UserRoleNameContants;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +17,7 @@ class SubjectService extends BaseService
     {
         $user = Auth::user();
         $query = $this->model;
-        if(!$user->hasRole('admin'))
+        if(!$user->hasRole(UserRoleNameContants::ADMIN))
          $query = $query->whereHas('course.userCourse', function($query) use ($user) {
             $query->where('user_id', $user->id);
          })->withCount(['course' => function($query) use ($user){

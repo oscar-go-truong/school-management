@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use App\Services\CourseService;
 use App\Services\UserCourseService;
 use App\Services\UserService;
@@ -23,13 +23,13 @@ class TeacherController extends Controller
         $this->userService = $userService;
     }
     public function index($courseId){
-        $teachers = $this->userService->getUserCanJoinToCourseByRole($courseId,'teacher');
+        $teachers = $this->userService->getUserCanJoinToCourseByRole($courseId,UserRoleNameContants::TEACHER);
         $course = $this->courseService->getById($courseId);
         return view('teacher.index', compact('courseId','course','teachers'));
     }
 
     public function getTable(Request $request, $courseId){
-        $teachers = $this->userCourseService->getTable($request, $courseId, 'teacher');
+        $teachers = $this->userCourseService->getTable($request, $courseId, UserRoleNameContants::TEACHER);
         return $teachers;
     }
 

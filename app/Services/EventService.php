@@ -32,11 +32,11 @@ class EventService extends BaseService{
             $event = $this->model->create($input);
             $users = $input['users'];
             $courses = $input['courses'];
-            $this->eventParticipantModel->create(['participant_id'=>$user->id, 'event_id' => $event->id]);
+            $this->eventParticipantModel->create(['participant_id' => $user->id, 'event_id' => $event->id]);
             foreach($users as $userId)
                 {
                     if($this->eventParticipantModel->where('participant_id', $userId)->where('event_id',$event->id)->count() === 0)
-                        $this->eventParticipantModel->create(['participant_id'=>$userId, 'event_id' => $event->id]);
+                        $this->eventParticipantModel->create(['participant_id'=> $userId, 'event_id' => $event->id]);
                 }
             foreach($courses as $courseId)
                 {
@@ -44,7 +44,7 @@ class EventService extends BaseService{
                     foreach($userCourses as $userCourse)
                     {
                         if($this->eventParticipantModel->where('participant_id', $userCourse->user_id)->where('event_id',$event->id)->count() === 0)
-                            $this->eventParticipantModel->create(['participant_id'=>$userCourse->user_id, 'event_id' => $event->id]);
+                            $this->eventParticipantModel->create(['participant_id' => $userCourse->user_id, 'event_id' => $event->id]);
                     }
                 }
             DB::commit();

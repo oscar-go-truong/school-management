@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use App\Models\Course;
 use Illuminate\Database\Seeder;
 use App\Models\Exam;
@@ -23,7 +23,7 @@ class ExamSeeder extends Seeder
         foreach($exams as $exam) 
         {
             $students = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
-                $query->role('student');
+                $query->role(UserRoleNameContants::STUDENT);
             })->get();
             foreach($students as $student)
             {

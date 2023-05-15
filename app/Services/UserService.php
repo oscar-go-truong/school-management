@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\UserRoleContants;
+use App\Helpers\Message;
 use App\Models\User;
 use App\Models\UserCourse;
 use Illuminate\Support\Facades\Hash;
@@ -31,9 +31,9 @@ class UserService extends BaseService
         if ($user) 
             {
                 $user->assignRole($data['role']);
-                return ['data'=> $user, 'message'=>"Create successful!"];
+                return ['data' => $user, 'message' => Message::createSuccessfully('user')];
             }
-        return  ['data'=> null, 'message'=>"Error, please try again later!"];
+        return  ['data' => null, 'message' => Message::error()];
     }
 
 
@@ -50,8 +50,8 @@ class UserService extends BaseService
         }
         $result = $this->model->where('id', $id)->update($data);
             if ($result) 
-                return ['data'=> $this->model->find($id), 'message'=>"Update successful!"];
-            return  ['data'=> null, 'message'=>"Error, please try again later!"];
+                return ['data'=> $this->model->find($id), 'message' => Message::updateSuccessfully('user')];
+            return  ['data' => null, 'message' => Message::error()];
     }
 
     public function getUserCanJoinToCourseByRole($courseId, $role) {

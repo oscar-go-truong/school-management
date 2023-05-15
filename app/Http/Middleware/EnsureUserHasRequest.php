@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class EnsureUserIsTeacher
+class EnsureUserHasRequest
 {
     /**
      * Handle an incoming request.
@@ -18,8 +18,12 @@ class EnsureUserIsTeacher
      */
     public function handle(Request $request, Closure $next)
     {
-        if(Auth::user()->hasRole(UserRoleNameContants::TEACHER) || Auth::user()->hasRole(UserRoleNameContants::ADMIN))
-            return $next($request);
+        $user = Auth::user();
+        $id = $request->route('id');
+        if(\App\Models\Request::where('id', $id)->count() === 0)
+            return abort(404);
+        if($user->hasRole(UserRoleNameContants::ADMIN) || \App\Models\Request::where('user_request_id', $user->id)->where('id', $id)->count()!== 0)
+            return $next($request, $id);
         return abort(404);
     }
 }

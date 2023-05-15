@@ -18,6 +18,10 @@
 
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="reason">Reason:</label>
+                    <textarea class="form-control" rows="10" name="reason" id="reason"></textarea>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary bg-secondary" data-bs-dismiss="modal">Close</button>
@@ -29,12 +33,29 @@
 <script>
     $(document).ready(function() {
         $('#submit').click(function() {
-            const newCourseId = $('#switchCourseSelects').val();
-            const oldCourseId = '{{ $course->id }}';
             let btn = $(this);
             btn.attr('disabled', true);
-            if (!newCourseId) {
-                toastr.warning('Please choose a course!');
+            const newCourseId = $('#switchCourseSelects').val();
+            const oldCourseId = '{{ $course->id }}';
+            const reason = $('#reason').val();
+            if (!newCourseId || !reason) {
+                if (!newCourseId) {
+                    toastr.warning('Please choose a course!');
+                    $('#switchCourseSelects').removeClass('is-valid');
+                    $('#switchCourseSelects').addClass('is-invalid');
+                } else {
+                    $('#switchCourseSelects').removeClass('is-invalid');
+                    $('#switchCourseSelects').addClass('is-valid');
+                }
+
+                if (!reason) {
+                    toastr.warning('Reason is required!');
+                    $('#reason').removeClass('is-valid');
+                    $('#reason').addClass('is-invalid');
+                } else {
+                    $('#reason').removeClass('is-invalid');
+                    $('#reason').addClass('is-valid');
+                }
                 btn.attr('disabled', false);
             } else {
                 $.ajax({
@@ -42,7 +63,8 @@
                     url: '/requests/switch-course',
                     data: {
                         new_course_id: newCourseId,
-                        old_course_id: oldCourseId
+                        old_course_id: oldCourseId,
+                        reason: reason
                     },
                     dataType: 'json',
                     success: function(resp) {

@@ -7,7 +7,6 @@ use App\Services\CourseService;
 use App\Services\EventService;
 use App\Services\RoomService;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 
 class EventController extends Controller
 {

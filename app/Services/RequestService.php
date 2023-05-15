@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\MyExamTypeConstants;
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Jobs\PreventUpdateExamScores;
 use App\Models\Course;
 use App\Models\Exam;
@@ -42,7 +44,7 @@ class RequestService extends BaseService
     public function getTable($input)
     {
         $query = $this->model->with('userRequest')->with('userApprove')->status($input)->type($input);
-        if (!Auth::user()->hasRole('admin')) {
+        if (!Auth::user()->hasRole(UserRoleNameContants::ADMIN)) {
             $query = $query->where('user_request_id', Auth::user()->id);
         }
         $requests = $this->orderNSearch($input, $query);
@@ -57,8 +59,17 @@ class RequestService extends BaseService
         return $requests;
     }
 
-    public function storeApprovedSwitchClassRequest($arg)
+    public function storeApprovedSwitchClassRequest($input)
     {
+        $user = Auth::user();
+        $arg = [
+                                'user_request_id' =>  $input['user_request_id'], 
+                                'user_approve_id' => $user->id, 
+                                'type' => RequestTypeContants::SWITCH_COURSE, 
+                                'status' => RequestStatusContants::APPROVED, 
+                                'old_course_id' => $input['oldCourseId'], 
+                                'new_course_id' => $input['newCourseId'] 
+                              ];
             $request = $this->model->create([
                 "user_request_id" => $arg['user_request_id'],
                 "user_approve_id" => $arg['user_approve_id'],
@@ -84,9 +95,9 @@ class RequestService extends BaseService
             'content' => '{"exam_id":' . $examId . '}'
             ]);
         if ($request) {
-            return ['data' => $request, 'message' => 'Create request successful!'];
+            return ['data' => $request, 'message' => Message::createSuccessfully('request')];
         } else {
-            return ['data' => $request, 'message' => 'Error, please try again later!'];
+            return ['data' => $request, 'message' => Message::error()];
         }
     }
 
@@ -94,6 +105,7 @@ class RequestService extends BaseService
     {
         $oldCourseId = $input['old_course_id'];
         $newCourseId = $input['new_course_id'];
+        $reason = $input['reason'];
         $userId = Auth::user()->id;
         $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->old_course_id', $oldCourseId)->where('type',RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
         if($checkIsExistRequest)
@@ -102,12 +114,12 @@ class RequestService extends BaseService
             'user_request_id' => $userId,
             'status' => RequestStatusContants::PENDING,
             'type' => RequestTypeContants::SWITCH_COURSE,
-            'content' => '{"old_course_id":' . $oldCourseId.',"new_course_id":'.$newCourseId . '}'
+            'content' => '{"old_course_id":' . $oldCourseId.',"new_course_id":'.$newCourseId . ',"reason":"'.$reason.'"}'
         ]);
         if ($request) {
-            return ['data' => $request, 'message' => 'Create request successful!'];
+            return ['data' => $request, 'message' => Message::createSuccessfully('request')];
         } else {
-            return ['data' => $request, 'message' => 'Error, please try again later!'];
+            return ['data' => $request, 'message' => Message::error()];
         }
     }
 
@@ -126,9 +138,9 @@ class RequestService extends BaseService
             'content' => '{"exam_id":' . $examId.'}'
         ]);
         if ($request) {
-            return ['data' => $request, 'message' => 'Create request successful!'];
+            return ['data' => $request, 'message' => Message::createSuccessfully('request')];
         } else {
-            return ['data' => $request, 'message' => 'Error, please try again later!'];
+            return ['data' => $request, 'message' => Message::error()];
         }
     }
 
@@ -137,9 +149,9 @@ class RequestService extends BaseService
         $result =  $this->model->where('id', $id)->update(['status' => RequestStatusContants::REJECTED]);
         if ($result) {
             $request = $this->model->find($id);
-            return ['data' => $request, 'message' => "Rejected request successful!"];
+            return ['data' => $request, 'message' => Message::rejectRequestSuccessfully()];
         } else {
-            return ['data' => null, 'message' => "Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
     }
 
@@ -149,9 +161,9 @@ class RequestService extends BaseService
         $result = $this->model->where('id', $id)->update(['status' => RequestStatusContants::APPROVED,'user_approve_id' => $user->id]);
         if ($result) {
             $request = $this->model->find($id);
-            return ['data' => $request, 'message' => "Approved request successful!"];
+            return ['data' => $request, 'message' => Message::approveRequestSuccessfully()];
         } else {
-            return ['data' => null, 'message' => "Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
     }
 
@@ -166,13 +178,13 @@ class RequestService extends BaseService
             $resultUpdateUserCourse = $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->old_course_id)->update(['course_id' => $content->new_course_id]);
             DB::commit();
             if ($resultRequestUpdate && $resultUpdateUserCourse) {
-                return ['data' => $request, 'message' => "Approved request successful!"];
+                return ['data' => $request, 'message' => Message::approveRequestSuccessfully()];
             } else {
-                return ['data' => null, 'message' => "Error, please try again later!"];
+                return ['data' => null, 'message' => Message::error()];
             }
         } catch (Exception $e) {
             DB::rollBack();
-            return ['data' => null, 'message' => "Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
         {
 
@@ -190,9 +202,9 @@ class RequestService extends BaseService
         PreventUpdateExamScores::dispatch($content->exam_id)->delay(now()->addWeek());
         if ($result) {
             $request = $this->model->find($id);
-            return ['data' => $request, 'message' => "Approved request successful!"];
+            return ['data' => $request, 'message' => Message::approveRequestSuccessfully()];
         } else {
-            return ['data' => null, 'message' => "Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
     }
 
@@ -207,7 +219,7 @@ class RequestService extends BaseService
         elseif ($request->type === RequestTypeContants::EDIT_EXAMS_SCORES) {
             return $this->approveEditExamScoresRequest($id);
         } else {
-            return ['data' => null, 'message' => "Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
     }
 
@@ -255,9 +267,7 @@ class RequestService extends BaseService
     public function getContent($id)
     {
         $request = $this->model->find($id);
-        if ($request->type === RequestTypeContants::BOOK_ROOM_OR_LAB) {
-            return $this->getBookingRoomRequest($request->content);
-        } elseif ($request->type === RequestTypeContants::REVIEW_GRADES) {
+      if ($request->type === RequestTypeContants::REVIEW_GRADES) {
             $content = $this->getReviewScoreRequestContent($request->content);
             $type = MyExamTypeConstants::getKey($content['exam']->type);
             $type = str_replace('_', ' ', $type);

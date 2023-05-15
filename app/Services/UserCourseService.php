@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Models\Course;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Models\UserCourse;
-use Illuminate\Support\Facades\Auth;
 
 class UserCourseService extends BaseService
 {
@@ -47,7 +47,9 @@ class UserCourseService extends BaseService
 
     protected function checkConflictScheduleWithOtherCourse($user, $course)
     {
-        $userCourses = $this->model->where('user_id',$user->id)->where('status', StatusTypeContants::ACTIVE)->get();
+        $userCourses = $this->model->where('user_id',$user->id)->where('status', StatusTypeContants::ACTIVE)->whereHas('course', function($query){
+            $query->where('status', StatusTypeContants::ACTIVE);
+        })->get();
         $courseSchedules = Schedule::where('course_id', $course->id)->get();
         foreach($userCourses as $userCourse)
         {
@@ -56,7 +58,7 @@ class UserCourseService extends BaseService
             {
                 foreach($courseSchedules as $courseSchedule)
                 {
-                    if((($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->start_time)||($schedule->start_time <= $courseSchedule->finish_time && $schedule->finish_time >= $courseSchedule->finish_time)) && $schedule->weekday === $courseSchedule->weekday)
+                    if((($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->start_time)||($schedule->start_time <= $courseSchedule->finish_time && $schedule->finish_time >= $courseSchedule->finish_time) || ($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->finish_time)) && $schedule->weekday === $courseSchedule->weekday)
                         return $this->model->with('course.subject')->find($userCourse->id);
                 }
             }
@@ -71,17 +73,14 @@ class UserCourseService extends BaseService
         
         $isConflictTime = $this->checkConflictScheduleWithOtherCourse($user, $course);
         if($isConflictTime)
-            return ['data'=>null, 'message' => 'User conflict time with course <b>'.$isConflictTime->course->subject->name.' - '.$isConflictTime->course->name.'</b>!'];
+            return ['data' => null, 'message' => Message::conflictTimeWithCourse($isConflictTime)];
         else
         {
-            if($user->hasRole('student'))
+            if($user->hasRole(UserRoleNameContants::STUDENT))
             {
                 $isJoinedSubjectInThisYear = $this->checkUSerIsJoinedSubjectInThisYear($user, $course);
                 if($isJoinedSubjectInThisYear)
-                    return ['data'=>null,'wait'=>true, 'message' => 'User has joined class <b>'.$isJoinedSubjectInThisYear->course->name.'</b> of subject <b>'.$isJoinedSubjectInThisYear->course->subject->name.'</b>. Do you want to change the class to <b>'.$course->name.'</b>?<div class="d-flex justify-content-center">
-                     <button class="btn btn-secondary mr-3">No</button> 
-                     <button class="btn btn-primary ml-3" data-id="'.$isJoinedSubjectInThisYear->id.'" data-newCourseId="'.$course->id.'" data-oldCourseId="'.$isJoinedSubjectInThisYear->course_id.'" data-userId="'.$user->id.'" id="changeCourse">Yes</button></div>
-                    </div>'];
+                    return ['data'=>null,'wait'=>true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear)];
             }
             return parent::store($input);
         }

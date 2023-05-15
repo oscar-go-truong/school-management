@@ -9,9 +9,9 @@ use BenSampo\Enum\Enum;
  * @method static static OptionTwo()
  * @method static static OptionThree()
  */
-final class UserRoleContants extends Enum
+final class UserRoleNameContants extends Enum
 {
-    const ADMIN =   1;
-    const TEACHER =   2;
-    const STUDENT = 3;
+    const ADMIN = 'admin';
+    const TEACHER = 'teacher';
+    const STUDENT = 'student';
 }

@@ -7,6 +7,8 @@ use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
 use App\Enums\StatusTypeContants;
 use App\Enums\TimeConstants;
+use App\Enums\UserRoleNameContants;
+use App\Helpers\Message;
 use App\Models\Course;
 use App\Models\Request;
 use Exception;
@@ -38,7 +40,7 @@ class CourseService extends BaseService
         });
         if($subjectId != null)
             $query = $query->where('subject_id', $subjectId);
-        if(!Auth::user()->hasRole('admin'))
+        if(!Auth::user()->hasRole(UserRoleNameContants::ADMIN))
          $query = $query->whereHas('userCourse', function($query) {
             $query->where('user_id', Auth::user()->id);
          });
@@ -55,10 +57,10 @@ class CourseService extends BaseService
                     'course_id' => $course->id,
                     'status' => StatusTypeContants::ACTIVE]);
             DB::commit();
-            return ['data'=> $course, 'message'=>"Create successful!"];
+            return ['data'=> $course, 'message' => "Create successful!"];
         } catch(Exception $e) {
             DB::rollBack();
-            return ['data'=> null, 'message'=>"Error, please try again later!"];
+            return ['data' => null, 'message' => Message::error()];
         }
     }
 
@@ -84,10 +86,10 @@ class CourseService extends BaseService
                     'status' => StatusTypeContants::ACTIVE
                 ]);
             DB::commit();
-            return ['data'=>$course, 'message'=>"Update successful!"];
+            return ['data' => $course, 'message' => "Update successful!"];
         }catch(Exception $e){
             DB::rollBack();
-            return  ['data'=> null, 'message'=>"Error, please try again later!"];
+            return  ['data'=> null, 'message' => Message::error()];
         }
     }
 
@@ -95,7 +97,7 @@ class CourseService extends BaseService
     {
         $user = Auth::user();
         $course = $this->model->with('subject')->find($id);
-        if($user->hasRole('student'))
+        if($user->hasRole(UserRoleNameContants::STUDENT))
             $course->isRequestSwitch =  $this->requestModel->where('user_request_id', $user->id)->where('content->old_course_id', $id)->where('type',RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
         return $course;
     }

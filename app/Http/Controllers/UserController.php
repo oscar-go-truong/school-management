@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\SearchColumnContants;
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
 use App\Http\Requests\CreateUpdateUserRequest;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
