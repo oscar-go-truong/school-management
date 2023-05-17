@@ -12,12 +12,12 @@
 
         <div class="container mt-3">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-xl-4">
                     <img src="{{ asset('img/subject.jpg') }}" alt="subject-image" class="rounded">
                     <div class="subject-info-box">
                     </div><!-- / subject-info-box -->
                 </div><!-- / column -->
-                <div class="col-md">
+                <div class="col-xl-8">
                     <div class="text-dark mt-0 mb-3">
                         <h5 class="pb-1"><b>{{ strtoupper($subject->name) }}</b></h5>
                         <div>{{ $subject->descriptions }}</div>
