@@ -19,17 +19,16 @@
                 </div><!-- / column -->
                 <div class="col-md">
                     <div class="text-dark mt-0 mb-3">
-                        <h5 class="pb-1"><b>SUBJECT DETAILS</b></h5>
+                        <h5 class="pb-1"><b>{{ strtoupper($subject->name) }}</b></h5>
                         <div>{{ $subject->descriptions }}</div>
                     </div><!-- / subject-info-box -->
-                    <div class="subject-info-box">
-                        <div><b>Name: </b> {{ $subject->name }}</div>
-                        <div><b>Date: </b> {{ $subject->date }}</div>
-                        <div><b>Status: </b>
-                            <span class="{{ $subject->status === 1 ? 'text-success' : 'text-danger' }}">
-                                {{ $subject->status === 1 ? 'Active' : 'Inactive' }}
-                        </div>
-                        </span>
+                    <a href="/courses?subjectId={{ $subject->id }}" class="detail-subject">
+                        <h3 class="font-bold mt-1 mb-1">Active courses:</h3>
+                    </a>
+                    <div class="max-h-80">
+                        @foreach ($courses as $course)
+                            <div class="border-b-2 border-gray-500">{{ $course->name }}</div>
+                        @endforeach
                     </div>
                 </div><!-- / column -->
 

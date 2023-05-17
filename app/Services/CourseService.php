@@ -150,7 +150,9 @@ class CourseService extends BaseService
     public function getById($id)
     {
         $user = Auth::user();
-        $course = $this->model->with('subject')->find($id);
+        $course = $this->model->with('subject')->withCount('exams')->withCount('teachers')->withCount('students')->with('schedules', function($query){
+            $query->orderByRaw("FIELD(weekday, '".implode("', '", TimeConstants::WEEKDAY)."')");
+        })->find($id);
         if($user->hasRole(UserRoleNameContants::STUDENT))
             $course->isRequestSwitch =  $this->requestModel->where('user_request_id', $user->id)->where('content->old_course_id', $id)->where('type',RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
         return $course;
@@ -159,5 +161,10 @@ class CourseService extends BaseService
     public function getAllActive()
     {
         return $this->model->where('status', StatusTypeContants::ACTIVE)->with('subject')->get();
+    }
+
+    public function getAllActiveOfCourse($subjectId)
+    {
+        return $this->model->select('name')->where('status', StatusTypeContants::ACTIVE)->where('subject_id',$subjectId)->get();
     }
 }

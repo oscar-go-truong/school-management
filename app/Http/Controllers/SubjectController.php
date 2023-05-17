@@ -69,8 +69,9 @@ class SubjectController extends Controller
      */
     public function show($id): View
     {
+        $courses = $this->courseService->getAllActiveOfCourse($id);
         $subject = $this->subjectService->getById($id);
-        return view('subject.detail', compact('subject'));
+        return view('subject.detail', compact('subject', 'courses'));
     }
     /**
      * Show the form for editing the specified resource.

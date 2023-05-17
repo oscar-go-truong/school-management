@@ -29,7 +29,7 @@
         search: null,
         role: [],
         status: null,
-        courseId: null,
+        courseId: '{{ $courseId }}',
         year: new Date().getFullYear(),
     };
     let last_page = 1;
