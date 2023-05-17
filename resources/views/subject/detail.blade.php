@@ -18,17 +18,17 @@
                     </div><!-- / subject-info-box -->
                 </div><!-- / column -->
                 <div class="col-md">
-                    <div class="subject-info-box mt-0 mb-3">
+                    <div class="text-dark mt-0 mb-3">
                         <h5 class="pb-1"><b>SUBJECT DETAILS</b></h5>
-                        <p>{{ $subject->descriptions }}</p>
+                        <div>{{ $subject->descriptions }}</div>
                     </div><!-- / subject-info-box -->
-
                     <div class="subject-info-box">
-                        <p><b>Date: </b> {{ $subject->created_at }}</p>
-                        <p><b>Status: </b>
+                        <div><b>Name: </b> {{ $subject->name }}</div>
+                        <div><b>Date: </b> {{ $subject->date }}</div>
+                        <div><b>Status: </b>
                             <span class="{{ $subject->status === 1 ? 'text-success' : 'text-danger' }}">
                                 {{ $subject->status === 1 ? 'Active' : 'Inactive' }}
-                        </p>
+                        </div>
                         </span>
                     </div>
                 </div><!-- / column -->

@@ -13,7 +13,6 @@ class AuthController extends Controller
     {
         if (Auth::attempt(['email' => $user->email, 'password' => $user->password ])) {
             $user->session()->regenerate();
-
             return redirect()->intended('/');
         }
         return back()->withErrors([

@@ -30,7 +30,7 @@
     $(document).ready(function() {
         $('#submit').click(function() {
             const examtypeId = $('#addExamSelects').val();
-            const courseId = "{{ request()->query('courseId') }}";
+            const courseId = "{{ $course->id }}";
             let btn = $(this);
             btn.attr('disabled', true);
             if (!examtypeId) {
@@ -49,7 +49,6 @@
                     success: function(resp) {
                         if (resp.data) {
                             toastr.success(resp.message);
-                            getTable(createRow);
                         } else
                             toastr.error('Error, please try again later!');
                         $('#addExamModal').modal('hide');

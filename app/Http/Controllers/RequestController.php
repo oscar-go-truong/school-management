@@ -33,17 +33,10 @@ class RequestController extends Controller
 
     public function getTable(Request $request)
     {
-        $input = $request->input();
-        $requests = $this->requestService->getTable($input);
+        $requests = $this->requestService->getTable($request);
         return response()->json($requests);
     }
 
-    public function changeStatus(Request $request, $id)
-    {
-        $status = $request->status;
-        $resp = $this->requestService->changeStatus($id, $status);
-        return response()->json($resp);
-    }
 
     /**
      * Display the specified resource.
@@ -85,22 +78,19 @@ class RequestController extends Controller
 
     public function storeReviewScoreRequest(CreateReviewScoreRequestRequest $request)
     {
-        $input = $request->input();
-        $resp = $this->requestService->storeReviewScoreRequest($input);
+        $resp = $this->requestService->storeReviewScoreRequest($request);
         return response()->json($resp);
     }
 
     public function storeSwitchCourseRequest(CreateSwitchCourseRequestRequest $request)
     {
-        $input = $request->input();
-        $resp = $this->requestService->storeSwitchcCourseRequest($input);
+        $resp = $this->requestService->storeSwitchcCourseRequest($request);
         return response()->json($resp);
     }
 
     public function storeEditExamScoresRequest(CreateEditExamsScoresRequesRequest $request)
     {
-        $input = $request->input();
-        $resp = $this->requestService->storeEditExamScoresRequest($input);
+        $resp = $this->requestService->storeEditExamScoresRequest($request);
         return response()->json($resp);
     }
 }

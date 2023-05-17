@@ -1,39 +1,39 @@
 @extends('components.layout')
 @section('content')
-    @if (session('error'))
-        <script>
-            toastr.error('{{ session('error') }}')
-        </script>
-    @endif
     <div class="row">
         <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-            <div> Scores<span class="text-2xl font-normal"> - {{ $exam->course->subject->name }}
-                    {{ $exam->course->name }} - {{ $exam->type }} exams</span>
+            <div> Scores<div class="text-xl font-normal inline"> - {{ $exam->course->subject->name }}
+                    {{ $exam->course->name }} - {{ $exam->type }} exams</div>
             </div>
-            @if ($exam->can_edit_scores == 1 || Auth::user()->hasRole('admin'))
-                <div class="inline">
-                    <input type="file" id="data-sheet" class="form-control inline w-80 p-2y" name="file" accept=".csv">
+
+            @if ($exam->can_edit_scores == 1)
+                @hasanyrole('admin|teacher')
                     <div class="inline">
-                        <button class="btn btn-primary rounded pb-2" id="open-upload-file-btn">Upload <i
-                                class="fa-solid fa-cloud-arrow-up text-xl"></i>
-                        </button>
+                        <input type="file" id="data-sheet" class="form-control inline w-80 p-2y" name="file" accept=".csv">
+                        <div class="inline">
+                            <button class="btn btn-primary rounded pb-2" id="open-upload-file-btn">Upload <i
+                                    class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="inline">
+                            <button class="btn btn-secondary rounded pb-2" id="open-edit-form-btn">Update <i
+                                    class="fa-solid fa-pen-to-square text-xl"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="inline">
-                        <button class="btn btn-secondary rounded pb-2" id="open-edit-form-btn">Update <i
-                                class="fa-solid fa-pen-to-square text-xl"></i>
-                        </button>
-                    </div>
-                </div>
+                @endhasanyrole
             @else
-                <div class="inline" id="request-update">
-                    @if ($exam->isRequested === 0)
-                        <button class="btn btn-success rounded pb-2" id="request-update-btn">Request Update <i
-                                class="fa-sharp fa-solid fa-pen-to-square text-xl"></i>
-                        </button>
-                    @else
-                        <div class="bg-primary text-white text-xl p-2 text-normal rounded">Requesting</div>
-                    @endif
-                </div>
+                @role('teacher')
+                    <div class="inline" id="request-update">
+                        @if ($exam->isRequested === 0)
+                            <button class="btn btn-success rounded pb-2" id="request-update-btn">Request Update <i
+                                    class="fa-sharp fa-solid fa-pen-to-square text-xl"></i>
+                            </button>
+                        @else
+                            <div class="bg-primary text-white text-xl p-2 text-normal rounded">Requesting</div>
+                        @endif
+                    </div>
+                @endrole('teacher')
             @endif
         </div>
     </div>
@@ -52,7 +52,7 @@
             row.append(`<td>${ score.fullname }</td>`);
             row.append(`<td>${ score.email }</td>`);
             row.append(
-                `<td> <input class="form-control score-demo-input" data-id="${score.user_id}" type="number" value="${ score.score }" min="0" max="10"/></td>`
+                `<td> <input class="form-control score-demo-input" data-id="${score.user_id}" type="number" value="${ score.total }" min="0" max="10"/></td>`
             );
             row.append(
                 `<td class="text-danger text-2xl text-center"><i class="fa-solid fa-delete-left delete-score-demo" data-id="${score.user_id}"></i></td>`
@@ -81,16 +81,19 @@
         const closeDemoForm = () => {
             formData = [];
             missingUser = [];
+            $('#loading').attr('hidden', true);
             getTable(createRow);
             $('#select-limit').show();
             $('#custom-btns').html("");
             $('#demo-remove-user').hide();
+            $('#table-layout-component').show();
         }
         // Function to parse CSV data into an array of rows
         const parseCSV = (csvData) => {
             let rows = csvData.split('\n');
             for (let i = 0; i < rows.length; i++) {
                 rows[i] = rows[i].replace('\r', "");
+                rows[i] = rows[i].replaceAll('"', '');
             }
             let data = [];
             rows[0] = rows[0].toLowerCase().replace('#', 'user_id');
@@ -107,7 +110,7 @@
         }
         const createMissingUserSelect = () => {
             $('#AddStudentScores').html(`<select class="form-control select2 w-80" id="addStudentSelect"> 
-                                    <option value ="" id = "selectDefault1">Add student </option>
+                                    <option value ="" id = "selectDefault" selected>Add student </option>
                                 </select> `);
             $('#addStudentSelect').select2();
             for (let i = 0; i < missingUser.length; i++) {
@@ -148,10 +151,10 @@
                                 if (resp.data.length) {
                                     for (let i = 0; i < data.length; i++) {
                                         const row = {
-                                            user_id: data[i].student_id,
-                                            fullname: data[i].user.fullname,
-                                            email: data[i].user.email,
-                                            score: data[i].total
+                                            user_id: data[i].user_id,
+                                            fullname: data[i].fullname,
+                                            email: data[i].email,
+                                            total: data[i].total
                                         };
                                         missingUser.push(row);
                                     }
@@ -160,10 +163,12 @@
                                     $('#AddStudentScores').html(``);
                                 }
                             },
-                            error: function() {}
+                            error: function() {
+                                closeDemoForm();
+                            }
                         })
                         toastr.info('Please check the information again before submitting!');
-
+                        $('#loading').attr('hidden', true);
                     } else {
                         closeDemoForm();
                         toastr.error(resp.message);
@@ -177,6 +182,7 @@
             })
         }
         const upload = () => {
+            $('#loading').attr('hidden', false);
             toastr.info('Updating!');
             $.ajax({
                 method: "POST",
@@ -188,11 +194,11 @@
                 success: function(resp) {
                     if (resp.data) {
                         toastr.success(resp.message);
-                    } else toasrt.error(message);
+                    } else toastr.error(message);
                     closeDemoForm();
                 },
                 error: function() {
-                    closeDemoForm()
+                    $('#loading').attr('hidden', true);
                     toastr.error('Error, please try again later!');
                 }
             })
@@ -227,7 +233,8 @@
                 closeDemoForm();
             })
             $('#open-upload-file-btn').click(function() {
-                toastr.info('Loading...');
+                toastr.info('Detaching file...');
+                $('#loading').attr('hidden', false);
                 let btn = $(this);
                 const file = $('#data-sheet')[0].files[0];
                 if (!file) {
@@ -256,8 +263,8 @@
                         <button class="btn btn-secondary mr-3">cancel</button> 
                         <button class="btn btn-success ml-3" onclick='upload()'>Upload</button></div>
                     </div>`);
-                toastr.options.timeOut = 600;
-                toastr.options.extendedTimeOut = 600;
+                toastr.options.timeOut = 3000;
+                toastr.options.extendedTimeOut = 3000;
             })
 
             $(document).on('change', '.score-demo-input', function() {
@@ -266,7 +273,7 @@
                 input.val(val);
                 const id = input.data('id');
                 const index = formData.findIndex(item => item.user_id == id);
-                formData[index].score = val;
+                formData[index].total = val;
             })
             $(document).on('change', '#addStudentSelect', function() {
                 let select = $(this);
@@ -279,7 +286,7 @@
                     formData.push(newRow);
                     $('#scoresTable').append(createRowDemo(newRow));
                     $('#student-missing-' + user_id).remove();
-
+                    createMissingUserSelect();
                 }
             })
             $(document).on('click', '.delete-score-demo', function() {
@@ -293,6 +300,7 @@
             });
             $(document).on('click', '#open-edit-form-btn', function() {
                 toastr.info('Loading...');
+                $('#loading').attr('hidden', false);
                 formData = [];
                 missingUser = [];
                 $('#table-layout-component').hide();
@@ -309,14 +317,15 @@
                         if (resp.data.length) {
                             for (let i = 0; i < data.length; i++) {
                                 const row = {
-                                    user_id: data[i].student_id,
-                                    fullname: data[i].user.fullname,
-                                    email: data[i].user.email,
-                                    score: data[i].total
+                                    user_id: data[i].user_id,
+                                    fullname: data[i].fullname,
+                                    email: data[i].email,
+                                    total: data[i].total
                                 };
                                 formData.push(row);
                             }
                             createDemoTable();
+                            $('#loading').attr('hidden', true);
                         } else {
                             toastr.error('Error, please try again later!');
                             closeDemoForm();
@@ -336,8 +345,8 @@
                         <button class="btn btn-secondary mr-3">cancel</button> 
                         <button class="btn btn-success ml-3" onclick='requestUpdate()'>Yes</button></div>
                     </div>`);
-                toastr.options.timeOut = 600;
-                toastr.options.extendedTimeOut = 600;
+                toastr.options.timeOut = 3000;
+                toastr.options.extendedTimeOut = 3000;
             })
         })
     </script>

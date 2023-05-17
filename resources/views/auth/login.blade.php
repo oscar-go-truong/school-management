@@ -34,19 +34,19 @@
                                 </div>
                             @endif
 
-                            <div class="d-flex mb-5 align-items-center">
+                            {{-- <div class="d-flex mb-5 align-items-center">
                                 <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
                                     <input type="checkbox" checked="checked" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
-                            </div>
+                            </div> --}}
 
                             <button type="submit" class="btn text-white btn-block bg-sky-800 w-100 rounded"
                                 id="submit">Log
                                 in</button>
 
-                            <span class="d-block text-left my-4 text-muted"> or sign in with</span>
+                            {{-- <span class="d-block text-left my-4 text-muted"> or sign in with</span>
 
                             <div class="social-login">
                                 <a href="#" class="facebook">
@@ -58,7 +58,7 @@
                                 <a href="#" class="google">
                                     <span class="mr-3"><i class="fa-brands fa-google text-white"></i></span>
                                 </a>
-                            </div>
+                            </div> --}}
                         </form>
                     </div>
                 </div>

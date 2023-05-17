@@ -31,29 +31,34 @@ class Course extends Model
         return $this->HasMany(BookingRoom::class);
     }
 
-    public function exam(): HasMany
+    public function exams(): HasMany
     {
         return $this->hasMany(Exam::class);
     }
 
     public function subject(): BelongsTo
     {
-        return $this->belongsTo(Subject::class, "subject_id");
+        return $this->belongsTo(Subject::class);
     }
 
-    public function scopeYear($query, $input)
+    public function scopeYear($query, $year)
     {
-        if($input['year']!==null)
-            return $query->whereRaw('Year(created_at) = '.$input['year']);
-        else
-            return $query;
+        if($year)
+            return $query->whereRaw('Year(created_at) = '.$year);
+        return $query;
+    }
+    public function scopeSubject($query, $subjectId)
+    {
+        if($subjectId)
+            return $query->where('subject_id', $subjectId);
+        return $query;
     }
     public function homeroomTeacher(): BelongsTo
     {
         return $this->belongsTo(User::class, "owner_id");
     }
 
-    public function userCourse() : HasMany
+    public function userCourses() : HasMany
     {
         return $this->hasMany(UserCourse::class); 
     }

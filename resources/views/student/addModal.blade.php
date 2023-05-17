@@ -62,8 +62,8 @@
                         }
                         $('#addStudentModal').modal('hide');
                         btn.attr('disabled', false);
-                        toastr.options.timeOut = 600;
-                        toastr.options.extendedTimeOut = 600;
+                        toastr.options.timeOut = 3000;
+                        toastr.options.extendedTimeOut = 3000;
 
                     },
                     error: function() {

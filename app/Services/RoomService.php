@@ -12,12 +12,11 @@ class RoomService extends BaseService {
         return Room::class;
     }
 
-    public function getAvailable($input)
-    {
-        $date =  $input['date'];
-        $startTime = $input['start_time'];
-        $endTime = $input['end_time'];
-        $rooms = $this->model->where('status',StatusTypeContants::ACTIVE)->whereDoesntHave('events', function($query) use($date, $startTime, $endTime){
+    public function getAvailable($request)    {
+        $date =  $request->date;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+        $rooms = $this->model->select('id','name')->where('status',StatusTypeContants::ACTIVE)->whereDoesntHave('events', function($query) use($date, $startTime, $endTime){
             $query->whereRaw('((start_time <"'.$startTime.'" and "'.$startTime.'"< end_time) or (start_time <= "'.$endTime.'" and "'.$endTime.'" <= end_time) or (start_time >= "'.$startTime.'" and "'.$endTime.'" >=end_time))')->where('date',$date);
         })->whereDoesntHave('schedules', function($query) use($date, $startTime, $endTime){
             $weekday = Carbon::parse($date)->format('D') ;

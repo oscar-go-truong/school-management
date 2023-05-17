@@ -24,7 +24,7 @@
 
                 <div>
                     <div class="form-group">
-                        <label class="control-label mt-3 font-semibold">Event Tag</label>
+                        <label class="control-label mt-3 font-semibold">Event Tag <span class="text-danger">*</span></label>
                         <div class="inputGroupContainer">
                             <div class="input-group">
                                 <input name="name" placeholder="Event Name" class="form-control" type="text"
@@ -42,7 +42,8 @@
                     <div class="row">
                         <div class="form-group col-md-3">
                             <div class="inputGroupContainer relative">
-                                <label for="date" class="mt-3  font-semibold">Start</label>
+                                <label for="date" class="mt-3  font-semibold">Date <span
+                                        class="text-danger">*</span></label>
                                 <input type="date" class="datepicker form-control" id="date" name="date">
                                 @error('date')
                                     <div class="text-danger mt-1">{{ $message }}</div>
@@ -51,7 +52,8 @@
                         </div>
                         <div class="form-group col-md-3">
                             <div class="inputGroupContainer relative">
-                                <label for="startTime" class="mt-3  font-semibold">Start</label>
+                                <label for="startTime" class="mt-3  font-semibold">Start <span
+                                        class="text-danger">*</span></label>
                                 <input type="time" class="datepicker form-control" id="startTime" step="3600"
                                     min="9:00" max="18:00" name="start_time">
                                 @error('start_time')
@@ -61,7 +63,8 @@
                         </div>
                         <div class="form-group col-md-3">
                             <div class="inputGroupContainer relative">
-                                <label for="endTime" class="mt-3  font-semibold">End</label>
+                                <label for="endTime" class="mt-3  font-semibold">End <span
+                                        class="text-danger">*</span></label>
                                 <input type="time" class="datepicker form-control" id="endTime" step="3600"
                                     min="9:00" max="18:00" name='end_time'>
                                 @error('end_time')
@@ -70,7 +73,8 @@
                             </div>
                         </div>
                         <div class="form-group col-md-3">
-                            <label class="control-label mt-3  font-semibold">Available Room</label>
+                            <label class="control-label mt-3  font-semibold">Available Room <span
+                                    class="text-danger">*</span></label>
                             <div class="inputRoomContainer">
                                 <select class="form-control select2" id="roomSelect" name="room_id">
 
@@ -87,22 +91,7 @@
                 <div class="row">
                     <label class="font-bold text-xl mt-3">Participants</label>
                     <div class="form-group col-md-6">
-                        <label class="control-label mt-3  font-semibold">Groups</label>
-                        <div class="inputGroupContainer">
-                            <select class="form-control select2" name="courses[]" id="groupSelect" multiple>
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}" id="course-{{ $course->id }}">
-                                        {{ $course->subject->name }} {{ $course->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('courses')
-                                <div class="text-danger mt-1">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label class="control-label mt-3  font-semibold">Users</label>
+                        <label class="control-label mt-3  font-semibold">Users <span class="text-danger">*</span></label>
                         <div class="inputGroupContainer">
                             <select class="form-control select2" name="users[]" id="userSelect" multiple>
 
@@ -117,10 +106,26 @@
                             @enderror
                         </div>
                     </div>
+                    <div class="form-group col-md-6">
+                        <label class="control-label mt-3  font-semibold">Groups</label>
+                        <div class="inputGroupContainer">
+                            <select class="form-control select2" name="courses[]" id="groupSelect" multiple>
+                                @foreach ($courses as $course)
+                                    <option value="{{ $course->id }}" id="course-{{ $course->id }}">
+                                        {{ $course->subject->name }} {{ $course->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('courses')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label mt-3  font-semibold">Description</label>
+                    <label class="control-label mt-3  font-semibold">Description <span class="text-danger">*</span></label>
                     <div class="inputGroupContainer">
                         <div class="input-group">
                             <textarea placeholder="Description..." rows="10" class="form-control" id="description" name="description"></textarea>
@@ -171,7 +176,36 @@
                     }
                 },
                 error: function() {
-
+                    $('#roomSelect').html('');
+                    toastr.warning('Loading room available failed. Please try again later!');
+                }
+            })
+        }
+        const checkIsConflictTime = (date, startTime, endTime) => {
+            toastr.info('Check time is valid...');
+            $.ajax({
+                method: 'GET',
+                url: '/schedules/check-is-conflict-time',
+                data: {
+                    date: date,
+                    start_time: startTime,
+                    end_time: endTime
+                },
+                dataType: 'json',
+                success: function(resp) {
+                    if (resp.data.schedule || resp.data.event) {
+                        if (resp.data.schedule)
+                            toastr.warning(
+                                `conflict time with ${resp.data.schedule}. Please select other time!`);
+                        if (resp.data.event)
+                            toastr.warning(
+                                `conflict time with ${resp.data.event}. Please select other time!`);
+                    } else {
+                        getAvailableRooms(date, startTime, endTime);
+                    }
+                },
+                error: function() {
+                    toastr.warning('Error, please try again later!');
                 }
             })
         }
@@ -179,7 +213,8 @@
             const dateStart = new Date(`October 11, 2001 ${startTime}:00`);
             const dateEnd = new Date(`October 11, 2001 ${endTime}:00`);
 
-            if (!name || !startTime || !endTime || !date || !room || !users || !description || dateStart.getTime() >=
+            if (!name || !startTime || !endTime || !date || !room || !users || !description || dateStart
+                .getTime() >=
                 dateEnd.getTime()) {
                 if (!name) {
                     toastr.warning('Event tag field is require!');
@@ -271,13 +306,15 @@
             $(".select2").select2();
         });
         $('#date, #startTime, #endTime').change(function() {
+            $('#roomSelect').html('');
             const start = $('#startTime').val();
             const end = $('#endTime').val();
             const date = $('#date').val();
             if (start && end && date)
-                getAvailableRooms(date, start, end);
+                checkIsConflictTime(date, start, end);
         })
         $('#submit').click(function() {
+            $(this).attr('disabled', true);
             const startTime = $('#startTime').val();
             const endTime = $('#endTime').val();
             const date = $('#date').val();
@@ -288,6 +325,8 @@
             const description = $('#description').val();
             if (validateform(name, startTime, endTime, date, room, users, description))
                 $('#event-form').submit();
+            else
+                $(this).attr('disabled', false);
         })
     </script>
 @endsection

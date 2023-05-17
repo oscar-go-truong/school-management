@@ -33,15 +33,15 @@ class Request extends Model
     }
 
 
-    public function scopeStatus($query, $input){
-        if($input['status'])
-            return $query->where('status', $input['status']);
+    public function scopeStatus($query, $request){
+        if($request->status)
+            return $query->where('status', $request->status);
         return $query;
     }
 
-    public function scopeType($query, $input){
-        if($input['type'])
-            return $query->where('type', $input['type']);
+    public function scopeType($query, $request){
+        if($request->type)
+            return $query->where('type', $request->type);
         return $query;
     }
 }

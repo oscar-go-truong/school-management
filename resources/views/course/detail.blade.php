@@ -40,6 +40,10 @@
                             @hasanyrole('admin|teacher')
                                 <button type="button" class="btn bg-info" id="export">Export student list
                                 </button>
+                                <button type="button" class="btn bg-success" data-bs-toggle="modal"
+                                    data-bs-target="#addExamModal">New exam
+                                </button>
+                                @include('course.addExamModal')
                             @endhasanyrole
                             @role('student')
                                 @if ($course->isRequestSwitch)

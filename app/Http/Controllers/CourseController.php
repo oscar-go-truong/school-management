@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MyExamTypeConstants;
 use App\Enums\TimeConstants;
 use App\Enums\UserRoleNameContants;
 use App\Exports\StudentsListExport;
@@ -47,17 +48,18 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : View
+    public function index(Request $request) : View
     {
+        $subjectId = $request->subjectId;
         $currentYear = date('Y');
         $years = range($currentYear, 2020);
-        return view('course.index', compact('years'));
+        $subjects = $this->subjectService->getAllSubjectsOfUser();
+        return view('course.index', compact('years', 'subjects', 'subjectId'));
     }
 
     public function getTable(Request $request) 
     {
-        $input = $request->input();
-        $courses = $this->courseService->getTable($input);
+        $courses = $this->courseService->getTable($request);
         return response()->json($courses);
     }
     /**
@@ -81,8 +83,7 @@ class CourseController extends Controller
      */
     public function store(CreateUpdateCourseRequest $request)
     {
-        $input =$request->input();
-        $resp = $this->courseService->store($input);
+        $resp = $this->courseService->store($request);
         if($resp['data'] != null)
             return redirect('/courses')->with('success',$resp['message']);
         else 
@@ -97,10 +98,10 @@ class CourseController extends Controller
      */
     public function show($id) : View
     {
+        $examTypes = MyExamTypeConstants::asArray();
         $course = $this->courseService->getById($id);
         $coursesAvailableSwitch = Auth::user()->hasRole(UserRoleNameContants::STUDENT) ? $this->courseService->coursesAvailableSwicth($course->id, Auth::user()->id) : null;
-        $rooms = $this->roomService->getAll();
-        return view('course.detail', compact('course', 'coursesAvailableSwitch','rooms'));
+        return view('course.detail', compact('course', 'coursesAvailableSwitch','examTypes'));
     }
 
     /**
@@ -126,9 +127,7 @@ class CourseController extends Controller
      */
     public function update(CreateUpdateCourseRequest $request, $id)
     {
-        $input = $request->input();
-        $arg = array('name' => $input['name'], 'subject_id' => $input['subject_id'], 'owner_id'=>$input['owner_id'], 'descriptions' => $input['descriptions']);
-        $resp = $this->courseService->update($id, $arg);
+        $resp = $this->courseService->update($id, $request);
         if($resp['data'] != null)
             return redirect('/courses')->with('success',$resp['message']);
         else 
@@ -150,8 +149,7 @@ class CourseController extends Controller
     // change course status
     public function changeStatus(Request $request, int $id)
     {
-        $status = $request->status;
-        $resp = $this->courseService->changeStatus($id, $status);
+        $resp = $this->courseService->changeStatus($id, $request);
         return response()->json($resp);
     }
 

@@ -31,7 +31,7 @@
         role: [],
         status: null,
         year: new Date().getFullYear(),
-        subjectId: subjectId ? subjectId : null
+        subjectId: subjectId
     };
     let last_page = 1;
     // end config
@@ -41,23 +41,23 @@
         let row = $(`<tr id="course-${ course.id    }">`);
         row.append(`<td>${ course.id }</td>`);
         row.append(`<td>${ course.name }</td>`);
-        row.append(`<td>${ course.subject.name}</td>`);
+        row.append(`<td>${ course.subject}</td>`);
         let schedules = $(`<td>`);
         for (let i = 0; i < course.schedules.length; i++) {
             schedules.append(
-                `<div class="mt-2">${course.schedules[i].start_time + '-' + course.schedules[i].finish_time +', '+ course.schedules[i].weekday}</div>`
+                `<div class="mt-2">${course.schedules[i].start + '-' + course.schedules[i].end +', '+ course.schedules[i].weekday}</div>`
             );
         }
         row.append(schedules);
-        row.append(`<td>${ new Date(course.created_at).getFullYear() }</td>`);
+        row.append(`<td>${course.year}</td>`);
         row.append(
-            `<td class="dark-link text-center"><a href="/courses/${course.id}/teachers">${course.teachers_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/courses/${course.id}/teachers">${course.teachersCount}</a></td>`
         );
         row.append(
-            `<td class="dark-link text-center"><a href="/courses/${course.id}/students">${course.students_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/courses/${course.id}/students">${course.studentsCount}</a></td>`
         );
         row.append(
-            `<td class="dark-link text-center"><a href="/exams?courseId=${course.id}">${course.exam_count}</a></td>`
+            `<td class="dark-link text-center"><a href="/exams?courseId=${course.id}">${course.examsCount}</a></td>`
         );
         row.append(` <td class="text-info text-2xl text-center">
                         <a href='/courses/${ course.id }'><i class="fa-sharp fa-solid fa-circle-info"></i></a>

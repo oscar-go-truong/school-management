@@ -32,7 +32,7 @@
             </div>
 
             <div class="form-group mt-3">
-                <label for="password" class="font-bold mb-1">Password <span class="text-danger">*</span></label>
+                <label for="password" class="font-bold mb-1">Password </label>
                 <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
                     name="password" placeholder="Password">
                 @error('password')
@@ -40,7 +40,7 @@
                 @enderror
             </div>
             <div class="form-group mt-3">
-                <label for="repassword" class="font-bold mb-1">Confirm password <span class="text-danger">*</span></label>
+                <label for="repassword" class="font-bold mb-1">Confirm password </label>
                 <input type="password" class="form-control  @error('repassword') is-invalid @enderror" id="repassword"
                     name="repassword" placeholder="Confirm password">
                 @error('repassword')

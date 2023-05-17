@@ -23,11 +23,12 @@ class EventService extends BaseService{
         return Event::class;
     }
 
-    public function store($input)
+    public function store($request)
     {
         try{
             DB::beginTransaction();
             $user = Auth::user();
+            $input = $request->input();
             $input['created_by'] = $user->id;
             $event = $this->model->create($input);
             $users = $input['users'];
@@ -77,5 +78,18 @@ class EventService extends BaseService{
             ];
         }
         return $events;
+    }
+
+    public function checkConflictTime($request)
+    {
+        $user = Auth::user();
+        $date = $request->date;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+        $event =  $this->model->whereRaw('((start_time <"'.$startTime.'" and "'.$startTime.'"< end_time) or (start_time <= "'.$endTime.'" and "'.$endTime.'" <= end_time) or (start_time >= "'.$startTime.'" and "'.$endTime.'" >=end_time))')->where('date',$date)->with('room')->whereHas('eventParticipants',function($query) use($user){
+            $query->where('participant_id', $user->id);
+        })->first();
+        if($event)
+            return $event->name.' from '.$event->start_time.' to '.$event->end_time.', '.$event->date.' at '.$event->room->name;
     }
 }

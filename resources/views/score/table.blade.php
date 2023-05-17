@@ -12,7 +12,7 @@
 <script>
     const model = 'score';
     const tableId = '#scoresTable';
-    const url = '/' + '{{ Request::path('/') }}' + '/table';
+    const url = '/exams/' + '{{ $exam->id }}' + '/scores/table';
     const isStudent = '{{ Auth::User()->hasRole('student') }}';
     let queryData = {
         page: 1,
@@ -29,8 +29,8 @@
     const createRow = (score) => {
         let row = $(`<tr id="score-${ score.id    }">`);
         row.append(`<td>${ score.id }</td>`);
-        row.append(`<td>${ score.user.fullname }</td>`);
-        row.append(`<td>${ score.user.email }</td>`);
+        row.append(`<td>${ score.fullname }</td>`);
+        row.append(`<td>${ score.email }</td>`);
         row.append(`<td>${ score.total }</td>`);
         return row;
     }

@@ -16,7 +16,6 @@ class Exam extends Model
     protected $fillable = [
         'type',
         'course_id',
-        'status'
     ];
 
     public function course(): BelongsTo
@@ -24,9 +23,24 @@ class Exam extends Model
         return $this->belongsTo(Course::class, "course_id");
     }
 
-    public function score(): HasMany
+    public function scores(): HasMany
     {
         return $this->hasMany(Score::class);
     }
 
+    public function scopeCourse($query, $courseId)
+    {
+        if($courseId)
+            return $query->where('course_id', $courseId);
+        return $query;
+    }
+
+    public function scopeYear($query, $year)
+    {
+        if($year)
+            return $query->whereHas('course',function($query) use($year){
+                return $query->whereRaw('Year(created_at) = '.$year);
+            });
+        return $query;
+    }
 }

@@ -233,8 +233,8 @@
                         <button class="btn btn-secondary mr-3">cancel</button> 
                         <button class="btn btn-danger ml-3 submit-delete" onclick='submitDelete(${id})'>delete</button></div>
                     </div>`);
-            toastr.options.timeOut = 600;
-            toastr.options.extendedTimeOut = 600;
+            toastr.options.timeOut = 3000;
+            toastr.options.extendedTimeOut = 3000;
         });
     });
 </script>

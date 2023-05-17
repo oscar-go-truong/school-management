@@ -50,10 +50,10 @@ class Message
         return 'User conflict time with course <b>'.$course->course->subject->name.' - '.$course->course->name.'</b>!';
     }
 
-    static function userWasJoinedSubjectInThisYear($user, $course){
+    static function userWasJoinedSubjectInThisYear($user, $course, $newCourseId){
         return 'User has joined class <b>'.$course->course->name.'</b> of subject <b>'.$course->course->subject->name.'</b>. Do you want to change the class to <b>'.$course->name.'</b>?<div class="d-flex justify-content-center">
         <button class="btn btn-secondary mr-3">No</button> 
-        <button class="btn btn-primary ml-3" data-id="'.$course->id.'" data-newCourseId="'.$course->id.'" data-oldCourseId="'.$course->course_id.'" data-userId="'.$user->id.'" id="changeCourse">Yes</button></div>
+        <button class="btn btn-primary ml-3" data-id="'.$course->id.'" data-newCourseId="'.$newCourseId.'" data-oldCourseId="'.$course->course_id.'" data-userId="'.$user->id.'" id="changeCourse">Yes</button></div>
        </div>';
     }
 }

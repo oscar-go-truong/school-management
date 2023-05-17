@@ -16,8 +16,7 @@ class RoomController extends Controller
 
     public function getAvailable(Request $request)
     {
-        $input = $request->input();
-        $rooms = $this->roomService->getAvailable($input);
+        $rooms = $this->roomService->getAvailable($request);
         return $rooms;
     }
 }

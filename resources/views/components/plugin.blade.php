@@ -41,10 +41,6 @@
         href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
     </script>
-    <!-- Development version -->
-    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
-    <!-- Production version -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
 
 <body>
     </head>

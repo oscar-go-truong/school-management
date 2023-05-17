@@ -33,8 +33,8 @@
         let row = $(`<tr id="request-${ request.id    }">`);
         row.append(`<td>${ request.id }</td>`);
         row.append(`<td>${ request.type }</td>`);
-        row.append(`<td>${ request.user_request.fullname }</td>`);
-        row.append(`<td>${ request.user_approve ? request.user_approve.fullname : "---" }</td>`);
+        row.append(`<td>${ request.userRequest }</td>`);
+        row.append(`<td>${ request.userApprove }</td>`);
         row.append(
             `<td>${  new Date(request.created_at).toLocaleString('en-us')  }</td>`
         );

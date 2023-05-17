@@ -22,8 +22,21 @@ class UserCourseService extends BaseService
         $query = $this->model->where('course_id', $courseId)->whereHas('user', function ($query) use ($role) {
             $query->role($role);
         })->with('user');
-        $data = $this->orderNSearch($request, $query);
-        return $data;
+        $result = $this->orderNSearch($request, $query);
+        $userCourses = $result['data'];
+        $data = [];
+        foreach($userCourses as $userCourse)
+        {
+            $data[] = [
+                'id' => $userCourse->id,
+                'user_id' => $userCourse->user_id,
+                'fullname' => $userCourse->user->fullname,
+                'email' => $userCourse->user->email,
+                'joined_at' => $userCourse->created_at
+            ];
+        }
+        $result['data'] = $data;
+        return $result;
     }
 
     public function getUsersByRole($courseId, $role)
@@ -66,10 +79,10 @@ class UserCourseService extends BaseService
         return null;
     }
    
-    public function store($input) 
+    public function store($request) 
     {
-        $course = Course::find($input['course_id']);
-        $user = User::find($input['user_id']);
+        $course = Course::find($request->course_id);
+        $user = User::find($request->user_id);
         
         $isConflictTime = $this->checkConflictScheduleWithOtherCourse($user, $course);
         if($isConflictTime)
@@ -80,9 +93,12 @@ class UserCourseService extends BaseService
             {
                 $isJoinedSubjectInThisYear = $this->checkUSerIsJoinedSubjectInThisYear($user, $course);
                 if($isJoinedSubjectInThisYear)
-                    return ['data'=>null,'wait'=>true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear)];
+                    return ['data'=>null,'wait'=>true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear, $course->id)];
             }
-            return parent::store($input);
+            $userCourse = $this->model->updateOrCreate(['user_id' => $request->user_id, 'course_id' => $request->course_id], ['deleted_at' => null]);
+            if ($userCourse) 
+            return ['data' => ['id' => $this->model->where('user_id', $request->user_id)->where('course_id', $request->course_id)->first()->id], 'message' => Message::createSuccessfully("")];
+                return  ['data' => null, 'message' => Message::error()];
         }
     }
 }

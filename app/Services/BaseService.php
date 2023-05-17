@@ -27,31 +27,40 @@ abstract class BaseService
         return $this->model->where('status', StatusTypeContants::ACTIVE)->get();
     }
 
-    public function changeStatus($id, $status)
+    public function changeStatus($id, $request)
     {
+        $status = $request->status;
         $update = $this->model->where('id', $id)->update(['status' => $status]);
         if ($update) 
-            return ['data' => $this->model->find($id), 'message' => Message::updateStatusSuccessfully("")];
+            return ['data' => ['id' => $id], 'message' => Message::updateStatusSuccessfully("")];
         return  ['data' => null, 'message' => Message::error()];
     }
 
-    protected function orderNSearch($input, $query)
+    protected function orderNSearch($request, $query)
     {
-        $limit =isset($input['limit']) ? $input['limit'] : PaginationContants::LIMIT;
+        $limit =$request->limit ? $request->limit : PaginationContants::LIMIT;
         // order by
-        $isOrder = isset($input['orderBy']) && isset($input['orderDirect']);
+        $isOrder = $request->orderBy && $request->orderDirect;
         if ($isOrder) {
-            $orderBy = $input['orderBy'];
-            $orderDirect = $input['orderDirect'];
+            $orderBy =  $request->orderBy ;
+            $orderDirect = $request->orderDirect;
                 $query = $query->orderBy($orderBy, $orderDirect);
         }
-        if (isset($input['search']) && $input['search']) {
-            $searchColumn = $input['search']['column'];
-            $searchType = $input['search']['type'];
-            $searchKey = $input['search']['key'];
+        if ($request->search) {
+            $searchColumn = $request->search['column'];
+            $searchType = $request->search['type'];
+            $searchKey = $request->search['key'];
             $query = $query->where($searchColumn, $searchType, '%' . $searchKey . '%');
         }
-        return $query->paginate($limit);
+        $models =  $query->paginate($limit);
+        $result = [
+            'data' => $models->items(),
+            'from' => $models->firstItem(),
+            'to' => $models->lastItem(),
+            'last_page' => $models->lastPage(),
+            'total' => $models->total()
+        ];
+        return $result;
     }
     public function getById($id)
     {
@@ -59,11 +68,11 @@ abstract class BaseService
     }
 
 
-    public function store($arg)
+    public function store($request)
     {
-        $result =  $this->model->create($arg);
+        $result =  $this->model->create($request->input());
         if ($result) 
-            return ['data' => $result, 'message' => Message::createSuccessfully("")];
+            return ['data' => ['id' => $result->id], 'message' => Message::createSuccessfully("")];
         return  ['data' => null, 'message' => Message::error()];
     }
 
@@ -71,16 +80,16 @@ abstract class BaseService
     {
         $result = $this->model->where('id', $id)->update($arg);
         if ($result) 
-            return ['data' => $this->model->find($id), 'message' => Message::updateStatusSuccessfully("")];
+            return ['data' => ['id' => $id], 'message' => Message::updateStatusSuccessfully("")];
         return  ['data' => null, 'message' => Message::error()];
     }
 
     public function destroy($id)
     {
-        $item = $this->model->find($id);
-        if ($item) {
+        $model = $this->model->find($id);
+        if ($model) {
             $this->model->destroy($id);
-            return ['data' => $item, 'message' => Message::deleteSuccessfully("")];
+            return ['data' => ['id' => $model->id], 'message' => Message::deleteSuccessfully("")];
         }
         return ['data' => null, 'message' => Message::error()];
     }

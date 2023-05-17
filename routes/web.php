@@ -101,6 +101,7 @@ Route::prefix('/')->middleware('auth')->group(function () {
         Route::get('/table', [ScheduleController::class, 'getTable'])->name('user.get.schedule.table');
         Route::get('events/create', [EventController::class, 'create'])->name('user.get.event.create')->middleware('auth.teacher');
         Route::post('events', [EventController::class, 'store'])->name('user.get.event.store')->middleware('auth.teacher');
+        Route::get('/check-is-conflict-time', [ScheduleController::class, 'checkIsConflictTime'])->name('user.check.conflict_time')->middleware('auth.teacher');
       });
 
     Route::prefix('/rooms/')->group(function () {

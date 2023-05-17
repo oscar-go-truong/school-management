@@ -5,22 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateEventRequest;
 use App\Services\CourseService;
 use App\Services\EventService;
-use App\Services\RoomService;
 use App\Services\UserService;
 
 class EventController extends Controller
 {
     protected $userService;
     protected $courseService;
-    protected $roomService;
 
     protected $eventService;
 
-    public function __construct(UserService $userService, CourseService $courseService, RoomService $roomService,EventService $eventService)
+    public function __construct(UserService $userService, CourseService $courseService, EventService $eventService)
     {
         $this->userService = $userService;
         $this->courseService = $courseService;
-        $this->roomService = $roomService;
         $this->eventService = $eventService;
     }
     public function create()
@@ -32,8 +29,7 @@ class EventController extends Controller
 
     public function store(CreateEventRequest $createEventRequest)
     {
-        $input = $createEventRequest->input();
-        $result = $this->eventService->store($input);
+        $result = $this->eventService->store($createEventRequest);
         if($result)
             return redirect('/schedules');
         else
