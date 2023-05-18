@@ -1,6 +1,6 @@
 <nav id="sidebar">
-    <div class="custom-menu">
-        <button type="button" id="sidebarCollapse" class="btn btn-primary">
+    <div class="custom-menu" id="sidebarCollapse">
+        <button type="button" class="btn btn-primary">
             <i class="fa fa-bars"></i>
             <span class="sr-only">Toggle Menu</span>
         </button>
@@ -70,16 +70,7 @@
 </nav>
 <script>
     $(document).ready(function() {
-
-        function fullHeight() {
-            $(".js-fullheight").css("height", $(window).height());
-            $(window).resize(function() {
-                $(".js-fullheight").css("height", $(window).height());
-            });
-        }
-        fullHeight();
-
-        $("#sidebarCollapse").on("click", function() {
+        $("#sidebarCollapse").click(function() {
             $("#sidebar").toggleClass("active");
         });
     })

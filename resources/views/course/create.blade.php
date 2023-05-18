@@ -145,7 +145,7 @@
         }
         $('.select2').select2();
         // validate form
-        const validate = (name, subject, teacher, start_time, finish_time, weekday, descriptions) => {
+        const validate = (name, subject, teacher, descriptions) => {
             $('.form-control').removeClass('is-invalid');
 
             if (!name || !subject || !teacher || !descriptions) {

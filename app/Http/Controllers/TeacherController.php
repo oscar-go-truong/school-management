@@ -34,9 +34,7 @@ class TeacherController extends Controller
     }
 
     public function store(Request $request) {
-        $input = $request->input();
-        $input['status'] = StatusTypeContants::ACTIVE; 
-        $resp = $this->userCourseService->store($input);
+        $resp = $this->userCourseService->store($request);
         return response()->json($resp);
     }
 }

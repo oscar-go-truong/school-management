@@ -1,7 +1,7 @@
 <div class="navbar navbar-inverse navbar-fixed-top d-flex justify-content-between">
     <div class="inline-block">
         <a class="navbar-brand" href="#"><i class="fa fa-square-o "></i>&nbsp;XShool</a>
-        <button type="button" class="mr-5 ml-3">
+        {{-- <button type="button" class="mr-5 ml-3">
             Home
         </button>
         <button type="button" class="mr-5">
@@ -12,7 +12,7 @@
         </button>
         <button type="button" class="mr-5">
             Contact
-        </button>
+        </button> --}}
     </div>
     <div class="dropdown mr-5">
         @if (Auth::check())

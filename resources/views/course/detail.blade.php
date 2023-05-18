@@ -13,33 +13,49 @@
 
         <div class="container mt-3">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-xl-4">
                     <img src="{{ asset('img/course.png') }}" alt="course-image" class="rounded">
                     <div class="course-info-box">
                     </div><!-- / course-info-box -->
                 </div><!-- / column -->
-                <div class="col-md">
+                <div class="col-xl-8">
                     <div class="course-info-box mt-0 mb-3">
-                        <h5 class="pb-1"><b>COURSE DETAILS</b></h5>
-                        <p>{{ $course->descriptions }}</p>
+                        <h5 class="pb-1"><b>{{ strtoupper($course->subject->name . ' ' . $course->name) }}</b></h5>
+                        <div>{{ $course->descriptions }}</div>
+                        <div class="text-sm"><b>Homeroom Teacher: </b>{{ $course->homeroomTeacher->fullname }}</div>
                     </div><!-- / course-info-box -->
+                    <div class="course-info-box mb-3">
+                        <div class="font-bold mb-1"> Schedule: </div>
+                        @foreach ($course->schedules as $schedule)
+                            <div>{{ $schedule->weekday }} {{ $schedule->start_time }}-{{ $schedule->finish_time }}</div>
+                        @endforeach
+                        <div class="font-bold mb-1 mt-2"> Detail: </div>
+                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail"
+                            href="/courses/{{ $course->id }}/teachers">
+                            <div class="inline font-bold">Teacher</div>
+                            <div class="inline font-bold">{{ $course->teachers_count }}</div>
+                        </a>
+                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail"
+                            href="/courses/{{ $course->id }}/students">
+                            <div class="inline font-bold">Student</div>
+                            <div class="inline font-bold">{{ $course->students_count }}</div>
+                        </a>
+                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail"
+                            href="/exams?courseId={{ $course->id }}">
+                            <div class="inline font-bold">Exam</div>
+                            <div class="inline font-bold">{{ $course->exams_count }}</div>
+                        </a>
 
-                    <div class="course-info-box">
-                        <p><b>Name: </b> {{ $course->name }}</p>
-                        <p><b>Subject: </b> {{ $course->subject->name }}</p>
-                        <p><b>Homeroom Teacher: </b>{{ $course->homeroomTeacher->fullname }}</p>
-                        <p><b>Date: </b> {{ $course->created_at }}</p>
-                        <p><b>Status: </b>
-                            <span class="{{ $course->status === 1 ? 'text-success' : 'text-danger' }}">
-                                {{ $course->status === 1 ? 'Active' : 'Inactive' }}
-                        </p>
-                        </span>
                     </div>
                     @if ($course->status === 1)
                         <div id="btns">
                             @hasanyrole('admin|teacher')
                                 <button type="button" class="btn bg-info" id="export">Export student list
                                 </button>
+                                <button type="button" class="btn bg-success" data-bs-toggle="modal"
+                                    data-bs-target="#addExamModal">New exam
+                                </button>
+                                @include('course.addExamModal')
                             @endhasanyrole
                             @role('student')
                                 @if ($course->isRequestSwitch)

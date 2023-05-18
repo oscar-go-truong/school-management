@@ -29,4 +29,11 @@ class ScheduleController extends Controller
       $events = $this->eventService->getEvents();
       return response()->json(['data'=>['schedules' => $schedules, 'events' => $events]]);
    }
+
+   public function checkIsConflictTime(Request $request)
+   {
+      $schedule = $this->scheduleService->checkConflictTime($request);
+      $event = $this->eventService->checkConflictTime($request);
+      return response()->json(['data'=>['schedule' => $schedule, 'event' => $event]]);
+   }
 }

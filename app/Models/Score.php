@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
 class Score extends Model
 {
@@ -26,6 +25,6 @@ class Score extends Model
 
     public function exam(): BelongsTo
     {
-        return $this->belongsTo(Exam::class, "exam_id");
+        return $this->belongsTo(Exam::class);
     }
 }

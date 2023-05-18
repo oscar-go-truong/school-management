@@ -33,8 +33,7 @@ class SubjectController extends Controller
 
     public function getTable(Request $request)
     {
-        $input = $request->input();
-        $subjects = $this->subjectService->getTable($input);
+        $subjects = $this->subjectService->getTable($request);
         return response()->json($subjects);
     }
     /**
@@ -55,8 +54,7 @@ class SubjectController extends Controller
      */
     public function store(CreateUpdateSubjectRequest $request)
     {
-        $input = $request->input();
-        $resp = $this->subjectService->store($input);
+        $resp = $this->subjectService->store($request->input());
         if($resp['data'] != null)
             return redirect('/subjects')->with('success',$resp['message']);
         else 
@@ -71,8 +69,9 @@ class SubjectController extends Controller
      */
     public function show($id): View
     {
+        $courses = $this->courseService->getAllActiveOfCourse($id);
         $subject = $this->subjectService->getById($id);
-        return view('subject.detail', compact('subject'));
+        return view('subject.detail', compact('subject', 'courses'));
     }
     /**
      * Show the form for editing the specified resource.
@@ -95,9 +94,7 @@ class SubjectController extends Controller
      */
     public function update(CreateUpdateSubjectRequest $request, $id)
     {
-        $input = $request->input();
-        $subject = ['name' => $input['name'], 'descriptions'=>$input['descriptions']];
-        $resp = $this->subjectService->update($id,$subject);
+        $resp = $this->subjectService->update($id,$request);
         if($resp['data'] != null)
             return redirect('/subjects')->with('success',$resp['message']);
         else 
@@ -106,8 +103,7 @@ class SubjectController extends Controller
 
     public function changeStatus(Request $request, $id)
     {
-        $status = $request->input('status', StatusTypeContants::ACTIVE);
-        $resp = $this->subjectService->changeStatus($id, $status);
+        $resp = $this->subjectService->changeStatus($id, $request);
         return response()->json($resp);  
     }
 

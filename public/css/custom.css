@@ -444,6 +444,7 @@ h5,
 
 
 #sidebar .custom-menu .btn {
+    z-index: 10;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -763,4 +764,12 @@ h2 {
     to {
         transform: rotate(360deg);
     }
+}
+
+.course-detail:hover {
+    background-color: #198754;
+}
+
+.detail-subject:hover {
+    color: #198754;
 }

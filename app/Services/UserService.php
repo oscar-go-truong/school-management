@@ -14,14 +14,24 @@ class UserService extends BaseService
         return User::class;
     }
 
-    public function getTable($input)
+    public function getTable($request)
     {
         $query = $this->model;
-        $query = $query->status($input)->inRole($input);
-        $users = $this->orderNSearch($input, $query);
+        $query = $query->status($request)->inRole($request);
+        $result = $this->orderNSearch($request, $query);
+        $users = $result['data'];
+        $data =[];
         foreach($users as $user)
-            $user->role = $user->getRoleNames()[0];
-        return $users;
+            $data[] = [
+                'id' => $user->id,
+                'username' => $user->username,
+                'fullname' => $user->fullname,
+                'email' => $user->email,
+                'role' => $user->getRoleNames()[0],
+                'status' => $user->status
+            ];
+        $result['data'] = $data;
+        return $result;
     }
 
     public function store($data)
@@ -31,14 +41,26 @@ class UserService extends BaseService
         if ($user) 
             {
                 $user->assignRole($data['role']);
-                return ['data' => $user, 'message' => Message::createSuccessfully('user')];
+                return ['data' => ['id' => $user->id], 'message' => Message::createSuccessfully('user')];
             }
         return  ['data' => null, 'message' => Message::error()];
     }
 
 
-    public function update($id, $data)
+    public function update($id, $request)
     {
+        $data = [
+            'email' => $request->email,
+            'username' => $request->username,
+            'role' => $request->role,
+            'fullname' => $request->fullname,
+            'phone' => $request->phone,
+            'mobile' => $request->mobile,
+            'address' => $request->address
+               ];
+        if ($request->password) {
+            $data['password'] = $request->password;
+        }
         $user = $this->model->find($id);
         $oldRole = $user->getRoleNames();
         if(count($oldRole)!=0)
@@ -50,17 +72,17 @@ class UserService extends BaseService
         }
         $result = $this->model->where('id', $id)->update($data);
             if ($result) 
-                return ['data'=> $this->model->find($id), 'message' => Message::updateSuccessfully('user')];
+                return ['data'=> ['id' => $id], 'message' => Message::updateSuccessfully('user')];
             return  ['data' => null, 'message' => Message::error()];
     }
 
     public function getUserCanJoinToCourseByRole($courseId, $role) {
         $joinedUserId = UserCourse::select('user_id')->where('course_id', $courseId)->get();
-        $users = $this->model->whereNotIn('id', $joinedUserId)->role($role)->get();
+        $users = $this->model->select('id', 'fullname', 'email')->whereNotIn('id', $joinedUserId)->role($role)->get();
         return $users;
     }
 
     public function getByRole($role){
-        return $this->model->role($role);
+        return $this->model->select('id', 'fullname', 'email')->role($role)->get();
     }
 }

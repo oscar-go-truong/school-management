@@ -33,55 +33,51 @@ class ExamService extends BaseService
     public function getById($examId)
     {
         $exam = $this->model->with('course.subject')->find($examId);
+        $exam->type = ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type)));
         $exam->isRequested = $this->requestModel->where('type', RequestTypeContants::EDIT_EXAMS_SCORES)->where('status', RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ". $examId)->count();
         return $exam;
     }
 
-    public function getTable($input)
+    public function getTable($request)
     {
         $user = Auth::user();
-        $courseId = isset($input['courseId'])?$input['courseId']:null;
-        $query = $this->model->withCount('score')->with('course.subject');
-        if($courseId != null)
-            $query = $query->where('course_id', $courseId);
-        if(!$user->hasRole(UserRoleNameContants::ADMIN)){
-            $query = $query->whereHas('course.userCourse', function ($query) use($user){
+        $userIsAdmin = $user->hasRole(UserRoleNameContants::ADMIN);
+        $userIsStudent = $user->hasRole(UserRoleNameContants::STUDENT);
+        $courseId = $request->courseId;
+        $year = $request->year;
+        $query = $this->model->withCount('scores')->with('course.subject')->course($courseId)->year($year);
+        
+        if(!$userIsAdmin){
+            $query = $query->whereHas('course.userCourses', function ($query) use($user){
                 $query->where('user_id', $user->id);
             });
-        if($user->hasRole(UserRoleNameContants::STUDENT)){
-            $query = $query->with('score', function ($query) use($user) {
+        if($userIsStudent){
+            $query = $query->with('scores', function ($query) use($user) {
                 $query->where('student_id', $user->id);
             });
         }
         }
-        $exams = $this->orderNSearch($input, $query);
+        $result = $this->orderNSearch($request, $query);
+        $exams = $result['data'];
+        $data = [];
         foreach ($exams as $exam) {
-            $exam->type = MyExamTypeConstants::getKey($exam->type);
-            $exam->wasRequestedByUser = $this->requestModel->where('user_request_id', $user->id)->where('status',RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
-            $exam->wasApprovedRequestedByAdmin = $this->requestModel->where('user_request_id', $user->id)->where('status',RequestStatusContants::APPROVED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
+            $item = [
+                'id' => $exam->id,
+                'subject' => $exam->course->subject->name,
+                'course' => $exam->course->name,
+                'type' => ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type))),
+                'scoresCount' => $exam->scores_count,
+                'created_at' => $exam->created_at
+            ];
+            if($userIsStudent);
+                {
+                    $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : ""; 
+                    $item['wasRequestedByUser'] = $this->requestModel->where('user_request_id', $user->id)->where('status',RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
+                    $item['wasApprovedRequestedByAdmin'] = $this->requestModel->where('user_request_id', $user->id)->where('status',RequestStatusContants::APPROVED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
+                }
+            $data[] = $item;
         }
-        return $exams;
-    }
-    public function store($input) {
-        try{
-            DB::beginTransaction();
-            $exam= $this->model->create($input);
-            PreventUpdateExamScores::dispatch($exam->id)->delay(now()->addDay());
-            $userCourses = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
-                $query->role(UserRoleNameContants::STUDENT);
-            })->get();;
-            foreach($userCourses as $userCourse){
-                Score::insert([
-                    'student_id' => $userCourse->user_id,
-                    'exam_id' => $exam->id
-                ]);
-            }
-            DB::commit();
-        return ['data' => $exam,'message' => Message::createSuccessfully('exam')];
-        } catch(Exception $e) 
-        {
-            DB::rollBack();
-            return ['data' => null,'message' => Message::error()];
-        }
+        $result['data'] = $data;
+        return $result;
     }
 }

@@ -4,41 +4,54 @@ namespace App\Services;
 
 use App\Enums\UserRoleNameContants;
 use App\Helpers\Message;
+use App\Models\Exam;
 use App\Models\Score;
+use App\Models\UserCourse;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ScoreService extends BaseService {
 
+    protected $examModel;
+    protected $userCourseModel;
+    public function __construct(Exam $examModel, UserCourse $userCourseModel)
+    {
+        parent::__construct();
+        $this->examModel = $examModel;
+        $this->userCourseModel = $userCourseModel;
+    }
     public function getModel()
     {
         return Score::class;
     }
 
-    public function getTable($input, $examId)
+    public function getTable($request, $examId)
     {
-        $user = Auth::user();
-        $query = $this->model->with('user');
-        if($examId!=null)
-            $query=$query->where('exam_id',$examId);
-        $scores = $this->orderNSearch($input,$query);
-        if(!$user->hasRole(UserRoleNameContants::ADMIN)){
-            $query = $query->whereHas('exam.course.userCourse', function ($query) use($user){
-                $query->where('user_id', $user->id);
-            });
+        $query = $this->model->where('exam_id',$examId)->with('user');
+        $result= $this->orderNSearch($request,$query);
+        $scores = $result['data'];
+        $data  = [];
+        foreach($scores as $score)
+        {
+            $data[] = [
+                'id' => $score->id,
+                'fullname' => $score->user->fullname,
+                'email' => $score->user->email,
+                'total' => $score->total
+            ];
         }
-        return $scores;
+        $result['data'] = $data;
+        return $result;
     }
-    public function importScores($examId, $input)
+    public function importScores($examId, $request)
     {
         try{
             $user = Auth::user();
-            $data = $input['formData'];
+            $data = $request->formData;
             DB::beginTransaction();
             foreach($data as $row){
-                if($row['score'])
-                    $this->model->where('exam_id', $examId)->where('student_id', $row['user_id'])->update(['total' => $row['score'], "updated_by" => $user->id]);
+                $this->model->updateOrCreate(['exam_id' => $examId,'student_id' => $row['user_id']],['total' => $row['total']?$row['total']:0, "updated_by" => $user->id]);
             }
             DB::commit();
             return ['data' => ['exam_id' => $examId, 'status' => 'success'], 'message' => Message::importFileSuccessfully()];
@@ -49,15 +62,26 @@ class ScoreService extends BaseService {
     }
     }
 
-    public function detachFile($examId, $input)
+    public function detachFile($examId, $request)
     {
         try{
-        $fileContent = $input['fileContent'];
-        $validContent = [];
-        foreach($fileContent as $content) {
-            if($this->model->where('student_id', $content['user_id'])->where('exam_id', $examId)->count())
-                array_push($validContent, $content);
-        }
+            $fileContent = $request->fileContent;
+            $validContent = [];
+            $exam = $this->examModel->find($examId);
+            foreach($fileContent as $content) {
+                $userCourse = $this->userCourseModel->where('user_id', $content['user_id'])->where('course_id', $exam->course_id)->whereHas('user', function($query){
+                    $query->whereHas('roles',function($query){
+                        $query->where('name', UserRoleNameContants::STUDENT);
+                    });
+                })->with('user')->first();
+                if($userCourse)
+                    $validContent[] = [
+                        'user_id' => $userCourse->user->id,
+                        'fullname' => $userCourse->user->fullname,
+                        'email' => $userCourse->user->email,
+                        'total' => $content['score']
+                    ];
+            }
         if(count($validContent))
             return ['data' => $validContent];
         else 
@@ -69,14 +93,32 @@ class ScoreService extends BaseService {
     }
 }
 
-    public function getMissingUser($input)
+    public function getMissingUser($request)
     {
-        $examId = $input['exam_id'];
-        $userIdList = $input['user_id_list'];
-        if($userIdList !== null)
-            $users = $this->model->whereNotIn('student_id',$userIdList)->where('exam_id', $examId)->with('user')->get();
-        else 
-            $users = $this->model->where('exam_id', $examId)->with('user')->get();
-        return ['data' => $users];
+        $examId = $request->exam_id;
+        $userIdList = $request->user_id_list;
+        $exam = $this->examModel->find($examId);
+        $data = [];
+        $query = $this->userCourseModel->where('course_id', $exam->course_id)->whereHas('user', function($query){
+                $query->whereHas('roles',function($query){
+                    $query->where('name', UserRoleNameContants::STUDENT);
+                });
+            })->with('user');
+        if($userIdList != null)
+        {
+            $query->whereNotIn('user_id', $userIdList);
+        }
+        $userCourses = $query->get();
+        foreach($userCourses as $userCourse)
+        {
+            $score = $this->model->where('student_id', $userCourse->user->id)->where('exam_id', $exam->id)->first();
+            $data[] = [
+                'user_id' => $userCourse->user->id,
+                'fullname' => $userCourse->user->fullname,
+                'email' => $userCourse->user->email,
+                'total' => $score ? $score->total : ""
+         ]; 
+        }
+        return ['data' => $data];
     }
 }

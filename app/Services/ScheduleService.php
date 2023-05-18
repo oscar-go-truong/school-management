@@ -3,6 +3,7 @@ namespace App\Services;
 use App\Enums\StatusTypeContants;
 use App\Models\Schedule;
 use App\Models\UserCourse;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleService extends BaseService
@@ -11,6 +12,7 @@ class ScheduleService extends BaseService
 
     public function __construct(UserCourse $userCourseModel)
     {
+        parent::__construct();
         $this->userCourseModel = $userCourseModel;
     }
     public function getModel()
@@ -41,4 +43,22 @@ class ScheduleService extends BaseService
         }
         return $schedules;
     } 
+
+    public function checkConflictTime($request)
+    {
+        $user = Auth::user();
+        if($user->hasRole('admin'))
+            return null;
+        $date = $request->date;
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+        $weekday =  $weekday = Carbon::parse($date)->format('D');
+
+        $schedule = $this->model->whereHas('course.userCourses', function($query) use($user){
+            $query->where('user_id', $user->id);
+        })->whereRaw('((start_time <="'.$startTime.'" and "'.$startTime.'"<= finish_time) or (start_time <= "'.$endTime.'" and "'.$endTime.'" <= finish_time) or (start_time >= "'.$startTime.'" and "'.$endTime.'" >= finish_time))')->where('weekday',$weekday)->with('course.subject')->with('room')->first();
+        if($schedule)
+            return $schedule->course->subject->name.' '.$schedule->course->name.' from '.$schedule->start_time.' to '.$schedule->finish_time.', '.$schedule->weekday.', '.$date.' at '.$schedule->room->name;
+        return null;
+    }
 }

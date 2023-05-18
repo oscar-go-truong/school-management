@@ -34,21 +34,13 @@
     const createRow = (student) => {
         let row = $(`<tr id="user-course-${ student.id    }">`);
         row.append(`<td>${ student.id }</td>`);
-        row.append(`<td>${ student.user.fullname }</td>`);
-        row.append(`<td>${ student.user.email }</td>`);
+        row.append(`<td>${ student.fullname }</td>`);
+        row.append(`<td>${ student.email }</td>`);
         row.append(
-            `<td>${  new Date(student.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
+            `<td>${  new Date(student.joined_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
         if (isAdmin) {
-            // row.append(`<td><div class="form-check form-switch">
-            //         <input class="form-check-input status" type="checkbox" id="${ student.id }"
-            //         data-id="${ student.id }" ${ student.status === 1 ? 'checked' : '' }>
-            //         <label class="form-check-label" for="${ student.id }">
-            //         ${ student.status === 1 ? 'active' : 'blocked' }
-            //         </label>
-            //         </div>
-            //         </td>`);
-            row.append(`<td class="text-danger text-center"><i class="fa-solid fa-user-xmark delete" data-id="${student.id}" data-name="${student.user.fullname}"
+            row.append(`<td class="text-danger text-center"><i class="fa-solid fa-user-xmark delete" data-id="${student.id}" data-name="${student.fullname}"
                                 ></i></td>`);
         }
         return row;

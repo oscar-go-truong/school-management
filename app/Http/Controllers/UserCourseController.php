@@ -16,8 +16,7 @@ class UserCourseController extends Controller
 
     public function changeStatus(Request $request,$id)
     {
-        $status = $request->status;
-        $resp = $this->userCourseService->changeStatus($id, $status);
+        $resp = $this->userCourseService->changeStatus($id, $request);
         return response()->json($resp);
     }
 

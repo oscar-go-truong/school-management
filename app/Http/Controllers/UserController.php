@@ -38,15 +38,13 @@ class UserController extends Controller
     // Get table data
     public function getTable(Request $request)
     {
-        $input = $request->input();
-        $table = $this->userService->getTable($input);
+        $table = $this->userService->getTable($request);
         return response()->json($table);
     }
     // Handle update user's status
     public function changeStatus(Request $request, int $id)
     {
-        $status = $request->status;
-        $resp = $this->userService->changeStatus($id, $status);
+        $resp = $this->userService->changeStatus($id, $request);
         return response()->json($resp);
     }
     // Handle delete user
@@ -70,19 +68,16 @@ class UserController extends Controller
     public function edit(int $id)
     {
         $user = $this->userService->getById($id);
+        $roles = Role::all();
         if ($user) 
-            return view('user.update', ['roles' => Role::all(), 'user' => $user]);
-       return redirect()->back()->with('error', "User was deleted!");
+            return view('user.update', compact('roles','user'));
+       return abort(404);
         
     }
     // Store update
     public function update(CreateUpdateUserRequest $request, int $id)
     {
-        $user = array('email' => $request->email, 'username' => $request->username, 'role' => $request->role, 'fullname' => $request->fullname);
-        if ($request->password) {
-            $user['password'] = $request->password;
-        }
-        $this->userService->update($id, $user);
+        $this->userService->update($id, $request);
         return redirect('/users');
     }
 }

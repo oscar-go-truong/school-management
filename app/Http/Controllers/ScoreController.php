@@ -27,14 +27,12 @@ class ScoreController extends Controller
     public function index(Request $request, $examId) : View
     {
         $exam = $this->examService->getById($examId);
-        $exam->type = ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type)));
         return view('score.index', compact('exam'));
     }
 
     public function getTable(Request $request, $examId)
     {
-        $input = $request->input();
-        $scores = $this->scoreService->getTable($input, $examId);
+        $scores = $this->scoreService->getTable($request, $examId);
         return response()->json($scores);
     }
 

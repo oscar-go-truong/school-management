@@ -32,7 +32,8 @@ class ExamSeeder extends Seeder
                 [
                 'student_id'=> $student->user_id, 
                 'exam_id' => $exam->id,
-                'created_at'=>$course->created_at
+                'created_at'=>$course->created_at,
+                'total' => collect([0,5,7,8,9,10])->random()
                 ]
             );
             }

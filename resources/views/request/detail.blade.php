@@ -102,8 +102,8 @@
                         <button class="btn btn-secondary mr-3">No</button> 
                         <button class="btn btn-danger ml-3" onclick='reject(${id})'>Yes</button></div>
                     </div>`);
-                toastr.options.timeOut = 600;
-                toastr.options.extendedTimeOut = 600;
+                toastr.options.timeOut = 3000;
+                toastr.options.extendedTimeOut = 3000;
             })
 
             $('#approve').click(function() {
@@ -118,8 +118,8 @@
                         <button class="btn btn-warning mr-3">No</button> 
                         <button class="btn btn-success ml-3" onclick='approve(${id})'>Yes</button></div>
                     </div>`);
-                toastr.options.timeOut = 600;
-                toastr.options.extendedTimeOut = 600;
+                toastr.options.timeOut = 3000;
+                toastr.options.extendedTimeOut = 3000;
             })
         })
     </script>

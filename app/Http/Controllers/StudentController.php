@@ -42,20 +42,15 @@ class StudentController extends Controller
     }
 
     public function store(Request $request){
-        $input = $request->input();
-        $input['status'] = StatusTypeContants::ACTIVE;
-        $resp = $this->userCourseService->store($input);
+        $resp = $this->userCourseService->store($request);
         return $resp;
     }
 
     public function changeCourse(Request $request)
     {
-        $input = $request->input();
-        $createRequestResp = $this->requestService->storeApprovedSwitchClassRequest($input);
-        if($createRequestResp['data'] === null)
+        $resp = $this->requestService->storeCreateNApproveSwitchClassRequest($request);
+        if($resp['data'] === null)
             return response()->json(['data' => null, 'message' => Message::error()]);
-        $arg = ['id' => $input['id'], 'course_id' => $input['newCourseId'],'user_id' => $input['user_request_id']];
-        $resp = $this->userCourseService->update($input['id'], $arg);
         return response()->json($resp);
     }
 }

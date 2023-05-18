@@ -42,20 +42,20 @@ class User extends Authenticatable
         'password'
     ];
 
-    public function scopeInRole($query, $input)
+    public function scopeInRole($query, $request)
     {
-        if (isset($input['role']) && count($input['role']) > 0) {
-            return $query->orWhereHas('roles', function ($query) use($input) {
-                $query->whereIn('name', $input['role']);
+        if ($request->role && count($request->role) > 0) {
+            return $query->orWhereHas('roles', function ($query) use($request) {
+                $query->whereIn('name', $request->role);
             });
         }
         return $query;
     }
 
-    public function scopeStatus($query, $input)
+    public function scopeStatus($query, $request)
     {
-        if (isset($input['status'])) {
-            return $query->where('status', $input['status']);
+        if ($request->status) {
+            return $query->where('status', $request->status);
         }
         return $query;
     }
@@ -75,9 +75,13 @@ class User extends Authenticatable
         return $this->HasMany(Course::class);
     }
 
-    public function exam(): hasMany
+    public function exams(): hasMany
     {
         return $this->hasMany(Exam::class);
+    }
+
+    public function scores():HasMany{
+        return $this->hasMany(Score::class,'student_id');
     }
 
     public function userCourse(): HasMany

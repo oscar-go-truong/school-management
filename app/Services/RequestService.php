@@ -41,35 +41,43 @@ class RequestService extends BaseService
         return Request::class;
     }
 
-    public function getTable($input)
+    public function getTable($req)
     {
-        $query = $this->model->with('userRequest')->with('userApprove')->status($input)->type($input);
+        $query = $this->model->with('userRequest')->with('userApprove')->status($req)->type($req);
         if (!Auth::user()->hasRole(UserRoleNameContants::ADMIN)) {
             $query = $query->where('user_request_id', Auth::user()->id);
         }
-        $requests = $this->orderNSearch($input, $query);
+        $result = $this->orderNSearch($req, $query);
+        $requests = $result['data'];
+        $data = [];
         foreach ($requests as $request) {
-            $type = RequestTypeContants::getKey($request->type);
-            $type = str_replace('_', ' ', $type);
-            $type = strtolower($type);
-            $type = ucwords($type);
-            $request->type = $type;
+            $type = ucwords(strtolower(str_replace('_', ' ', RequestTypeContants::getKey($request->type))));
+            $data[] = [
+                'id' => $request->id,
+                'type' => $type,
+                'userRequest' => $request->userRequest->fullname,
+                'userApprove' => $request->userApprove? $request->userApprove->fullname : '',
+                'created_at' => $request->created_at,
+                'status' => $request->status
+            ];
         }
-
-        return $requests;
+        $result['data'] = $data;
+        return $result;
     }
 
-    public function storeApprovedSwitchClassRequest($input)
+    public function storeCreateNApproveSwitchClassRequest($req)
     {
-        $user = Auth::user();
-        $arg = [
-                                'user_request_id' =>  $input['user_request_id'], 
-                                'user_approve_id' => $user->id, 
-                                'type' => RequestTypeContants::SWITCH_COURSE, 
-                                'status' => RequestStatusContants::APPROVED, 
-                                'old_course_id' => $input['oldCourseId'], 
-                                'new_course_id' => $input['newCourseId'] 
-                              ];
+        try {
+            DB::beginTransaction();
+            $user = Auth::user();
+            $arg = [
+                'user_request_id' =>  $req->user_request_id, 
+                'user_approve_id' => $user->id, 
+                'type' => RequestTypeContants::SWITCH_COURSE, 
+                'status' => RequestStatusContants::APPROVED, 
+                'old_course_id' => $req->oldCourseId, 
+                'new_course_id' => $req->newCourseId, 
+                ];
             $request = $this->model->create([
                 "user_request_id" => $arg['user_request_id'],
                 "user_approve_id" => $arg['user_approve_id'],
@@ -77,13 +85,21 @@ class RequestService extends BaseService
                 "status" => $arg['status'],
                 "content" => '{"old_course_id":' . $arg['old_course_id'] . ',"new_course_id":' . $arg['new_course_id'] . ',"reason":"Admin change course."}'
                 ]);
-            return ['data' => $request];
+            $content = json_decode($request->content);
+            $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->old_course_id)->delete();
+            $userCourse = $this->userCourseModel->create(['user_id'=> $user->id, 'course_id' => $content->new_course_id ]);
+            DB::commit();
+            return ['data' => ['request' =>$request, 'userCourse' => $userCourse], 'message' => Message::approveRequestSuccessfully()];
+            } catch (Exception $e) {
+                DB::rollBack();
+                return ['data' => null, 'message' => Message::error()];
+            }
     }
 
-    public function storeReviewScoreRequest($input)
+    public function storeReviewScoreRequest($request)
     {
         
-        $examId = $input['exam_id'];
+        $examId = $request->exam_id;
         $userId = Auth::user()->id;
         $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('type', RequestTypeContants::REVIEW_GRADES)->count();
         if($checkIsExistRequest)
@@ -101,11 +117,11 @@ class RequestService extends BaseService
         }
     }
 
-    public function storeSwitchcCourseRequest($input)
+    public function storeSwitchcCourseRequest($request)
     {
-        $oldCourseId = $input['old_course_id'];
-        $newCourseId = $input['new_course_id'];
-        $reason = $input['reason'];
+        $oldCourseId = $request->old_course_id;
+        $newCourseId = $request->new_course_id;
+        $reason = $request->reason;
         $userId = Auth::user()->id;
         $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->old_course_id', $oldCourseId)->where('type',RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
         if($checkIsExistRequest)
@@ -124,10 +140,10 @@ class RequestService extends BaseService
     }
 
 
-    public function storeEditExamScoresRequest($input) 
+    public function storeEditExamScoresRequest($request) 
     {
         $userId = Auth::user()->id;
-        $examId = $input['exam_id'];
+        $examId = $request->exam_id;
         $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('status', RequestStatusContants::PENDING)->where('type', RequestTypeContants::EDIT_EXAMS_SCORES)->count();
         if($checkIsExistRequest)
             return ['data'=>null, 'message' => 'Request was created before!'];
@@ -185,9 +201,6 @@ class RequestService extends BaseService
         } catch (Exception $e) {
             DB::rollBack();
             return ['data' => null, 'message' => Message::error()];
-        }
-        {
-
         }
     }
 
