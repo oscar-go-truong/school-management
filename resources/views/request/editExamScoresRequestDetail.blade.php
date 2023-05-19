@@ -2,15 +2,15 @@
 @section('type-name', 'Edit exam scores')
 @section('request-content')
     <div class="request-info-box">
-        <p><b>User request name: </b> {{ $request->userRequest->fullname }}</p>
-        <p><b>User request email: </b> {{ $request->userRequest->email }}</p>
+        <div><b>User request name: </b> {{ $request->userRequest->fullname }}</div>
+        <div><b>User request email: </b> {{ $request->userRequest->email }}</div>
         @if ($request->status === $status['APPROVED'])
-            <p><b>User approve name: </b> {{ $request->userApprove->fullname }}</p>
-            <p><b>User approve email: </b> {{ $request->userApprove->email }}</p>
+            <div><b>User approve name: </b> {{ $request->userApprove->fullname }}</div>
+            <div><b>User approve email: </b> {{ $request->userApprove->email }}</div>
         @endif
-        <p><b>Subject: </b> {{ $content->exam->course->subject->name }}</p>
-        <p><b>Course: </b> {{ $content->exam->course->name }}</p>
-        <p><b>Exam: </b> {{ $content->exam->type }}</p>
+        <div><b>Subject: </b> {{ $content->exam->course->subject->name }}</div>
+        <div><b>Course: </b> {{ $content->exam->course->name }}</div>
+        <div><b>Exam: </b> {{ $content->exam->type }}</div>
         </span>
     </div>
 @endsection

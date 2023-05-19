@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\Message;
 use App\Models\User;
 use App\Models\UserCourse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserService extends BaseService
@@ -84,5 +85,12 @@ class UserService extends BaseService
 
     public function getByRole($role){
         return $this->model->select('id', 'fullname', 'email')->role($role)->get();
+    }
+
+    public function updateProfile($request)
+    {
+        $user = Auth::user();
+        $resp = $this->model->where('id', $user->id)->update($request->only('fullname','phone', 'mobile', 'address'));
+        return $resp;
     }
 }

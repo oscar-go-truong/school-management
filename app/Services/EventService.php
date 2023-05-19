@@ -11,12 +11,14 @@ class EventService extends BaseService{
 
     protected $eventParticipantModel;
     protected $userCourseModel;
+    protected $mailService;
 
-    public function __construct(EventParticipant $eventParticipantModel, UserCourse $userCourseModel)
+    public function __construct(EventParticipant $eventParticipantModel, UserCourse $userCourseModel, MailService $mailService)
     {
         parent::__construct();
         $this->eventParticipantModel =$eventParticipantModel;
         $this->userCourseModel = $userCourseModel;
+        $this->mailService = $mailService;
     }
     public function getModel()
     {
@@ -49,6 +51,7 @@ class EventService extends BaseService{
                     }
                 }
             DB::commit();
+            $this->mailService->mailInvitationToEnvent($event->id);
             return true;
 
         } catch(Exception $e){

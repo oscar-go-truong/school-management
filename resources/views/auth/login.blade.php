@@ -15,13 +15,13 @@
                         </div>
                         <form action="{{ route('login') }}" method="POST" id="login-form">
                             @csrf
-                            <div class="form-group first" id="label-email">
+                            <div class="form-group first field--not-empty" id="label-email">
                                 <label for="email">Email</label>
                                 <input type="email" class="form-control login-input" id="email" name="email"
-                                    data-label="label-email">
+                                    data-label="label-email" value="{{ old('email') }}">
 
                             </div>
-                            <div class="form-group last mb-4" id="label-password">
+                            <div class="form-group last mb-4 field--not-empty" id="label-password">
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control login-input" id="password" name="password"
                                     data-label="label-password">
@@ -34,13 +34,14 @@
                                 </div>
                             @endif
 
-                            {{-- <div class="d-flex mb-5 align-items-center">
-                                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
+                            <div class="d-flex mb-5 align-items-center">
+                                {{-- <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
                                     <input type="checkbox" checked="checked" />
                                     <div class="control__indicator"></div>
-                                </label>
-                                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password</a></span>
-                            </div> --}}
+                                </label> --}}
+                                <span class="ml-auto"><a href="/password/reset" class="forgot-pass">Forgot
+                                        Password</a></span>
+                            </div>
 
                             <button type="submit" class="btn text-white btn-block bg-sky-800 w-100 rounded"
                                 id="submit">Log
@@ -74,7 +75,6 @@
 
 
         $('#login-form').submit(function(e) {
-
             const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
             let email = $('#email').val();
@@ -93,31 +93,5 @@
             }
 
         });
-
-        $('.login-input').on('input', function() {
-            let label = $('#' + $(this).data('label'));
-            if ($(this).val()) {
-                label.addClass('field--not-empty');
-            } else {
-                label.removeClass('field--not-empty');
-            }
-        });
-        $('#submit').click(function(e) {
-
-            const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-            let email = $('#email').val();
-            let password = $("#password").val();
-            if (!email) {
-                $('#error').text("The email field is required.");
-            } else if (!password) {
-                $('#error').text("The password field is required.");
-            } else if (!email.match(validRegex)) {
-                $('#error').text("The email is invalid.");
-            } else {
-                $('#error').text("");
-                $('#login').submit();
-            }
-        })
     });
 </script>

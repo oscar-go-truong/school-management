@@ -76,6 +76,11 @@ class RequestController extends Controller
         return response()->json($resp);
     }
 
+    public function cancel($id)
+    {
+        $resp = $this->requestService->cancel($id);
+        return response()->json($resp);
+    }
     public function storeReviewScoreRequest(CreateReviewScoreRequestRequest $request)
     {
         $resp = $this->requestService->storeReviewScoreRequest($request);

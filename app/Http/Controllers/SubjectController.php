@@ -54,7 +54,7 @@ class SubjectController extends Controller
      */
     public function store(CreateUpdateSubjectRequest $request)
     {
-        $resp = $this->subjectService->store($request->input());
+        $resp = $this->subjectService->store($request);
         if($resp['data'] != null)
             return redirect('/subjects')->with('success',$resp['message']);
         else 

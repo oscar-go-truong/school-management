@@ -310,8 +310,22 @@
             const start = $('#startTime').val();
             const end = $('#endTime').val();
             const date = $('#date').val();
+            const dateStart = new Date(`October 11, 2001 ${start}:00`);
+            const dateEnd = new Date(`October 11, 2001 ${end}:00`);
             if (start && end && date)
-                checkIsConflictTime(date, start, end);
+                if (dateStart.getTime() >= dateEnd.getTime()) {
+                    toastr.warning('Range time is in valid!');
+                    $('#endTime').removeClass('is-valid');
+                    $('#endTime').addClass('is-invalid');
+                    $('#startTime').removeClass('is-valid');
+                    $('#startTime').addClass('is-invalid');
+                } else {
+                    $('#startTime').removeClass('is-invalid');
+                    $('#startTime').addClass('is-valid');
+                    $('#endTime').removeClass('is-invalid');
+                    $('#endTime').addClass('is-valid');
+                    checkIsConflictTime(date, start, end);
+                }
         })
         $('#submit').click(function() {
             $(this).attr('disabled', true);

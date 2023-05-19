@@ -100,7 +100,7 @@ class CourseService extends BaseService
         try{
             DB::beginTransaction();
             $course =  $this->model->create($request->input());
-            $this->userCourseService->store([
+            $this->userCourseService->store((object)[
                     'user_id' => $course->owner_id,
                     'course_id' => $course->id,
                     'status' => StatusTypeContants::ACTIVE]);

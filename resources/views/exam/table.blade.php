@@ -51,9 +51,14 @@
             `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
         if (isStudent)
-            row.append(
-                `<td class="${exam.wasApprovedRequestedByAdmin !==0 ? "text-success":"text-primary"} text-center" id="request-btn-${exam.id}">${exam.wasRequestedByUser !== 0 ? 'Request pending' :exam.wasApprovedRequestedByAdmin?"Aprroved": `<i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course}' data-subjectName='${exam.subject}' data-type='${exam.type}'></i>` }</td>`
-            );
+            if (!exam.requestStatus)
+                row.append(
+                    `<td class="text-primary text-center" id="request-btn-${exam.id}"><i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course}' data-subjectName='${exam.subject}' data-type='${exam.type}'></i></td>`
+                );
+            else
+                row.append(
+                    `<td class="text-primary text-center">${exam.requestStatus}</td>`
+                );
         return row;
     }
 
@@ -69,7 +74,7 @@
             success: function(resp) {
                 if (resp.data) {
                     toastr.success(resp.message);
-                    $('#request-btn-' + examId).html('Request pending');
+                    $('#request-btn-' + examId).html('Pending');
                 } else {
                     toastr.error(resp.message);
                 }

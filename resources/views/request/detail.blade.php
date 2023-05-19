@@ -39,6 +39,8 @@
                         <div class="bg-success text-white text-center"> Approved</div>
                     @elseif ($request->status === $status['REJECTED'])
                         <div class="bg-danger text-white text-center">Rejected</div>
+                    @elseif ($request->status === $status['CANCELED'])
+                        <div class="bg-danger text-white text-center">Canceled</div>
                     @endif
                 </div>
 

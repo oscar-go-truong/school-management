@@ -72,8 +72,8 @@ class ExamService extends BaseService
             if($userIsStudent);
                 {
                     $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : ""; 
-                    $item['wasRequestedByUser'] = $this->requestModel->where('user_request_id', $user->id)->where('status',RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
-                    $item['wasApprovedRequestedByAdmin'] = $this->requestModel->where('user_request_id', $user->id)->where('status',RequestStatusContants::APPROVED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->count();
+                    $status = $this->requestModel->where('user_request_id', $user->id)->where('status','!=',RequestStatusContants::CANCELED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->first();
+                    $item['requestStatus'] = $status ? ucfirst(strtolower(RequestStatusContants::getKey($status->status))):null;
                 }
             $data[] = $item;
         }

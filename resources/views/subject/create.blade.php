@@ -20,7 +20,7 @@
             <div class="form-group mt-3">
                 <label for="name" class="font-bold mb-1">Subject name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
-                    aria-describedby="nameHelp" placeholder="Enter course name">
+                    aria-describedby="nameHelp" placeholder="Enter course name" value="{{ old('name') }}">
                 @error('name')
                     <div class="text-danger mt-1">{{ $message }}</div>
                 @enderror
@@ -28,7 +28,7 @@
             <div class="form-group mt-3">
                 <label for="descriptions" class="font-bold mb-1">Descriptions <span class="text-danger">*</span></label>
                 <textarea class="form-control @error('descriptions') is-invalid @enderror" id="descriptions" name="descriptions"
-                    placeholder="Enter course descriptions" rows="8"></textarea>
+                    placeholder="Enter course descriptions" rows="8">{{ old('descriptions') }}</textarea>
                 @error('descriptions')
                     <div class="text-danger mt-1">{{ $message }}</div>
                 @enderror

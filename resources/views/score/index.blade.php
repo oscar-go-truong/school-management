@@ -234,13 +234,13 @@
             })
             $('#open-upload-file-btn').click(function() {
                 toastr.info('Detaching file...');
-                $('#loading').attr('hidden', false);
                 let btn = $(this);
                 const file = $('#data-sheet')[0].files[0];
                 if (!file) {
                     btn.attr('disabled', false);
                     toastr.warning('Please upload file!');
                 } else {
+                    $('#loading').attr('hidden', false);
                     $('#table-layout-component').hide();
                     $('#data-sheet').val('');
                     const reader = new FileReader();

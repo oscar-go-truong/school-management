@@ -33,10 +33,7 @@ class CreateUpdateUserRequest extends FormRequest
             'email' => 'required|unique:users,email|max:255',
             'username' => 'required|unique:users,username|max:255',
             'password' => 'required|min:8|max:32',
-            'repassword' => 'required|min:8|max:32:same:password',
-            'phone' => 'required',
-            'mobile' => 'required',
-            'address' => 'required'
+            'repassword' => 'required|min:8|max:32|same:password'
         );
 
         if ($method === "PUT" || $method === "PATCH") {

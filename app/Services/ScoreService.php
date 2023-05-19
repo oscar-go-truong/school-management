@@ -54,7 +54,7 @@ class ScoreService extends BaseService {
                 $this->model->updateOrCreate(['exam_id' => $examId,'student_id' => $row['user_id']],['total' => $row['total']?$row['total']:0, "updated_by" => $user->id]);
             }
             DB::commit();
-            return ['data' => ['exam_id' => $examId, 'status' => 'success'], 'message' => Message::importFileSuccessfully()];
+            return ['data' => ['exam_id' => $examId, 'status' => 'success'], 'message' => Message::updateScoresSuccessfully()];
     } catch(Exception $e) 
     {
         DB::rollBack();

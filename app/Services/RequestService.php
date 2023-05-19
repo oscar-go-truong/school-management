@@ -58,7 +58,7 @@ class RequestService extends BaseService
                 'userRequest' => $request->userRequest->fullname,
                 'userApprove' => $request->userApprove? $request->userApprove->fullname : '',
                 'created_at' => $request->created_at,
-                'status' => $request->status
+                'status' => ucwords(strtolower(RequestStatusContants::getKey($request->status)))
             ];
         }
         $result['data'] = $data;
@@ -101,8 +101,8 @@ class RequestService extends BaseService
         
         $examId = $request->exam_id;
         $userId = Auth::user()->id;
-        $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('type', RequestTypeContants::REVIEW_GRADES)->count();
-        if($checkIsExistRequest)
+        $existRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('type', RequestTypeContants::REVIEW_GRADES)->where('status','!=',RequestStatusContants::CANCELED)->first();
+        if($existRequest)
             return ['data'=>null, 'message' => 'Request was created before!'];
         $request = $this->model->create([
             'user_request_id' => $userId,
@@ -236,6 +236,16 @@ class RequestService extends BaseService
         }
     }
 
+    public function cancel($id)
+    {
+        $result = $this->model->where('id',$id)->update(['status' => RequestStatusContants::CANCELED]);
+        if($result)
+        {
+            return ['data' => $this->model->select('id', 'status')->find($id), 'message' => Message::cancelRequestSuccessfully()];
+        } else {
+            return ['data' => null, 'message' => Message::error()];
+        }
+    }
     public function getBookingRoomRequest($content)
     {
         $data = json_decode($content);
