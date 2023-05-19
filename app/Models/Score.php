@@ -15,7 +15,8 @@ class Score extends Model
     protected $fillable = [
         'exam_id',
         'student_id',
-        'total'
+        'total',
+        'updated_by'
     ];
 
     public function user(): BelongsTo

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EventController;
@@ -26,15 +28,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+    Route::get('password/reset', [ForgotPasswordController::class,'showLinkRequestForm'])->name('password.request');
+    Route::post('password/email', [ForgotPasswordController::class,'sendResetLinkEmail'])->name('password.email');
+    Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('password/reset', [ResetPasswordController::class,'reset'])->name('password.update');
+    
+    Route::get('/login', [AuthController::class, 'login'])->name('signin')->middleware('auth.login');
 
-Route::get('/login', [AuthController::class, 'login']);
-
-Route::post('/login', [AuthController::class, 'authenticate'])->name('login');
-
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/login', [AuthController::class, 'authenticate'])->name('login')->middleware('auth.login');
 
 
 Route::prefix('/')->middleware('auth')->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/profile/update', [AuthController::class, 'updateProfile'])->name('update.profile');
     Route::get('/', [UserController::class, 'profile'])->name('profile');
     Route::patch('student/change-course', [StudentController::class, 'changeCourse'])->name('admin.change.user_course');
 
@@ -86,9 +92,9 @@ Route::prefix('/')->middleware('auth')->group(function () {
     Route::prefix('/requests/')->group(function () {
         Route::get('table', [RequestController::class, 'getTable'])->name('user.get.request.table');
         Route::get('{id}', [RequestController::class, 'show'])->name('user.get.request.detail')->middleware('has.request');
-        Route::patch('status/{id}',[RequestController::class, 'changeStatus'])->name('admin.change.request.status')->middleware('auth.admin');
-        Route::patch('{id}/reject', [RequestController::class, 'reject'])->name('admin.reject.request')->middleware('auth.admin');
-        Route::patch('{id}/approve', [RequestController::class, 'approve'])->name('admin.approve.request')->middleware('auth.admin');
+        Route::patch('{id}/reject', [RequestController::class, 'reject'])->name('admin.reject.request')->middleware('auth.admin')->middleware('request.is.open');
+        Route::patch('{id}/approve', [RequestController::class, 'approve'])->name('admin.approve.request')->middleware('auth.admin')->middleware('request.is.open');
+        Route::patch('{id}/cancel', [RequestController::class, 'cancel'])->name('user.cancel.request')->middleware('has.request')->middleware('request.is.open');
         Route::post('review-score', [RequestController::class, 'storeReviewScoreRequest'])->name('student.create.review_score_request');
         Route::post('switch-course', [RequestController::class, 'storeSwitchCourseRequest'])->name('student.create.switch_course_request');
         Route::post('booking-room', [RequestController::class, 'storeBookingRoomRequest'])->name('hoomroom_teacher.create.booking_room.request');

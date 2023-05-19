@@ -36,14 +36,19 @@ class Message
         return 'Approve request successfully!';
     }
 
+    static function cancelRequestSuccessfully()
+    {
+        return 'Cancel request successfully!';
+    }
+
     static function fileUploadIsInvalid()
     {
         return "File upload is invalid!";
     }
 
-    static function importFileSuccessfully()
+    static function updateScoresSuccessfully()
     {
-        return 'File import successful!';
+        return 'update scores successfully!';
     }
 
     static function conflictTimeWithCourse($course){

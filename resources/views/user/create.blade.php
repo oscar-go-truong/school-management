@@ -15,7 +15,7 @@
             <div class="form-group mt-3">
                 <label for="email" class="font-bold mb-1">Email address <span class="text-danger">*</span></label>
                 <input type="email" class="form-control @error('gmail') is-invalid @enderror" id="email"
-                    name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                    name="email" aria-describedby="emailHelp" placeholder="Enter email" value="{{ old('email') }}">
                 @error('email')
                     <div class="text-danger mt-1">{{ $message }}</div>
                 @enderror
@@ -23,7 +23,7 @@
             <div class="form-group mt-3">
                 <label for="username" class="font-bold mb-1">Username <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('username') is-invalid @enderror" id="username"
-                    name="username" placeholder="Enter your username">
+                    name="username" placeholder="Enter your username" value="{{ old('username') }}">
                 @error('username')
                     <div class="text-danger mt-1">{{ $message }}</div>
                 @enderror
@@ -48,7 +48,7 @@
             <div class="form-group mt-3">
                 <label for="fullname" class="font-bold mb-1">Fullname <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('fullname') is-invalid @enderror" id="fullname"
-                    name="fullname" placeholder="Enter your name">
+                    name="fullname" placeholder="Enter your name" value="{{ old('fullname') }}">
                 @error('fullname')
                     <div class="text-danger mt-1">{{ $message }}</div>
                 @enderror
@@ -59,7 +59,7 @@
                     aria-label="Default select example">
                     <option selected value="0">Select role</option>
                     @foreach ($roles as $role)
-                        <option value="{{ $role->name }}">
+                        <option value="{{ $role->name }}" @if ($role->name === old('role')) selected @endif>
                             {{ $role->name }}</option>
                     @endforeach
                 </select>
@@ -69,15 +69,18 @@
             </div>
             <div class="form-group mt-3">
                 <label for="phone" class="font-bold mb-1">Phone</label>
-                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter your phone">
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter your phone"
+                    value="{{ old('phone') }}">
             </div>
             <div class="form-group mt-3">
                 <label for="mobile" class="font-bold mb-1">Mobile</label>
-                <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter your mobile">
+                <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter your mobile"
+                    value="{{ old('mobile') }}">
             </div>
             <div class="form-group mt-3">
                 <label for="address" class="font-bold mb-1">Address</label>
-                <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address">
+                <input type="text" class="form-control" id="address" name="address" placeholder="Enter your address"
+                    value="{{ old('mobile') }}">
             </div>
 
         </form>
@@ -87,8 +90,9 @@
     <script>
         // validate form
         const validate = (email, username, password, repassword, fullname, role) => {
+            const decimal = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,32}$/;;
             $('.form-control').removeClass('is-invalid');
-            if (!email || !username || !repassword || password.length < 8 || password != repassword || !
+            if (!email || !username || !repassword || !password.match(decimal) || password != repassword || !
                 fullname || !role) {
                 // Missing email
                 if (!email) {
@@ -111,8 +115,10 @@
                 } else {
                     $('#password').addClass('is-valid');
                 };
-                if (password.length < 8) {
-                    toastr.warning('The password must be at least 8 characters.');
+                if (!password.match(decimal)) {
+                    toastr.warning(
+                        'The password must have 8 to 32 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character.'
+                    );
                     $('#password').addClass('is-invalid');
                 } else {
                     $('#password').addClass('is-valid');

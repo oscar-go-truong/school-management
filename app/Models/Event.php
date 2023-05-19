@@ -30,4 +30,9 @@ class Event extends Model
     {
         return $this->belongsTo(Room::class);
     }
+
+    public function owner() : BelongsTo
+    {
+        Return $this->belongsTo(User::class,'created_by');
+    }
 }

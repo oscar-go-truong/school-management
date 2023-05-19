@@ -14,4 +14,5 @@ final class RequestTypeContants extends Enum
     const REVIEW_GRADES =   1;
     const  SWITCH_COURSE = 2;
     const EDIT_EXAMS_SCORES = 3;
+    
 }

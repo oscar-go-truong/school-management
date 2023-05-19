@@ -10,20 +10,22 @@
         <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
             <div> Requests</div>
             <div class="inline">
-                <select
-                    class="form-select
+                @role('admin')
+                    <select
+                        class="form-select
                                                     w-40 text-sm filter inline-block"
-                    data-column="status" id="filter-type">
-                    <option value="">
-                        All types
-                    </option>
-                    @foreach ($types as $key => $value)
-                        <option
-                            value="{{ $value }}"@role('admin') @if ($key === 'PENDING') selected @endif @endrole>
-                            {{ ucfirst(strtolower(str_replace('_', ' ', $key))) }}
+                        data-column="status" id="filter-type">
+                        <option value="">
+                            All types
                         </option>
-                    @endforeach
-                </select>
+                        @foreach ($types as $key => $value)
+                            <option
+                                value="{{ $value }}"@role('admin') @if ($key === 'PENDING') selected @endif @endrole>
+                                {{ ucfirst(strtolower(str_replace('_', ' ', $key))) }}
+                            </option>
+                        @endforeach
+                    </select>
+                @endrole
                 <select
                     class="form-select
                                                     w-40 text-sm filter inline-block"

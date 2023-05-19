@@ -9,9 +9,18 @@ use App\Models\Course;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Models\UserCourse;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class UserCourseService extends BaseService
 {
+    protected $mailService;
+
+    public function __construct(MailService $mailService)
+    {
+        parent::__construct();
+        $this->mailService = $mailService;
+    }
     public function getModel()
     {
         return UserCourse::class;
@@ -81,25 +90,31 @@ class UserCourseService extends BaseService
    
     public function store($request) 
     {
-        $course = Course::find($request->course_id);
-        $user = User::find($request->user_id);
+        try{
+            $course = Course::find($request->course_id);
+            $user = User::find($request->user_id);
         
-        $isConflictTime = $this->checkConflictScheduleWithOtherCourse($user, $course);
-        if($isConflictTime)
-            return ['data' => null, 'message' => Message::conflictTimeWithCourse($isConflictTime)];
-        else
-        {
-            if($user->hasRole(UserRoleNameContants::STUDENT))
+            $isConflictTime = $this->checkConflictScheduleWithOtherCourse($user, $course);
+            if($isConflictTime)
+                return ['data' => null, 'message' => Message::conflictTimeWithCourse($isConflictTime)];
+            else
             {
-                $isJoinedSubjectInThisYear = $this->checkUSerIsJoinedSubjectInThisYear($user, $course);
-                if($isJoinedSubjectInThisYear)
-                    return ['data'=>null,'wait'=>true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear, $course->id)];
-            }
-            $userCourse = $this->model->updateOrCreate(['user_id' => $request->user_id, 'course_id' => $request->course_id], ['deleted_at' => null]);
-            if ($userCourse) 
-            return ['data' => ['id' => $this->model->where('user_id', $request->user_id)->where('course_id', $request->course_id)->first()->id], 'message' => Message::createSuccessfully("")];
-                return  ['data' => null, 'message' => Message::error()];
+                if($user->hasRole(UserRoleNameContants::STUDENT))
+                {
+                    $isJoinedSubjectInThisYear = $this->checkUSerIsJoinedSubjectInThisYear($user, $course);
+                    if($isJoinedSubjectInThisYear)
+                        return ['data'=>null,'wait'=>true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear, $course->id)];
+                }
+                DB::beginTransaction();
+                $this->model->updateOrCreate(['user_id' => $request->user_id, 'course_id' => $request->course_id], ['deleted_at' => null]);
+                DB::commit();
+                $this->mailService->mailUserToJoinCourse($request->user_id, $request->course_id);
+                return ['data' => ['id' => $this->model->where('user_id', $request->user_id)->where('course_id', $request->course_id)->first()->id], 'message' => Message::createSuccessfully("")];
         }
+    } catch(Exception $e){
+        DB::rollBack();
+        return  ['data' => null, 'message' => Message::error()];
+    }
     }
 }
 

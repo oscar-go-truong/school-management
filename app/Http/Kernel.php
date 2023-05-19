@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\EnsureRequestIsOpen;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -55,6 +56,7 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.login' => \App\Http\Middleware\EnsureUserIsLogin::class,
         'auth.admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         'auth.teacher' => \App\Http\Middleware\EnsureUserIsTeacher::class,
         'has.course' => \App\Http\Middleware\EnsureUserHasCourse::class,
@@ -69,5 +71,6 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'request.is.open' => EnsureRequestIsOpen::class
     ];
 }
