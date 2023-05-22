@@ -117,7 +117,8 @@ class CourseController extends Controller
         $teachers = $this->userService->getByRole(UserRoleNameContants::TEACHER);
         $subjects = $this->subjectService->getAll();
         $course = $this->courseService->getById($id);
-        return view('course.update', compact('course', 'teachers', 'subjects'));
+        $weekdays = TimeConstants::WEEKDAY;
+        return view('course.update', compact('course', 'teachers', 'subjects', 'weekdays'));
     }
 
     /**
