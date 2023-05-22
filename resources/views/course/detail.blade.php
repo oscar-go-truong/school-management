@@ -30,20 +30,20 @@
                             <div>{{ $schedule->weekday }} {{ $schedule->start_time }}-{{ $schedule->finish_time }}</div>
                         @endforeach
                         <div class="font-bold mb-1 mt-2"> Detail: </div>
-                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail"
+                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail p-1"
                             href="/courses/{{ $course->id }}/teachers">
                             <div class="inline font-bold">Teacher</div>
-                            <div class="inline font-bold">{{ $course->teachers_count }}</div>
+                            <div class="inline font-bold mr-2">{{ $course->teachers_count }}</div>
                         </a>
-                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail"
+                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail p-1"
                             href="/courses/{{ $course->id }}/students">
                             <div class="inline font-bold">Student</div>
-                            <div class="inline font-bold">{{ $course->students_count }}</div>
+                            <div class="inline font-bold mr-2">{{ $course->students_count }}</div>
                         </a>
-                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail"
+                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail p-1"
                             href="/exams?courseId={{ $course->id }}">
                             <div class="inline font-bold">Exam</div>
-                            <div class="inline font-bold">{{ $course->exams_count }}</div>
+                            <div class="inline font-bold mr-2">{{ $course->exams_count }}</div>
                         </a>
 
                     </div>

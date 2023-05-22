@@ -17,80 +17,77 @@ class UserService extends BaseService
 
     public function getTable($request)
     {
-        $query = $this->model;
-        $query = $query->status($request)->inRole($request);
+        $query = $this->model->status($request)->inRole($request);
         $result = $this->orderNSearch($request, $query);
-        $users = $result['data'];
-        $data =[];
-        foreach($users as $user)
-            $data[] = [
-                'id' => $user->id,
-                'username' => $user->username,
-                'fullname' => $user->fullname,
-                'email' => $user->email,
-                'role' => $user->getRoleNames()[0],
-                'status' => $user->status
+        $data = collect($result['data'])->map(function ($user) {
+            return [
+            'id' => $user->id,
+            'username' => $user->username,
+            'fullname' => $user->fullname,
+            'email' => $user->email,
+            'role' => $user->getRoleNames()->first(),
+            'status' => $user->status
             ];
+        });
         $result['data'] = $data;
         return $result;
     }
 
-    public function store($data)
+    public function store($request)
     {
+        $data = $request->input();
         $data['password'] = Hash::make($data['password']);
-        $user =  $this->model->create($data);
-        if ($user) 
-            {
-                $user->assignRole($data['role']);
-                return ['data' => ['id' => $user->id], 'message' => Message::createSuccessfully('user')];
-            }
-        return  ['data' => null, 'message' => Message::error()];
+        $user = $this->model->create($data);
+        if ($user) {
+            $user->assignRole($data['role']);
+            return ['data' => ['id' => $user->id], 'message' => Message::createSuccessfully('user')];
+        }
+        return ['data' => null, 'message' => Message::error()];
     }
 
 
     public function update($id, $request)
     {
-        $data = [
-            'email' => $request->email,
-            'username' => $request->username,
-            'role' => $request->role,
-            'fullname' => $request->fullname,
-            'phone' => $request->phone,
-            'mobile' => $request->mobile,
-            'address' => $request->address
-               ];
-        if ($request->password) {
-            $data['password'] = $request->password;
-        }
         $user = $this->model->find($id);
-        $oldRole = $user->getRoleNames();
-        if(count($oldRole)!=0)
-            $user->roles()->detach();
-        $user->assignRole($data['role']);
-        unset($data['role']);
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
+        if (!$user) {
+            return ['data' => null, 'message' => Message::error()];
         }
-        $result = $this->model->where('id', $id)->update($data);
-            if ($result) 
-                return ['data'=> ['id' => $id], 'message' => Message::updateSuccessfully('user')];
-            return  ['data' => null, 'message' => Message::error()];
+
+        $data = $request->only(['email', 'username', 'fullname', 'phone', 'mobile', 'address']);
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $oldRole = $user->getRoleNames();
+        if (!empty($oldRole)) {
+            $user->roles()->detach();
+        }
+        $user->assignRole($request->role);
+
+        $result = $user->update($data);
+        if ($result) {
+            return ['data' => ['id' => $id], 'message' => Message::updateSuccessfully('user')];
+        }
+
+        return ['data' => null, 'message' => Message::error()];
     }
 
-    public function getUserCanJoinToCourseByRole($courseId, $role) {
+    public function getUserCanJoinToCourseByRole($courseId, $role)
+    {
         $joinedUserId = UserCourse::select('user_id')->where('course_id', $courseId)->get();
         $users = $this->model->select('id', 'fullname', 'email')->whereNotIn('id', $joinedUserId)->role($role)->get();
         return $users;
     }
 
-    public function getByRole($role){
+    public function getByRole($role)
+    {
         return $this->model->select('id', 'fullname', 'email')->role($role)->get();
     }
 
     public function updateProfile($request)
     {
         $user = Auth::user();
-        $resp = $this->model->where('id', $user->id)->update($request->only('fullname','phone', 'mobile', 'address'));
+        $resp = $this->model->where('id', $user->id)->update($request->only('fullname', 'phone', 'mobile', 'address'));
         return $resp;
     }
 }

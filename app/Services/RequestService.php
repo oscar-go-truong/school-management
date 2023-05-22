@@ -26,8 +26,9 @@ class RequestService extends BaseService
     protected $courseModel;
     protected $userModel;
     protected $examModel;
+    protected $mailService;
 
-    public function __construct(UserCourse $userCourseModel, Room $roomModel, Course $courseModel, User $userModel, Exam $examModel)
+    public function __construct(UserCourse $userCourseModel, Room $roomModel, Course $courseModel, User $userModel, Exam $examModel, MailService $mailService)
     {
         parent::__construct();
         $this->userCourseModel = $userCourseModel;
@@ -35,6 +36,7 @@ class RequestService extends BaseService
         $this->courseModel = $courseModel;
         $this->userModel = $userModel;
         $this->examModel = $examModel;
+        $this->mailService = $mailService;
     }
     public function getModel()
     {
@@ -56,7 +58,7 @@ class RequestService extends BaseService
                 'id' => $request->id,
                 'type' => $type,
                 'userRequest' => $request->userRequest->fullname,
-                'userApprove' => $request->userApprove? $request->userApprove->fullname : '',
+                'userApprove' => $request->userApprove ? $request->userApprove->fullname : '',
                 'created_at' => $request->created_at,
                 'status' => ucwords(strtolower(RequestStatusContants::getKey($request->status)))
             ];
@@ -71,12 +73,12 @@ class RequestService extends BaseService
             DB::beginTransaction();
             $user = Auth::user();
             $arg = [
-                'user_request_id' =>  $req->user_request_id, 
-                'user_approve_id' => $user->id, 
-                'type' => RequestTypeContants::SWITCH_COURSE, 
-                'status' => RequestStatusContants::APPROVED, 
-                'old_course_id' => $req->oldCourseId, 
-                'new_course_id' => $req->newCourseId, 
+                'user_request_id' =>  $req->user_request_id,
+                'user_approve_id' => $user->id,
+                'type' => RequestTypeContants::SWITCH_COURSE,
+                'status' => RequestStatusContants::APPROVED,
+                'old_course_id' => $req->oldCourseId,
+                'new_course_id' => $req->newCourseId,
                 ];
             $request = $this->model->create([
                 "user_request_id" => $arg['user_request_id'],
@@ -86,24 +88,26 @@ class RequestService extends BaseService
                 "content" => '{"old_course_id":' . $arg['old_course_id'] . ',"new_course_id":' . $arg['new_course_id'] . ',"reason":"Admin change course."}'
                 ]);
             $content = json_decode($request->content);
-            $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->old_course_id)->delete();
-            $userCourse = $this->userCourseModel->create(['user_id'=> $user->id, 'course_id' => $content->new_course_id ]);
+            $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->old_course_id)->update(['course_id' => $content->new_course_id ]);
+            $this->mailService->mailStudentToChangeCourse($req->user_request_id, $req->newCourseId, $req->oldCourseId, $user, "Admin change course.");
             DB::commit();
-            return ['data' => ['request' =>$request, 'userCourse' => $userCourse], 'message' => Message::approveRequestSuccessfully()];
-            } catch (Exception $e) {
-                DB::rollBack();
-                return ['data' => null, 'message' => Message::error()];
-            }
+            $userCourse = $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->new_course_id)->first();
+            return ['data' => ['request' => $request, 'userCourse' => $userCourse], 'message' => Message::updateSuccessfully("")];
+        } catch (Exception $e) {
+            DB::rollBack();
+            return ['data' => null, 'message' => Message::error()];
+        }
     }
 
     public function storeReviewScoreRequest($request)
     {
-        
+
         $examId = $request->exam_id;
         $userId = Auth::user()->id;
-        $existRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('type', RequestTypeContants::REVIEW_GRADES)->where('status','!=',RequestStatusContants::CANCELED)->first();
-        if($existRequest)
-            return ['data'=>null, 'message' => 'Request was created before!'];
+        $existRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('type', RequestTypeContants::REVIEW_GRADES)->where('status', '!=', RequestStatusContants::CANCELED)->first();
+        if ($existRequest) {
+            return ['data' => null, 'message' => 'Request was created before!'];
+        }
         $request = $this->model->create([
             'user_request_id' => $userId,
             'status' => RequestStatusContants::PENDING,
@@ -123,14 +127,15 @@ class RequestService extends BaseService
         $newCourseId = $request->new_course_id;
         $reason = $request->reason;
         $userId = Auth::user()->id;
-        $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->old_course_id', $oldCourseId)->where('type',RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
-        if($checkIsExistRequest)
-            return ['data'=>null, 'message' => 'Request was created before!'];
+        $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->old_course_id', $oldCourseId)->where('type', RequestTypeContants::SWITCH_COURSE)->where('status', RequestStatusContants::PENDING)->count();
+        if ($checkIsExistRequest) {
+            return ['data' => null, 'message' => 'Request was created before!'];
+        }
         $request = $this->model->create([
             'user_request_id' => $userId,
             'status' => RequestStatusContants::PENDING,
             'type' => RequestTypeContants::SWITCH_COURSE,
-            'content' => '{"old_course_id":' . $oldCourseId.',"new_course_id":'.$newCourseId . ',"reason":"'.$reason.'"}'
+            'content' => '{"old_course_id":' . $oldCourseId . ',"new_course_id":' . $newCourseId . ',"reason":"' . $reason . '"}'
         ]);
         if ($request) {
             return ['data' => $request, 'message' => Message::createSuccessfully('request')];
@@ -140,18 +145,19 @@ class RequestService extends BaseService
     }
 
 
-    public function storeEditExamScoresRequest($request) 
+    public function storeEditExamScoresRequest($request)
     {
         $userId = Auth::user()->id;
         $examId = $request->exam_id;
         $checkIsExistRequest = $this->model->where('user_request_id', $userId)->where('content->exam_id', $examId)->where('status', RequestStatusContants::PENDING)->where('type', RequestTypeContants::EDIT_EXAMS_SCORES)->count();
-        if($checkIsExistRequest)
-            return ['data'=>null, 'message' => 'Request was created before!'];
+        if ($checkIsExistRequest) {
+            return ['data' => null, 'message' => 'Request was created before!'];
+        }
         $request = $this->model->create([
             'user_request_id' => $userId,
             'status' => RequestStatusContants::PENDING,
             'type' => RequestTypeContants::EDIT_EXAMS_SCORES,
-            'content' => '{"exam_id":' . $examId.'}'
+            'content' => '{"exam_id":' . $examId . '}'
         ]);
         if ($request) {
             return ['data' => $request, 'message' => Message::createSuccessfully('request')];
@@ -187,17 +193,14 @@ class RequestService extends BaseService
     {
         try {
             DB::beginTransaction();
-            $user =Auth::user();
-            $resultRequestUpdate = $this->model->where('id', $id)->update(['status' => RequestStatusContants::APPROVED, 'user_approve_id' => $user->id]);
+            $user = Auth::user();
+            $this->model->where('id', $id)->update(['status' => RequestStatusContants::APPROVED, 'user_approve_id' => $user->id]);
             $request = $this->model->find($id);
             $content = json_decode($request->content);
-            $resultUpdateUserCourse = $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->old_course_id)->update(['course_id' => $content->new_course_id]);
+            $this->userCourseModel->where('user_id', $request->user_request_id)->where('course_id', $content->old_course_id)->update(['course_id' => $content->new_course_id]);
+            $this->mailService->mailStudentToChangeCourse($request->user_request_id, $content->new_course_id, $content->old_course_id, $user, $content->reason);
             DB::commit();
-            if ($resultRequestUpdate && $resultUpdateUserCourse) {
-                return ['data' => $request, 'message' => Message::approveRequestSuccessfully()];
-            } else {
-                return ['data' => null, 'message' => Message::error()];
-            }
+            return ['data' => $request, 'message' => Message::approveRequestSuccessfully()];
         } catch (Exception $e) {
             DB::rollBack();
             return ['data' => null, 'message' => Message::error()];
@@ -228,8 +231,7 @@ class RequestService extends BaseService
             return $this->approveReviewScoreRequest($id);
         } elseif ($request->type === RequestTypeContants::SWITCH_COURSE) {
             return $this->approveSwitchCourseRequest($id);
-        }
-        elseif ($request->type === RequestTypeContants::EDIT_EXAMS_SCORES) {
+        } elseif ($request->type === RequestTypeContants::EDIT_EXAMS_SCORES) {
             return $this->approveEditExamScoresRequest($id);
         } else {
             return ['data' => null, 'message' => Message::error()];
@@ -238,9 +240,8 @@ class RequestService extends BaseService
 
     public function cancel($id)
     {
-        $result = $this->model->where('id',$id)->update(['status' => RequestStatusContants::CANCELED]);
-        if($result)
-        {
+        $result = $this->model->where('id', $id)->update(['status' => RequestStatusContants::CANCELED]);
+        if ($result) {
             return ['data' => $this->model->select('id', 'status')->find($id), 'message' => Message::cancelRequestSuccessfully()];
         } else {
             return ['data' => null, 'message' => Message::error()];
@@ -290,7 +291,7 @@ class RequestService extends BaseService
     public function getContent($id)
     {
         $request = $this->model->find($id);
-      if ($request->type === RequestTypeContants::REVIEW_GRADES) {
+        if ($request->type === RequestTypeContants::REVIEW_GRADES) {
             $content = $this->getReviewScoreRequestContent($request->content);
             $type = MyExamTypeConstants::getKey($content['exam']->type);
             $type = str_replace('_', ' ', $type);
@@ -298,8 +299,7 @@ class RequestService extends BaseService
             $type = ucwords($type);
             $content['exam']->type = $type;
             return $content;
-        }
-        elseif ($request->type === RequestTypeContants::EDIT_EXAMS_SCORES) {
+        } elseif ($request->type === RequestTypeContants::EDIT_EXAMS_SCORES) {
             $content = $this->getReviewScoreRequestContent($request->content);
             $type = MyExamTypeConstants::getKey($content['exam']->type);
             $type = str_replace('_', ' ', $type);
@@ -307,8 +307,7 @@ class RequestService extends BaseService
             $type = ucwords($type);
             $content['exam']->type = $type;
             return $content;
-        }
-         elseif ($request->type === RequestTypeContants::SWITCH_COURSE) {
+        } elseif ($request->type === RequestTypeContants::SWITCH_COURSE) {
             return $this->getSwitchCourseRequest($request->content);
         } else {
             return null;

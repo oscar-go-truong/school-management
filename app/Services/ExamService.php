@@ -34,7 +34,7 @@ class ExamService extends BaseService
     {
         $exam = $this->model->with('course.subject')->find($examId);
         $exam->type = ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type)));
-        $exam->isRequested = $this->requestModel->where('type', RequestTypeContants::EDIT_EXAMS_SCORES)->where('status', RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ". $examId)->count();
+        $exam->isRequested = $this->requestModel->where('type', RequestTypeContants::EDIT_EXAMS_SCORES)->where('status', RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = " . $examId)->count();
         return $exam;
     }
 
@@ -46,16 +46,16 @@ class ExamService extends BaseService
         $courseId = $request->courseId;
         $year = $request->year;
         $query = $this->model->withCount('scores')->with('course.subject')->course($courseId)->year($year);
-        
-        if(!$userIsAdmin){
-            $query = $query->whereHas('course.userCourses', function ($query) use($user){
+
+        if (!$userIsAdmin) {
+            $query = $query->whereHas('course.userCourses', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             });
-        if($userIsStudent){
-            $query = $query->with('scores', function ($query) use($user) {
-                $query->where('student_id', $user->id);
-            });
-        }
+            if ($userIsStudent) {
+                $query = $query->with('scores', function ($query) use ($user) {
+                    $query->where('student_id', $user->id);
+                });
+            }
         }
         $result = $this->orderNSearch($request, $query);
         $exams = $result['data'];
@@ -69,11 +69,12 @@ class ExamService extends BaseService
                 'scoresCount' => $exam->scores_count,
                 'created_at' => $exam->created_at
             ];
-            if($userIsStudent);
+            if ($userIsStudent) {
+            }
                 {
-                    $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : ""; 
-                    $status = $this->requestModel->where('user_request_id', $user->id)->where('status','!=',RequestStatusContants::CANCELED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->first();
-                    $item['requestStatus'] = $status ? ucfirst(strtolower(RequestStatusContants::getKey($status->status))):null;
+                    $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : "";
+                    $status = $this->requestModel->where('user_request_id', $user->id)->where('status', '!=', RequestStatusContants::CANCELED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->first();
+                    $item['requestStatus'] = $status ? ucfirst(strtolower(RequestStatusContants::getKey($status->status))) : null;
                 }
             $data[] = $item;
         }

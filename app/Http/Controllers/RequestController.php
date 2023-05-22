@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
-use App\Http\Requests\CreateBookingRoomRequestRequest;
 use App\Http\Requests\CreateEditExamsScoresRequesRequest;
 use App\Http\Requests\CreateReviewScoreRequestRequest;
 use App\Http\Requests\CreateSwitchCourseRequestRequest;
@@ -16,7 +15,8 @@ class RequestController extends Controller
 {
     protected $requestService;
 
-    public function __construct(RequestService $requestService){
+    public function __construct(RequestService $requestService)
+    {
         $this->requestService = $requestService;
     }
     /**
@@ -24,11 +24,11 @@ class RequestController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : View
+    public function index(): View
     {
         $status = RequestStatusContants::asArray();
         $types = RequestTypeContants::asArray();
-        return view('request.index', compact('status','types'));
+        return view('request.index', compact('status', 'types'));
     }
 
     public function getTable(Request $request)
@@ -44,24 +44,24 @@ class RequestController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) 
+    public function show($id)
     {
         $request = $this->requestService->getById($id);
         $content = (object) $this->requestService->getContent($id);
         $status = RequestStatusContants::asArray();
-        switch($request->type){
-        case(RequestTypeContants::REVIEW_GRADES):
-            $viewName ='request.reviewScoreRequestDetail';
-            break;
-        case(RequestTypeContants::SWITCH_COURSE):
-            $viewName = 'request.switchCourseRequestDetail';
-            break;
-        case(RequestTypeContants::EDIT_EXAMS_SCORES):
-            $viewName = 'request.editExamScoresRequestDetail';
-        default: 
-            return redirect()->back();
+        switch ($request->type) {
+            case (RequestTypeContants::REVIEW_GRADES):
+                $viewName = 'request.reviewScoreRequestDetail';
+                break;
+            case (RequestTypeContants::SWITCH_COURSE):
+                $viewName = 'request.switchCourseRequestDetail';
+                break;
+            case (RequestTypeContants::EDIT_EXAMS_SCORES):
+                $viewName = 'request.editExamScoresRequestDetail';
+            default:
+                return redirect()->back();
         }
-        return view($viewName, compact('request', 'content','status'));
+        return view($viewName, compact('request', 'content', 'status'));
     }
 
     public function reject($id)

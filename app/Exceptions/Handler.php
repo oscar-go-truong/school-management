@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -15,6 +16,7 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         //
     ];
+
 
     /**
      * A list of the inputs that are never flashed for validation exceptions.
@@ -35,7 +37,9 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            if (app()->bound('sentry')) {
+                app('sentry')->captureException($e);
+            }
         });
     }
 }

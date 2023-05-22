@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Services\MailService;
-use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordController extends Controller
 {
