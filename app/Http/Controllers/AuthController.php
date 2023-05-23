@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Message;
-use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -54,9 +52,10 @@ class AuthController extends Controller
     public function updateProfile(UpdateProfileRequest $request)
     {
         $resp = $this->userService->updateProfile($request);
-        if($resp)
+        if ($resp) {
             return redirect('/')->with('success', Message::updateSuccessfully('profile'));
-        else
+        } else {
             return redirect()->back()->with('error', Message::error());
+        }
     }
 }

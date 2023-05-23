@@ -37,7 +37,6 @@
                 },
             });
             toastr.info('Loading...');
-            $('#loading').attr('hidden', false);
             calendar.render();
             $.ajax({
                 method: "GET",
@@ -49,11 +48,9 @@
                         calendar.addEventSource(resp.data.events);
                         calendar.addEventSource(resp.data.schedules);
                     }
-                    $('#loading').attr('hidden', true);
                 },
                 error: function() {
                     toastr.error('Error, please try again later!');
-                    $('#loading').attr('hidden', true);
                 }
             })
         });

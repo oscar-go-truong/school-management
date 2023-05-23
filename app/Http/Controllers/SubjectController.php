@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\StatusTypeContants;
 use App\Http\Requests\CreateUpdateSubjectRequest;
 use App\Services\CourseService;
 use App\Services\SubjectService;
@@ -41,9 +40,9 @@ class SubjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() : View
+    public function create(): View
     {
-       return view('subject.create');
+        return view('subject.create');
     }
 
     /**
@@ -55,10 +54,11 @@ class SubjectController extends Controller
     public function store(CreateUpdateSubjectRequest $request)
     {
         $resp = $this->subjectService->store($request);
-        if($resp['data'] != null)
-            return redirect('/subjects')->with('success',$resp['message']);
-        else 
-            return redirect()->back()->with('error',$resp['message']);
+        if ($resp['data'] != null) {
+            return redirect('/subjects')->with('success', $resp['message']);
+        } else {
+            return redirect()->back()->with('error', $resp['message']);
+        }
     }
 
     /**
@@ -79,7 +79,7 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) : View
+    public function edit($id): View
     {
         $subject = $this->subjectService->getById($id);
         return view('subject.update', compact('subject'));
@@ -94,17 +94,18 @@ class SubjectController extends Controller
      */
     public function update(CreateUpdateSubjectRequest $request, $id)
     {
-        $resp = $this->subjectService->update($id,$request);
-        if($resp['data'] != null)
-            return redirect('/subjects')->with('success',$resp['message']);
-        else 
-            return redirect()->back()->with('error',$resp['message']);
+        $resp = $this->subjectService->update($id, $request);
+        if ($resp['data'] != null) {
+            return redirect('/subjects')->with('success', $resp['message']);
+        } else {
+            return redirect()->back()->with('error', $resp['message']);
+        }
     }
 
     public function changeStatus(Request $request, $id)
     {
         $resp = $this->subjectService->changeStatus($id, $request);
-        return response()->json($resp);  
+        return response()->json($resp);
     }
 
     /**
@@ -113,7 +114,7 @@ class SubjectController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : JsonResponse
+    public function destroy($id): JsonResponse
     {
         $resp = $this->subjectService->destroy($id);
         return response()->json($resp);

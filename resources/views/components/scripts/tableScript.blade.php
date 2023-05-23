@@ -7,7 +7,6 @@
         // hidden data on table
         toastr.clear();
         toastr.info('Loading, please wait...');
-        $('#loading').attr('hidden', false);
         $(tableId).hide();
         $('#paginations').hide();
         // active current page 
@@ -78,13 +77,11 @@
                                         </span>`);
                 }
                 toastr.clear();
-                $('#loading').attr('hidden', true);
             },
             error: function() {
                 $(tableId).show();
                 toastr.clear();
                 toastr.error('Error, Please try again later!');
-                $('#loading').attr('hidden', true);
             }
         });
     }

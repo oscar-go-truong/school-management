@@ -14,11 +14,15 @@ use Illuminate\Support\Facades\DB;
 
 class UserCourseService extends BaseService
 {
+    protected $userModel;
+    protected $courseModel;
     protected $mailService;
 
-    public function __construct(MailService $mailService)
+    public function __construct(User $userModel, Course $courseModel, MailService $mailService)
     {
         parent::__construct();
+        $this->userModel = $userModel;
+        $this->courseModel = $courseModel;
         $this->mailService = $mailService;
     }
     public function getModel()
@@ -34,8 +38,7 @@ class UserCourseService extends BaseService
         $result = $this->orderNSearch($request, $query);
         $userCourses = $result['data'];
         $data = [];
-        foreach($userCourses as $userCourse)
-        {
+        foreach ($userCourses as $userCourse) {
             $data[] = [
                 'id' => $userCourse->id,
                 'user_id' => $userCourse->user_id,
@@ -55,66 +58,62 @@ class UserCourseService extends BaseService
         })->with('user')->get();
         return $data;
     }
-    public function checkUserWasJoinedCourse($user_id, $course_id) 
+    public function checkUserWasJoinedCourse($user_id, $course_id)
     {
-        return $this->model->where('user_id',$user_id)->where('course_id',$course_id)->count();
+        return $this->model->where('user_id', $user_id)->where('course_id', $course_id)->count();
     }
 
     protected function checkUSerIsJoinedSubjectInThisYear($user, $course)
     {
-       return  $this->model->whereHas('course', function($query) use($course){
-            $query->where('subject_id', $course->subject_id)->whereRaw('YEAR(created_at) = '.$course->created_at->year);
-        })->where('user_id',$user->id)->with('course.subject')->first();
+        return $this->model->whereHas('course', function ($query) use ($course) {
+            $query->where('subject_id', $course->subject_id)->whereRaw('YEAR(created_at) = ' . $course->created_at->year);
+        })->where('user_id', $user->id)->with('course.subject')->first();
     }
 
     protected function checkConflictScheduleWithOtherCourse($user, $course)
     {
-        $userCourses = $this->model->where('user_id',$user->id)->where('status', StatusTypeContants::ACTIVE)->whereHas('course', function($query){
+        $userCourses = $this->model->where('user_id', $user->id)->where('status', StatusTypeContants::ACTIVE)->whereHas('course', function ($query) {
             $query->where('status', StatusTypeContants::ACTIVE);
         })->get();
         $courseSchedules = Schedule::where('course_id', $course->id)->get();
-        foreach($userCourses as $userCourse)
-        {
+        foreach ($userCourses as $userCourse) {
             $schedules = Schedule::where('course_id', $userCourse->course_id)->get();
-            foreach($schedules as $schedule)
-            {
-                foreach($courseSchedules as $courseSchedule)
-                {
-                    if((($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->start_time)||($schedule->start_time <= $courseSchedule->finish_time && $schedule->finish_time >= $courseSchedule->finish_time) || ($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->finish_time)) && $schedule->weekday === $courseSchedule->weekday)
+            foreach ($schedules as $schedule) {
+                foreach ($courseSchedules as $courseSchedule) {
+                    if ((($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->start_time) || ($schedule->start_time <= $courseSchedule->finish_time && $schedule->finish_time >= $courseSchedule->finish_time) || ($schedule->start_time <= $courseSchedule->start_time && $schedule->finish_time >= $courseSchedule->finish_time)) && $schedule->weekday === $courseSchedule->weekday) {
                         return $this->model->with('course.subject')->find($userCourse->id);
+                    }
                 }
             }
         }
         return null;
     }
-   
-    public function store($request) 
+
+    public function store($request)
     {
-        try{
-            $course = Course::find($request->course_id);
-            $user = User::find($request->user_id);
-        
+        try {
+            $course = $this->courseModel->find($request->course_id);
+            $user = $this->userModel->find($request->user_id);
+
             $isConflictTime = $this->checkConflictScheduleWithOtherCourse($user, $course);
-            if($isConflictTime)
+            if ($isConflictTime) {
                 return ['data' => null, 'message' => Message::conflictTimeWithCourse($isConflictTime)];
-            else
-            {
-                if($user->hasRole(UserRoleNameContants::STUDENT))
-                {
+            } else {
+                if ($user->hasRole(UserRoleNameContants::STUDENT)) {
                     $isJoinedSubjectInThisYear = $this->checkUSerIsJoinedSubjectInThisYear($user, $course);
-                    if($isJoinedSubjectInThisYear)
-                        return ['data'=>null,'wait'=>true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear, $course->id)];
+                    if ($isJoinedSubjectInThisYear) {
+                        return ['data' => null, 'wait' => true, 'message' => Message::userWasJoinedSubjectInThisYear($user, $isJoinedSubjectInThisYear, $course->id)];
+                    }
                 }
                 DB::beginTransaction();
                 $this->model->updateOrCreate(['user_id' => $request->user_id, 'course_id' => $request->course_id], ['deleted_at' => null]);
-                DB::commit();
                 $this->mailService->mailUserToJoinCourse($request->user_id, $request->course_id);
+                DB::commit();
                 return ['data' => ['id' => $this->model->where('user_id', $request->user_id)->where('course_id', $request->course_id)->first()->id], 'message' => Message::createSuccessfully("")];
+            }
+        } catch (Exception $e) {
+            DB::rollBack();
+            return ['data' => null, 'message' => Message::error()];
         }
-    } catch(Exception $e){
-        DB::rollBack();
-        return  ['data' => null, 'message' => Message::error()];
-    }
     }
 }
-

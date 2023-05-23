@@ -24,16 +24,16 @@ class EventController extends Controller
     {
         $users = $this->userService->getAllActive();
         $courses = $this->courseService->getAllActive();
-        return view('schedule.createEvent', compact('users','courses'));
+        return view('schedule.createEvent', compact('users', 'courses'));
     }
 
     public function store(CreateEventRequest $createEventRequest)
     {
         $result = $this->eventService->store($createEventRequest);
-        if($result)
+        if ($result) {
             return redirect('/schedules');
-        else
+        } else {
             return redirect()->back();
-
+        }
     }
 }

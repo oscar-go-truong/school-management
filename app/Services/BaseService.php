@@ -31,14 +31,15 @@ abstract class BaseService
     {
         $status = $request->status;
         $update = $this->model->where('id', $id)->update(['status' => $status]);
-        if ($update) 
+        if ($update) {
             return ['data' => ['id' => $id], 'message' => Message::updateStatusSuccessfully("")];
+        }
         return  ['data' => null, 'message' => Message::error()];
     }
 
     protected function orderNSearch($request, $query)
     {
-        $limit =$request->limit ? $request->limit : PaginationContants::LIMIT;
+        $limit = $request->limit ? $request->limit : PaginationContants::LIMIT;
         // order by
         $isOrder = $request->orderBy && $request->orderDirect;
         if ($isOrder) {
@@ -71,16 +72,18 @@ abstract class BaseService
     public function store($request)
     {
         $result =  $this->model->create($request->input());
-        if ($result) 
+        if ($result) {
             return ['data' => ['id' => $result->id], 'message' => Message::createSuccessfully("")];
+        }
         return  ['data' => null, 'message' => Message::error()];
     }
 
     public function update($id, $arg)
     {
         $result = $this->model->where('id', $id)->update($arg);
-        if ($result) 
+        if ($result) {
             return ['data' => ['id' => $id], 'message' => Message::updateStatusSuccessfully("")];
+        }
         return  ['data' => null, 'message' => Message::error()];
     }
 
