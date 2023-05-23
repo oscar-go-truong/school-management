@@ -49,7 +49,7 @@
                         <a href='/requests/${request.id}'><i class="fa-sharp fa-solid fa-circle-info"></i></a>
                     </td>`);
         row.append(
-            `<td class="${request.status === 'Pending' ?'text-primary':''} ${request.status === 'Approved' ?'text-success':''} ${request.status === 'Rejected' || request.status === 'Canceled' ?'text-danger':''}"> ${request.status} </td>`
+            `<td class="${request.status === 'Pending' ?'text-primary':''} ${request.status === 'Approved' ?'text-success':''} ${request.status === 'Rejected' || request.status === 'Cancelled' ?'text-danger':''}"> ${request.status} </td>`
         );
         if (!isAdmin)
             row.append(request.status !== 'Pending' ? `<td></td>` :

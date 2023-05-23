@@ -19,3 +19,12 @@
 
     </section>
 </body>
+<script>
+    $(document).ajaxStart(function() {
+        $("#loading").attr('hidden', false);
+    });
+
+    $(document).ajaxStop(function() {
+        $("#loading").attr('hidden', true);
+    });
+</script>

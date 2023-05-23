@@ -14,5 +14,5 @@ final class RequestStatusContants extends Enum
     const PENDING = 1;
     const REJECTED = 2;
     const APPROVED = 3;
-    const CANCELED = 4;
+    const CANCELLED = 4;
 }

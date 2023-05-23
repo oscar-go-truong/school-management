@@ -64,7 +64,6 @@
                         btn.attr('disabled', false);
                         toastr.options.timeOut = 3000;
                         toastr.options.extendedTimeOut = 3000;
-
                     },
                     error: function() {
                         toastr.error('Error, please try again later!');
@@ -88,7 +87,7 @@
                 user_request_id: userId
             }
 
-            toastr.info('Updating!');
+            toastr.info('Updating!')
             $.ajax({
                 type: "PATCH",
                 url: '/student/change-course',
@@ -97,13 +96,13 @@
                 success: function(resp) {
                     if (resp.data) {
                         toastr.success(resp.message);
-                        $('#student-' + studentId).remove();
+                        $('#student-' + userId).remove();
                         getTable(createRow);
                     } else
-                        toastr.warning(resp.message);
+                        toastr.warning(resp.message)
                 },
                 error: function() {
-                    toastr.error('Error, please try again later!');
+                    toastr.error('Error, please try again later!')
                 }
             });
         });

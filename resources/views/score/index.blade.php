@@ -25,7 +25,7 @@
             @else
                 @role('teacher')
                     <div class="inline" id="request-update">
-                        @if ($exam->isRequested === 0)
+                        @if (!$exam->isRequested)
                             <button class="btn btn-success rounded pb-2" id="request-update-btn">Request Update <i
                                     class="fa-sharp fa-solid fa-pen-to-square text-xl"></i>
                             </button>
@@ -81,7 +81,6 @@
         const closeDemoForm = () => {
             formData = [];
             missingUser = [];
-            $('#loading').attr('hidden', true);
             getTable(createRow);
             $('#select-limit').show();
             $('#custom-btns').html("");
@@ -168,7 +167,7 @@
                             }
                         })
                         toastr.info('Please check the information again before submitting!');
-                        $('#loading').attr('hidden', true);
+
                     } else {
                         closeDemoForm();
                         toastr.error(resp.message);
@@ -182,7 +181,6 @@
             })
         }
         const upload = () => {
-            $('#loading').attr('hidden', false);
             toastr.info('Updating!');
             $.ajax({
                 method: "POST",
@@ -198,7 +196,7 @@
                     closeDemoForm();
                 },
                 error: function() {
-                    $('#loading').attr('hidden', true);
+
                     toastr.error('Error, please try again later!');
                 }
             })
@@ -240,7 +238,7 @@
                     btn.attr('disabled', false);
                     toastr.warning('Please upload file!');
                 } else {
-                    $('#loading').attr('hidden', false);
+
                     $('#table-layout-component').hide();
                     $('#data-sheet').val('');
                     const reader = new FileReader();
@@ -300,7 +298,7 @@
             });
             $(document).on('click', '#open-edit-form-btn', function() {
                 toastr.info('Loading...');
-                $('#loading').attr('hidden', false);
+
                 formData = [];
                 missingUser = [];
                 $('#table-layout-component').hide();
@@ -325,7 +323,7 @@
                                 formData.push(row);
                             }
                             createDemoTable();
-                            $('#loading').attr('hidden', true);
+
                         } else {
                             toastr.error('Error, please try again later!');
                             closeDemoForm();

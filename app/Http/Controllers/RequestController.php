@@ -56,8 +56,9 @@ class RequestController extends Controller
             case (RequestTypeContants::SWITCH_COURSE):
                 $viewName = 'request.switchCourseRequestDetail';
                 break;
-            case (RequestTypeContants::EDIT_EXAMS_SCORES):
+            case (RequestTypeContants::EDIT_EXAM_SCORES):
                 $viewName = 'request.editExamScoresRequestDetail';
+                break;
             default:
                 return redirect()->back();
         }

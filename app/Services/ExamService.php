@@ -34,7 +34,10 @@ class ExamService extends BaseService
     {
         $exam = $this->model->with('course.subject')->find($examId);
         $exam->type = ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type)));
-        $exam->isRequested = $this->requestModel->where('type', RequestTypeContants::EDIT_EXAMS_SCORES)->where('status', RequestStatusContants::PENDING)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = " . $examId)->count();
+        $exam->isRequested = $this->requestModel
+                            ->where('type', RequestTypeContants::EDIT_EXAM_SCORES)
+                            ->where('status', RequestStatusContants::PENDING)
+                            ->where("content->exam_id", $examId)->count();
         return $exam;
     }
 
@@ -73,7 +76,7 @@ class ExamService extends BaseService
             }
                 {
                     $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : "";
-                    $status = $this->requestModel->where('user_request_id', $user->id)->where('status', '!=', RequestStatusContants::CANCELED)->whereRaw("JSON_EXTRACT(content, '$.exam_id') = ?", [$exam->id])->first();
+                    $status = $this->requestModel->where('user_request_id', $user->id)->where('status', '!=', RequestStatusContants::CANCELLED)->where("content->exam_id", [$exam->id])->first();
                     $item['requestStatus'] = $status ? ucfirst(strtolower(RequestStatusContants::getKey($status->status))) : null;
                 }
             $data[] = $item;
