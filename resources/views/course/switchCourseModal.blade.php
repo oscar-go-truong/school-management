@@ -58,6 +58,7 @@
                 }
                 btn.attr('disabled', false);
             } else {
+                toastr.info('Creating request...');
                 $.ajax({
                     method: "POST",
                     url: '/requests/switch-course',

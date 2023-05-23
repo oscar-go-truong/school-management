@@ -27,14 +27,14 @@ class CreateUpdateUserRequest extends FormRequest
     {
         $method = Request::method();
 
-        $rules = array(
+        $rules = [
             'fullname' => 'required',
             'role' => 'required',
             'email' => 'required|unique:users,email|max:255',
             'username' => 'required|unique:users,username|max:255',
             'password' => 'required|min:8|max:32',
-            'repassword' => 'required|min:8|max:32|same:password'
-        );
+            'repassword' => 'required|min:8|max:32|same:password',
+        ];
 
         if ($method === "PUT" || $method === "PATCH") {
             $rules['email'] = 'required|max:255|unique:users,email,' . $this->id;

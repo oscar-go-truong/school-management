@@ -29,13 +29,14 @@ class CourseController extends Controller
 
     protected $roomService;
 
-    public function __construct(CourseService $courseService, 
-                                UserCourseService $userCourseService,
-                                ExamService $examService, 
-                                UserService $userService, 
-                                SubjectService $subjectService,
-                                RoomService $roomService )
-    {
+    public function __construct(
+        CourseService $courseService,
+        UserCourseService $userCourseService,
+        ExamService $examService,
+        UserService $userService,
+        SubjectService $subjectService,
+        RoomService $roomService
+    ) {
         $this->courseService = $courseService;
         $this->userCourseService = $userCourseService;
         $this->examService = $examService;
@@ -48,7 +49,7 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) : View
+    public function index(Request $request): View
     {
         $subjectId = $request->subjectId;
         $currentYear = date('Y');
@@ -57,7 +58,7 @@ class CourseController extends Controller
         return view('course.index', compact('years', 'subjects', 'subjectId'));
     }
 
-    public function getTable(Request $request) 
+    public function getTable(Request $request)
     {
         $courses = $this->courseService->getTable($request);
         return response()->json($courses);
@@ -67,12 +68,12 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() : View
+    public function create(): View
     {
         $teachers = $this->userService->getByRole(UserRoleNameContants::TEACHER);
         $subjects = $this->subjectService->getAll();
         $weekdays = TimeConstants::WEEKDAY;
-        return view('course.create', compact('teachers','subjects','weekdays'));
+        return view('course.create', compact('teachers', 'subjects', 'weekdays'));
     }
 
     /**
@@ -84,10 +85,11 @@ class CourseController extends Controller
     public function store(CreateUpdateCourseRequest $request)
     {
         $resp = $this->courseService->store($request);
-        if($resp['data'] != null)
-            return redirect('/courses')->with('success',$resp['message']);
-        else 
-            return redirect()->back()->with('error',$resp['message']);
+        if ($resp['data'] != null) {
+            return redirect('/courses')->with('success', $resp['message']);
+        } else {
+            return redirect()->back()->with('error', $resp['message']);
+        }
     }
 
     /**
@@ -96,12 +98,12 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : View
+    public function show($id): View
     {
         $examTypes = MyExamTypeConstants::asArray();
         $course = $this->courseService->getById($id);
         $coursesAvailableSwitch = Auth::user()->hasRole(UserRoleNameContants::STUDENT) ? $this->courseService->coursesAvailableSwicth($course->id, Auth::user()->id) : null;
-        return view('course.detail', compact('course', 'coursesAvailableSwitch','examTypes'));
+        return view('course.detail', compact('course', 'coursesAvailableSwitch', 'examTypes'));
     }
 
     /**
@@ -110,12 +112,13 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) : View
+    public function edit($id): View
     {
         $teachers = $this->userService->getByRole(UserRoleNameContants::TEACHER);
         $subjects = $this->subjectService->getAll();
         $course = $this->courseService->getById($id);
-        return view('course.update', compact('course','teachers','subjects'));
+        $weekdays = TimeConstants::WEEKDAY;
+        return view('course.update', compact('course', 'teachers', 'subjects', 'weekdays'));
     }
 
     /**
@@ -128,10 +131,11 @@ class CourseController extends Controller
     public function update(CreateUpdateCourseRequest $request, $id)
     {
         $resp = $this->courseService->update($id, $request);
-        if($resp['data'] != null)
-            return redirect('/courses')->with('success',$resp['message']);
-        else 
-            return redirect()->back()->with('error',$resp['message']);
+        if ($resp['data'] != null) {
+            return redirect('/courses')->with('success', $resp['message']);
+        } else {
+            return redirect()->back()->with('error', $resp['message']);
+        }
     }
 
     /**
@@ -140,7 +144,7 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : JsonResponse
+    public function destroy($id): JsonResponse
     {
         $resp = $this->courseService->destroy($id);
         return response()->json($resp);
@@ -155,8 +159,8 @@ class CourseController extends Controller
 
     public function exportStudentList($id)
     {
-      $student =$this->userCourseService->getUsersByRole($id, UserRoleNameContants::STUDENT);
-      $course = $this->courseService->getById($id);
-      return Excel::download(new StudentsListExport($student), $course->subject->name.' '.$course->name.' '.'students.csv');
+        $student = $this->userCourseService->getUsersByRole($id, UserRoleNameContants::STUDENT);
+        $course = $this->courseService->getById($id);
+        return Excel::download(new StudentsListExport($student), $course->subject->name . ' ' . $course->name . ' ' . 'students.csv');
     }
 }

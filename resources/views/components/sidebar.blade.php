@@ -6,7 +6,7 @@
         </button>
     </div>
     <div class="p-4">
-        <h1><a href="index.html" class="logo">XSchool <span class="text-sm">
+        <h1><a class="logo">XSchool <span class="text-sm">
                     Empowering Minds, Igniting Futures.</span></a></h1>
         <ul class="list-unstyled components mb-5">
             <li class="{{ Request::is('/') ? 'active' : '' }}">

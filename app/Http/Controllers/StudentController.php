@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\RequestStatusContants;
-use App\Enums\RequestTypeContants;
-use App\Enums\StatusTypeContants;
 use App\Enums\UserRoleNameContants;
 use App\Helpers\Message;
 use App\Services\CourseService;
@@ -12,7 +9,6 @@ use App\Services\RequestService;
 use App\Services\UserCourseService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
@@ -30,18 +26,21 @@ class StudentController extends Controller
         $this->userService = $userService;
         $this->requestService = $requestService;
     }
-    public function index($courseId){
+    public function index($courseId)
+    {
         $course = $this->courseService->getById($courseId);
         $students = $this->userService->getUserCanJoinToCourseByRole($courseId, UserRoleNameContants::STUDENT);
-        return view('student.index', compact('courseId','course','students'));
+        return view('student.index', compact('courseId', 'course', 'students'));
     }
 
-    public function getTable(Request $request, $courseId){
+    public function getTable(Request $request, $courseId)
+    {
         $students = $this->userCourseService->getTable($request, $courseId, UserRoleNameContants::STUDENT);
         return $students;
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $resp = $this->userCourseService->store($request);
         return $resp;
     }
@@ -49,8 +48,9 @@ class StudentController extends Controller
     public function changeCourse(Request $request)
     {
         $resp = $this->requestService->storeCreateNApproveSwitchClassRequest($request);
-        if($resp['data'] === null)
+        if ($resp['data'] === null) {
             return response()->json(['data' => null, 'message' => Message::error()]);
+        }
         return response()->json($resp);
     }
 }

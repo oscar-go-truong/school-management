@@ -22,18 +22,21 @@ class TeacherController extends Controller
         $this->userCourseService = $userCourseService;
         $this->userService = $userService;
     }
-    public function index($courseId){
-        $teachers = $this->userService->getUserCanJoinToCourseByRole($courseId,UserRoleNameContants::TEACHER);
+    public function index($courseId)
+    {
+        $teachers = $this->userService->getUserCanJoinToCourseByRole($courseId, UserRoleNameContants::TEACHER);
         $course = $this->courseService->getById($courseId);
-        return view('teacher.index', compact('courseId','course','teachers'));
+        return view('teacher.index', compact('courseId', 'course', 'teachers'));
     }
 
-    public function getTable(Request $request, $courseId){
+    public function getTable(Request $request, $courseId)
+    {
         $teachers = $this->userCourseService->getTable($request, $courseId, UserRoleNameContants::TEACHER);
         return $teachers;
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $resp = $this->userCourseService->store($request);
         return response()->json($resp);
     }

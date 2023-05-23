@@ -7,7 +7,7 @@
     @endif
     <div class="row">
         <div class="col-md-12 text-3xl font-bold">
-            Create Subject
+            Update Subject
         </div>
 
     </div>

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\MyExamTypeConstants;
-use App\Enums\StatusTypeContants;
 use App\Services\CourseService;
 use App\Services\ExamService;
 use App\Services\ScoreService;
@@ -20,7 +18,7 @@ class ExamController extends Controller
     protected $subjectService;
     protected $scoreService;
 
-    public function __construct(ExamService $examService, CourseService $courseService,SubjectService $subjectService , ScoreService $scoreService)
+    public function __construct(ExamService $examService, CourseService $courseService, SubjectService $subjectService, ScoreService $scoreService)
     {
         $this->examService = $examService;
         $this->courseService = $courseService;
@@ -32,13 +30,13 @@ class ExamController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) :View
+    public function index(Request $request): View
     {
         $currentYear = date('Y');
         $years = range($currentYear, 2020);
         $courseId = $request->query('courseId', null);
         $courses = $this->courseService->getAllCoursesOfUser();
-        return view('exam.index', compact('courseId', 'courses','years'));
+        return view('exam.index', compact('courseId', 'courses', 'years'));
     }
 
     public function getTable(Request $request)
@@ -54,14 +52,14 @@ class ExamController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : JsonResponse
+    public function store(Request $request): JsonResponse
     {
-       $resp = $this->examService->store($request);
-       return response()->json($resp);
+        $resp = $this->examService->store($request);
+        return response()->json($resp);
     }
 
 
-    public function importScores(Request $request,$id)
+    public function importScores(Request $request, $id)
     {
         $result = $this->scoreService->importScores($id, $request);
         return response()->json($result);

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\MyExamTypeConstants;
-use App\Models\Exam;
 use App\Services\ExamService;
 use App\Services\ScoreService;
 use Illuminate\Contracts\View\View;
@@ -14,7 +12,7 @@ class ScoreController extends Controller
     protected $scoreService;
     protected $examService;
 
-    public function __construct(ScoreService $scoreService,ExamService $examService)
+    public function __construct(ScoreService $scoreService, ExamService $examService)
     {
         $this->scoreService = $scoreService;
         $this->examService = $examService;
@@ -24,7 +22,7 @@ class ScoreController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $examId) : View
+    public function index(Request $request, $examId): View
     {
         $exam = $this->examService->getById($examId);
         return view('score.index', compact('exam'));
@@ -35,6 +33,4 @@ class ScoreController extends Controller
         $scores = $this->scoreService->getTable($request, $examId);
         return response()->json($scores);
     }
-
-    
 }

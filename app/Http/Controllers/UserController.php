@@ -23,7 +23,8 @@ class UserController extends Controller
     // Render profile view.
     public function profile()
     {
-        $user =$this->userService->getById(Auth::User()->id);;
+        $user = $this->userService->getById(Auth::User()->id);
+        ;
         return view('auth.profile', compact('user'));
     }
 
@@ -48,7 +49,7 @@ class UserController extends Controller
         return response()->json($resp);
     }
     // Handle delete user
-    public function destroy(int $id) : JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         $resp = $this->userService->destroy($id);
         return response()->json($resp);
@@ -61,7 +62,7 @@ class UserController extends Controller
     // Store user
     public function store(CreateUpdateUserRequest $request)
     {
-        $this->userService->store($request->input());
+        $this->userService->store($request);
         return redirect('/users');
     }
     // Render update user form
@@ -69,10 +70,10 @@ class UserController extends Controller
     {
         $user = $this->userService->getById($id);
         $roles = Role::all();
-        if ($user) 
-            return view('user.update', compact('roles','user'));
-       return abort(404);
-        
+        if ($user) {
+            return view('user.update', compact('roles', 'user'));
+        }
+        return abort(404);
     }
     // Store update
     public function update(CreateUpdateUserRequest $request, int $id)
