@@ -37,24 +37,33 @@ class EventService extends BaseService
             $input = $request->input();
             $input['created_by'] = $user->id;
             $event = $this->model->create($input);
+
+            $userIds = [];
+            $eventParticipants = [];
+
             $users = $input['users'];
-            $this->eventParticipantModel->create(['participant_id' => $user->id, 'event_id' => $event->id]);
             foreach ($users as $userId) {
-                if ($this->eventParticipantModel->where('participant_id', $userId)->where('event_id', $event->id)->count() === 0) {
-                    $this->eventParticipantModel->create(['participant_id' => $userId, 'event_id' => $event->id]);
-                }
+                $userIds[] = intval($userId);
             }
+
+            $userIds[] = $user->id;
             if (isset($input['courses'])) {
                 $courses = $input['courses'];
-                foreach ($courses as $courseId) {
-                    $userCourses = $this->userCourseModel->where('course_id', $courseId)->get();
-                    foreach ($userCourses as $userCourse) {
-                        if ($this->eventParticipantModel->where('participant_id', $userCourse->user_id)->where('event_id', $event->id)->count() === 0) {
-                            $this->eventParticipantModel->create(['participant_id' => $userCourse->user_id, 'event_id' => $event->id]);
-                        }
-                    }
+                $userCourses = $this->userCourseModel->select('user_id')->whereIn('course_id', $courses)->distinct()->get();
+                foreach ($userCourses as $userCourse) {
+                    $userIds[] = $userCourse->user_id;
                 }
             }
+
+            $userIds = array_unique($userIds);
+            foreach ($userIds as $userId) {
+                $eventParticipants[] = [
+                'participant_id' => $userId,
+                'event_id' => $event->id
+                ];
+            }
+
+            $this->eventParticipantModel->insert($eventParticipants);
             $this->notificationService->sendEventInvatationNotification($event->id);
             $this->mailService->mailInvitationToEnvent($event->id);
             DB::commit();
