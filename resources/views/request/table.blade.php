@@ -5,7 +5,7 @@
         <th>Type</th>
         @role('admin')
             <th>User request</th>
-            <th>User approve</th>
+            <th>User approve/reject</th>
         @endrole
         <th class="sorting sort sorting_desc" data-column="created_at">Created at</th>
         <th class="text-center">Info</th>

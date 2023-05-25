@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRoleNameContants;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,6 +18,7 @@ class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
     use HasRoles;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,7 +31,7 @@ class User extends Authenticatable
         'fullname',
         'status',
         'phone',
-        'mobile', 
+        'mobile',
         'address'
     ];
 
@@ -45,7 +47,7 @@ class User extends Authenticatable
     public function scopeInRole($query, $request)
     {
         if ($request->role && count($request->role) > 0) {
-            return $query->orWhereHas('roles', function ($query) use($request) {
+            return $query->orWhereHas('roles', function ($query) use ($request) {
                 $query->whereIn('name', $request->role);
             });
         }
@@ -58,6 +60,20 @@ class User extends Authenticatable
             return $query->where('status', $request->status);
         }
         return $query;
+    }
+
+    public function notifications()
+    {
+        $query = Notification::where('user_id', $this->id)->orderBy('created_at', 'desc');
+
+        if ($this->hasRole(UserRoleNameContants::ADMIN)) {
+            $query = $query->orWhere('user_id', null);
+        }
+
+        return (object) [
+            'notifications' => $query->offset(0)->limit(15)->get(),
+            'unread_count' => $query->count()
+        ];
     }
 
     public function requestUser(): HasMany
@@ -80,8 +96,9 @@ class User extends Authenticatable
         return $this->hasMany(Exam::class);
     }
 
-    public function scores():HasMany{
-        return $this->hasMany(Score::class,'student_id');
+    public function scores(): HasMany
+    {
+        return $this->hasMany(Score::class, 'student_id');
     }
 
     public function userCourse(): HasMany
@@ -89,7 +106,7 @@ class User extends Authenticatable
         return $this->hasMany(UserCourse::class);
     }
 
-    public function eventParticipants() : HasMany
+    public function eventParticipants(): HasMany
     {
         return $this->hasMany(EventParticipant::class);
     }

@@ -14,13 +14,15 @@ class EventService extends BaseService
     protected $eventParticipantModel;
     protected $userCourseModel;
     protected $mailService;
+    protected $notificationService;
 
-    public function __construct(EventParticipant $eventParticipantModel, UserCourse $userCourseModel, MailService $mailService)
+    public function __construct(EventParticipant $eventParticipantModel, UserCourse $userCourseModel, MailService $mailService, NotificationService $notificationService)
     {
         parent::__construct();
         $this->eventParticipantModel = $eventParticipantModel;
         $this->userCourseModel = $userCourseModel;
         $this->mailService = $mailService;
+        $this->notificationService = $notificationService;
     }
     public function getModel()
     {
@@ -36,22 +38,25 @@ class EventService extends BaseService
             $input['created_by'] = $user->id;
             $event = $this->model->create($input);
             $users = $input['users'];
-            $courses = $input['courses'];
             $this->eventParticipantModel->create(['participant_id' => $user->id, 'event_id' => $event->id]);
             foreach ($users as $userId) {
                 if ($this->eventParticipantModel->where('participant_id', $userId)->where('event_id', $event->id)->count() === 0) {
                     $this->eventParticipantModel->create(['participant_id' => $userId, 'event_id' => $event->id]);
                 }
             }
-            foreach ($courses as $courseId) {
+            if (isset($input['courses'])) {
+                $courses = $input['courses'];
+                foreach ($courses as $courseId) {
                     $userCourses = $this->userCourseModel->where('course_id', $courseId)->get();
-                foreach ($userCourses as $userCourse) {
-                    if ($this->eventParticipantModel->where('participant_id', $userCourse->user_id)->where('event_id', $event->id)->count() === 0) {
-                        $this->eventParticipantModel->create(['participant_id' => $userCourse->user_id, 'event_id' => $event->id]);
+                    foreach ($userCourses as $userCourse) {
+                        if ($this->eventParticipantModel->where('participant_id', $userCourse->user_id)->where('event_id', $event->id)->count() === 0) {
+                            $this->eventParticipantModel->create(['participant_id' => $userCourse->user_id, 'event_id' => $event->id]);
+                        }
                     }
                 }
             }
-            $this->mailService->mailUserToJoinCourse($request->user_id, $request->course_id);
+            $this->notificationService->sendEventInvatationNotification($event->id);
+            $this->mailService->mailInvitationToEnvent($event->id);
             DB::commit();
             return true;
         } catch (Exception $e) {

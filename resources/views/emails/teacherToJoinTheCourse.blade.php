@@ -19,7 +19,7 @@
             For more information on the course visit the link below:
         </p>
 
-        <a href="https://x-school.azurewebsites.net/courses/{{ $course->id }}"
+        <a href="{{ asset('courses/' . $course->id) }}"
             class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-base inline-block mb-6">Go to
             Course</a>
 
