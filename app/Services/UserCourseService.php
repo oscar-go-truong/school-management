@@ -110,6 +110,7 @@ class UserCourseService extends BaseService
                 DB::beginTransaction();
                 $this->model->updateOrCreate(['user_id' => $request->user_id, 'course_id' => $request->course_id], ['deleted_at' => null]);
                 $this->mailService->mailUserToJoinCourse($request->user_id, $request->course_id);
+
                 $this->notificationService->sendUserJoinToCourseNotification($request->user_id, $request->course_id);
                 DB::commit();
                 return ['data' => ['id' => $this->model->where('user_id', $request->user_id)->where('course_id', $request->course_id)->first()->id], 'message' => Message::createSuccessfully("")];

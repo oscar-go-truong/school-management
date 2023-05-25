@@ -99,6 +99,7 @@ class RequestService extends BaseService
                 ->where('user_id', $request->user_request_id)
                 ->where('course_id', $req->newCourseId)
                 ->first();
+
             return [
                 'data' => [
                 'request' => $request,
