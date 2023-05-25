@@ -96,9 +96,11 @@
                             <select class="form-control select2" name="users[]" id="userSelect" multiple>
 
                                 @foreach ($users as $user)
-                                    <option value="{{ $user->id }}" id="user-{{ $user->id }}">
-                                        {{ $user->fullname }}
-                                    </option>
+                                    @if ($user->id != Auth::user()->id)
+                                        <option value="{{ $user->id }}" id="user-{{ $user->id }}">
+                                            {{ $user->fullname }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                             @error('users')

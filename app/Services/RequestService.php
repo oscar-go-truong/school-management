@@ -27,7 +27,8 @@ class RequestService extends BaseService
     protected $examModel;
     protected $mailService;
 
-    public function __construct(UserCourse $userCourseModel, Room $roomModel, Course $courseModel, User $userModel, Exam $examModel, MailService $mailService)
+    protected $notificationService;
+    public function __construct(UserCourse $userCourseModel, Room $roomModel, Course $courseModel, User $userModel, Exam $examModel, MailService $mailService, NotificationService $notificationService)
     {
         parent::__construct();
         $this->userCourseModel = $userCourseModel;
@@ -36,6 +37,7 @@ class RequestService extends BaseService
         $this->userModel = $userModel;
         $this->examModel = $examModel;
         $this->mailService = $mailService;
+        $this->notificationService = $notificationService;
     }
     public function getModel()
     {
@@ -89,15 +91,8 @@ class RequestService extends BaseService
                 ->where('course_id', $req->oldCourseId)
                 ->update(['course_id' => $req->newCourseId]);
 
-            $this->mailService
-                ->mailStudentToChangeCourse(
-                    $req->user_request_id,
-                    $req->newCourseId,
-                    $req->oldCourseId,
-                    $user,
-                    'Admin change course.'
-                );
-
+            $this->mailService->mailStudentToChangeCourse($request);
+            $this->notificationService->sendUserChangeToCourseNotification($request);
             DB::commit();
 
             $userCourse = $this->userCourseModel
@@ -142,6 +137,7 @@ class RequestService extends BaseService
         ]);
 
         if ($newRequest) {
+            $this->notificationService->sendNewRequestNotification($userId, $newRequest->id);
             return ['data' => $newRequest, 'message' => Message::createSuccessfully('request')];
         }
 
@@ -178,6 +174,7 @@ class RequestService extends BaseService
         ]);
 
         if ($newRequest) {
+            $this->notificationService->sendNewRequestNotification($userId, $newRequest->id);
             return ['data' => $newRequest, 'message' => Message::createSuccessfully('request')];
         }
 
@@ -211,6 +208,7 @@ class RequestService extends BaseService
         ]);
 
         if ($newRequest) {
+            $this->notificationService->sendNewRequestNotification($userId, $newRequest->id);
             return ['data' => $newRequest, 'message' => Message::createSuccessfully('request')];
         }
 
@@ -219,11 +217,14 @@ class RequestService extends BaseService
 
     public function reject($id)
     {
+        $user = Auth::user();
         $result =  $this->model
                    ->where('id', $id)
-                   ->update(['status' => RequestStatusContants::REJECTED]);
+                   ->update(['status' => RequestStatusContants::REJECTED, 'user_approve_id' => $user->id ]);
 
         if ($result) {
+            $request = $this->model->find($id);
+            $this->notificationService->sendUserHasRejectedRequestNotification($request);
             return [
                     'data' => $this->model->find($id),
                     'message' => Message::rejectRequestSuccessfully()
@@ -242,6 +243,8 @@ class RequestService extends BaseService
         $result = $this->model->where('id', $id)->update(['status' => RequestStatusContants::APPROVED,'user_approve_id' => $user->id]);
 
         if ($result) {
+            $request = $this->model->find($id);
+            $this->notificationService->sendUserHasApprovedRequestNotification($request);
             return [
                 'data' => $this->model->find($id),
                 'message' => Message::approveRequestSuccessfully()
@@ -276,8 +279,8 @@ class RequestService extends BaseService
                 ->where('course_id', $content->old_course_id)
                 ->update(['course_id' => $content->new_course_id]);
 
-            $this->mailService->mailStudentToChangeCourse($request->user_request_id, $content->new_course_id, $content->old_course_id, $user, $content->reason);
-
+            $this->mailService->mailStudentToChangeCourse($request);
+            $this->notificationService->sendUserHasApprovedRequestNotification($request);
             DB::commit();
 
             return ['data' => $request, 'message' => Message::approveRequestSuccessfully()];
@@ -308,6 +311,8 @@ class RequestService extends BaseService
 
             PreventUpdateExamScores::dispatch($content->exam_id)->delay(now()->addWeek());
 
+            $request = $this->model->find($id);
+            $this->notificationService->sendUserHasApprovedRequestNotification($request);
             DB::commit();
 
             $request = $this->model->find($id);
@@ -405,5 +410,10 @@ class RequestService extends BaseService
     public function getById($id)
     {
         return $this->model->with('userApprove')->with('userRequest')->find($id);
+    }
+
+    public function getPendingRequestCount()
+    {
+        return ['data' => ['count' => $this->model->where('status', RequestStatusContants::PENDING)->count()],'message' => 'success'];
     }
 }

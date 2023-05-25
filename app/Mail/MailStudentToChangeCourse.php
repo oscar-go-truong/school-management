@@ -14,7 +14,7 @@ class MailStudentToChangeCourse extends Mailable
     use Queueable;
     use SerializesModels;
 
-    protected $user;
+    protected $userRequest;
     protected $newCourse;
     protected $oldCourse;
 
@@ -27,9 +27,9 @@ class MailStudentToChangeCourse extends Mailable
      *
      * @return void
      */
-    public function __construct(User $user, Course $newCourse, Course $oldCourse, User $userApprove, $reason, $date)
+    public function __construct(User $userRequest, Course $newCourse, Course $oldCourse, User $userApprove, $reason, $date)
     {
-        $this->user = $user;
+        $this->userRequest = $userRequest;
         $this->newCourse = $newCourse;
         $this->oldCourse = $oldCourse;
         $this->userApprove = $userApprove;
