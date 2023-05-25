@@ -44,7 +44,7 @@ class MailStudentToChangeCourse extends Mailable
      */
     public function build()
     {
-        $user = $this->user;
+        $user = $this->userRequest;
         $newCourse = $this->newCourse;
         $oldCourse = $this->oldCourse;
         $userApprove = $this->userApprove;
