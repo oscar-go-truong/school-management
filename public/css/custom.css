@@ -773,3 +773,36 @@ h2 {
 .detail-subject:hover {
     color: #198754;
 }
+
+.notifications {
+    min-width: 420px;
+    z-index: 99999;
+}
+
+.notification-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.notification-wrapper {
+    overflow: auto;
+    max-height: 250px;
+}
+
+
+
+
+.no-after::after {
+    display: none !important;
+}
+
+.red-dot::after {
+    left: 10px;
+    display: block;
+    content: attr(data-content);
+    color: red;
+    font-size: 15px;
+    position: absolute;
+    bottom: -30px;
+    border: 0;
+    font-weight: 600;
+}

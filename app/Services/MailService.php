@@ -34,13 +34,16 @@ class MailService
         Mail::to($user)->queue(new MailUserToJoinCourse($user, $course));
     }
 
-    public function mailStudentToChangeCourse($userId, $newCourseId, $oldCourseId, $userApprove, $reason)
+    public function mailStudentToChangeCourse($request)
     {
-        $user = $this->userModel->find($userId);
-        $newCourse = $this->CourseModel->find($newCourseId);
-        $oldCourse = $this->CourseModel->find($oldCourseId);
+        $content = json_decode($request->content);
+        $userRequest = $this->userModel->find($request->user_request_id);
+        $userApprove = $this->userModel->find($request->user_approve_id);
+        $newCourse = $this->CourseModel->find($content->new_course_id);
+        $oldCourse = $this->CourseModel->find($content->old_course_id);
+        $reason = $content->reason;
         $date = date('Y-m-d H:i:s');
-        Mail::to($user)->queue(new MailStudentToChangeCourse($user, $newCourse, $oldCourse, $userApprove, $reason, $date));
+        Mail::to($userRequest)->queue(new MailStudentToChangeCourse($userRequest, $newCourse, $oldCourse, $userApprove, $reason, $date));
     }
 
     public function mailResetPassword($request)

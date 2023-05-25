@@ -30,7 +30,6 @@ class CreateEventRequest extends FormRequest
             'start_time' => 'required',
             'end_time' => 'required',
             'room_id' => 'required',
-            'courses' => 'required|array',
             'users' => 'required|array',
             'description' => 'required'
         ];

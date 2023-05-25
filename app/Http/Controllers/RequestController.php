@@ -99,4 +99,9 @@ class RequestController extends Controller
         $resp = $this->requestService->storeEditExamScoresRequest($request);
         return response()->json($resp);
     }
+
+    public function getPendingRequestCount()
+    {
+        return $this->requestService->getPendingRequestCount();
+    }
 }
