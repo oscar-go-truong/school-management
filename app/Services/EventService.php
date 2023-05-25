@@ -49,10 +49,8 @@ class EventService extends BaseService
             $userIds[] = $user->id;
             if (isset($input['courses'])) {
                 $courses = $input['courses'];
-                $userCourses = $this->userCourseModel->select('user_id')->whereIn('course_id', $courses)->distinct()->get();
-                foreach ($userCourses as $userCourse) {
-                    $userIds[] = $userCourse->user_id;
-                }
+                $userCourses = $this->userCourseModel->whereIn('course_id', $courses)->pluck('user_id')->toArray();
+                $userIds = array_merge($userIds, $userCourses);
             }
 
             $userIds = array_unique($userIds);

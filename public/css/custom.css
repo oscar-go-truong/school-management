@@ -796,13 +796,13 @@ h2 {
 }
 
 .red-dot::after {
-    left: 12px;
+    left: 10px;
     display: block;
     content: attr(data-content);
     color: red;
     font-size: 15px;
     position: absolute;
-    bottom: -35px;
+    bottom: -30px;
     border: 0;
     font-weight: 600;
 }
