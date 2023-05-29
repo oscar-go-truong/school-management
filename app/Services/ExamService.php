@@ -76,6 +76,7 @@ class ExamService extends BaseService
             }
                 {
                     $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : "";
+                    $item['isUpdated'] = count($exam->scores) && !$exam->scores[0]->edit_key && $this->requestModel->where('user_request_id', $user->id)->where('status', RequestStatusContants::APPROVED)->where("content->exam_id", [$exam->id])->first() ? true : false;
                     $status = $this->requestModel->where('user_request_id', $user->id)->where('status', '!=', RequestStatusContants::CANCELLED)->where("content->exam_id", [$exam->id])->first();
                     $item['requestStatus'] = $status ? ucfirst(strtolower(RequestStatusContants::getKey($status->status))) : null;
                 }

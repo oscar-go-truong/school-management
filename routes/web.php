@@ -94,6 +94,10 @@ use Illuminate\Support\Facades\Route;
         });
         Route::resource('exams', ExamController::class);
 
+        Route::prefix('/scores/')->group(function () {
+            Route::get('/update/{key}', [ScoreController::class, 'edit'])->name('teacher.get.edit.score');
+            Route::patch('/update/{key}', [ScoreController::class, 'update'])->name('teacher.update.score');
+        });
         Route::prefix('/requests/')->group(function () {
             Route::get('table', [RequestController::class, 'getTable'])->name('user.get.request.table');
             Route::get('pending-count', [RequestController::class, 'getPendingRequestCount'])->name('admin.get.pending.request.count')->middleware('auth.admin');
@@ -117,7 +121,8 @@ use Illuminate\Support\Facades\Route;
         });
 
         Route::prefix('/rooms/')->group(function () {
-            Route::get('/available', [RoomController::class, 'getAvailable'])->name('user.get.rooms.available');
+            Route::get('/available-room-for-event', [RoomController::class, 'getAvailableRoomForEvent'])->name('user.get.rooms.available.for.event');
+            Route::get('/available-room-for-schedule', [RoomController::class, 'getAvailableRoomForSchedule'])->name('user.get.rooms.available.for.schedule');
         });
         Route::prefix('/user-courses/')->group(function () {
             Route::patch('status/{id}', [UserCourseController::class, 'changeStatus'])->name('admin.update.userCourse.status')->middleware('auth.admin');

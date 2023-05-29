@@ -21,12 +21,11 @@ class CreateSchedulesTable extends Migration
             $table->unsignedBigInteger('room_id');
             $table->unsignedBigInteger('course_id');
             $table->timestamps();
-            $table->softDeletes();
         });
 
         Schema::table('schedules', function (Blueprint $table) {
-          $table->foreign('course_id')->references('id')->on('courses');
-          $table->foreign('room_id')->references('id')->on('rooms');
+            $table->foreign('course_id')->references('id')->on('courses');
+            $table->foreign('room_id')->references('id')->on('rooms');
         });
     }
 
@@ -37,6 +36,6 @@ class CreateSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schedule');
+        Schema::dropIfExists('schedules');
     }
 }

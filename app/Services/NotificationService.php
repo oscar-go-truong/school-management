@@ -7,6 +7,7 @@ use App\Enums\UserRoleNameContants;
 use App\Events\NewRequestEvent;
 use App\Events\RequestApprovedEvent;
 use App\Events\RequestRejectedEvent;
+use App\Events\RequestTeacherUpdateScoreEvent;
 use App\Events\UserJoinToCourseEvent;
 use App\Events\UserToChangeCourseEvent;
 use App\Events\UserToJoinEventEvent;
@@ -14,6 +15,7 @@ use App\Models\Course;
 use App\Models\Event;
 use App\Models\EventParticipant;
 use App\Models\Notification;
+use App\Models\Score;
 use App\Models\User;
 use App\Services\BaseService;
 use Illuminate\Support\Facades\Auth;
@@ -22,14 +24,16 @@ class NotificationService extends BaseService
 {
     protected $userModel;
     protected $courseModel;
+    protected $scoreModel;
     protected $eventModel;
     protected $eventParticipantModel;
 
-    public function __construct(User $userModel, Course $courseModel, Event $eventModel, EventParticipant $eventParticipantModel)
+    public function __construct(User $userModel, Course $courseModel, Score $scoreModel, Event $eventModel, EventParticipant $eventParticipantModel)
     {
         parent::__construct();
         $this->userModel = $userModel;
         $this->courseModel = $courseModel;
+        $this->scoreModel = $scoreModel;
         $this->eventModel = $eventModel;
         $this->eventParticipantModel = $eventParticipantModel;
     }
@@ -116,6 +120,20 @@ class NotificationService extends BaseService
             'url' => '/requests/' . $request->id
         ]);
         event(new RequestRejectedEvent($notification, $request->user_request_id));
+    }
+
+    public function sendRequestTeacherUpdateScoreNotification($request)
+    {
+        $content = json_decode($request->content);
+        $score = $this->scoreModel->where('student_id', $request->user_request_id)->where('exam_id', $content->exam_id)->first();
+        $userApporve = $this->userModel->find($request->user_approve_id);
+        $notification = $this->model->create([
+            'user_id' => $score->updated_by,
+            'title' => 'Request review score',
+            'message' => 'You have a request reivew score for student create by ' . $userApporve->fullname,
+            'url' => '/scores/update/' . $score->edit_key
+        ]);
+        event(new RequestTeacherUpdateScoreEvent($notification, $score->updated_by));
     }
 
     public function getTable()
