@@ -13,7 +13,7 @@ class RoomService extends BaseService
         return Room::class;
     }
 
-    public function getAvailable($request)
+    public function getAvailableRoomForEvent($request)
     {
         $date = $request->date;
         $startTime = $request->start_time;
@@ -25,6 +25,19 @@ class RoomService extends BaseService
             $query->whereHas('course', function ($query) {
                 $query->where('status', StatusTypeContants::ACTIVE);
             })->whereRaw('((start_time <="' . $startTime . '" and "' . $startTime . '"<= finish_time) or (start_time <= "' . $endTime . '" and "' . $endTime . '" <= finish_time) or (start_time >= "' . $startTime . '" and "' . $endTime . '" >= finish_time))')->where('weekday', $weekday);
+        })->get();
+        return ['data' => ['rooms' => $rooms]];
+    }
+
+    public function getAvailableRoomForSchedule($request)
+    {
+        $startTime = $request->start_time;
+        $finishTime = $request->finish_time;
+        $weekday = $request->weekday;
+        $rooms = $this->model->select('id', 'name')->whereDoesntHave('schedules', function ($query) use ($startTime, $finishTime, $weekday) {
+            $query->whereHas('course', function ($query) {
+                $query->where('status', StatusTypeContants::ACTIVE);
+            })->whereRaw('((start_time <="' . $startTime . '" and "' . $startTime . '"<= finish_time) or (start_time <= "' . $finishTime . '" and "' . $finishTime . '" <= finish_time) or (start_time >= "' . $startTime . '" and "' . $finishTime . '" >= finish_time))')->where('weekday', $weekday);
         })->get();
         return ['data' => ['rooms' => $rooms]];
     }

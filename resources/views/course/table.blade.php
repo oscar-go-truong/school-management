@@ -45,7 +45,7 @@
         let schedules = $(`<td>`);
         for (let i = 0; i < course.schedules.length; i++) {
             schedules.append(
-                `<div class="mt-2">${course.schedules[i].start + '-' + course.schedules[i].end +', '+ course.schedules[i].weekday}</div>`
+                `<div class="mt-2">${course.schedules[i].start + '-' + course.schedules[i].end +', '+ course.schedules[i].weekday + " - "+course.schedules[i].room }</div>`
             );
         }
         row.append(schedules);

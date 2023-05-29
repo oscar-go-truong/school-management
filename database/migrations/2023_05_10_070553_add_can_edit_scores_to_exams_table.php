@@ -25,7 +25,7 @@ class AddCanEditScoresToExamsTable extends Migration
      */
     public function down()
     {
-        Schema::table('scores', function (Blueprint $table) {
+        Schema::table('exams', function (Blueprint $table) {
             $table->dropColumn('can_edit_scores');
         });
     }

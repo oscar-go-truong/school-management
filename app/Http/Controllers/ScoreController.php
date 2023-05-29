@@ -33,4 +33,23 @@ class ScoreController extends Controller
         $scores = $this->scoreService->getTable($request, $examId);
         return response()->json($scores);
     }
+
+    public function edit($key)
+    {
+        $score = $this->scoreService->getByEditKey($key);
+        if ($score) {
+            return view('score.update', compact('score'));
+        }
+        return abort(404);
+    }
+
+    public function update(Request $request)
+    {
+        $resp = $this->scoreService->updateReview($request);
+        if ($resp['data'] != null) {
+            return redirect('/exams/' . $resp['data'] . '/scores')->with('success', $resp['message']);
+        } else {
+            return redirect()->back()->with('error', $resp['message']);
+        }
+    }
 }

@@ -27,7 +27,7 @@ body {
 }
 
 .table-content {
-    height: 710px;
+    height: 90vh;
     overflow-y: scroll;
 }
 

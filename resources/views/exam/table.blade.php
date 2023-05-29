@@ -51,14 +51,26 @@
             `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
         if (isStudent)
-            if (!exam.requestStatus)
+            if (exam.myScore) {
+                if (!exam.requestStatus)
+                    row.append(
+                        `<td class="text-primary text-center" id="request-btn-${exam.id}"><i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course}' data-subjectName='${exam.subject}' data-type='${exam.type}'></i></td>`
+                    );
+                else {
+                    if (!exam.isUpdated)
+                        row.append(
+                            `<td class="text-primary text-center">${exam.requestStatus}</td>`
+                        );
+                    else
+                        row.append(
+                            `<td class="text-primary text-center">Updated</td>`
+                        );
+                }
+            } else {
                 row.append(
-                    `<td class="text-primary text-center" id="request-btn-${exam.id}"><i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course}' data-subjectName='${exam.subject}' data-type='${exam.type}'></i></td>`
+                    `<td class="text-primary text-center"></td>`
                 );
-            else
-                row.append(
-                    `<td class="text-primary text-center">${exam.requestStatus}</td>`
-                );
+            }
         return row;
     }
 

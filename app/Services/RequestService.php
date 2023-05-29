@@ -12,11 +12,13 @@ use App\Models\Course;
 use App\Models\Exam;
 use App\Models\Request;
 use App\Models\Room;
+use App\Models\Score;
 use App\Models\User;
 use App\Models\UserCourse;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class RequestService extends BaseService
 {
@@ -25,10 +27,11 @@ class RequestService extends BaseService
     protected $courseModel;
     protected $userModel;
     protected $examModel;
+    protected $scoreModel;
     protected $mailService;
 
     protected $notificationService;
-    public function __construct(UserCourse $userCourseModel, Room $roomModel, Course $courseModel, User $userModel, Exam $examModel, MailService $mailService, NotificationService $notificationService)
+    public function __construct(UserCourse $userCourseModel, Room $roomModel, Course $courseModel, User $userModel, Exam $examModel, Score $scoreModel, MailService $mailService, NotificationService $notificationService)
     {
         parent::__construct();
         $this->userCourseModel = $userCourseModel;
@@ -36,6 +39,7 @@ class RequestService extends BaseService
         $this->courseModel = $courseModel;
         $this->userModel = $userModel;
         $this->examModel = $examModel;
+        $this->scoreModel = $scoreModel;
         $this->mailService = $mailService;
         $this->notificationService = $notificationService;
     }
@@ -239,22 +243,33 @@ class RequestService extends BaseService
 
     protected function approveReviewScoreRequest($id)
     {
-        $user = Auth::user();
-        $result = $this->model->where('id', $id)->update(['status' => RequestStatusContants::APPROVED,'user_approve_id' => $user->id]);
+        try {
+            DB::beginTransaction();
 
-        if ($result) {
+            $user = Auth::user();
+
+            $this->model->where('id', $id)->update(['status' => RequestStatusContants::APPROVED,'user_approve_id' => $user->id]);
+
             $request = $this->model->find($id);
+            $content = json_decode($request->content);
+
+            $this->scoreModel->where('exam_id', $content->exam_id)->where('student_id', $request->user_request_id)->update(['edit_key' => Str::random()]);
+
             $this->notificationService->sendUserHasApprovedRequestNotification($request);
+            $this->notificationService->sendRequestTeacherUpdateScoreNotification($request);
+            $this->mailService->mailRequestTeacherUpdateScore($id);
+            DB::commit();
             return [
                 'data' => $this->model->find($id),
                 'message' => Message::approveRequestSuccessfully()
-            ];
-        }
-
-        return [
+                ];
+        } catch (Exception $e) {
+            DB::rollBack();
+            return [
             'data' => null,
             'message' => Message::error()
-        ];
+            ];
+        }
     }
 
     protected function approveSwitchCourseRequest($id)
@@ -265,11 +280,11 @@ class RequestService extends BaseService
             $user = Auth::user();
 
             $this->model
-                ->where('id', $id)
-                ->update([
-                    'status' => RequestStatusContants::APPROVED,
-                    'user_approve_id' => $user->id
-                ]);
+            ->where('id', $id)
+            ->update([
+                'status' => RequestStatusContants::APPROVED,
+                'user_approve_id' => $user->id
+            ]);
 
             $request = $this->model->find($id);
             $content = json_decode($request->content);
@@ -301,10 +316,10 @@ class RequestService extends BaseService
             $content = json_decode($request->content);
 
             $this->model
-                ->where('id', $id)
-                ->update([
-                'status' => RequestStatusContants::APPROVED,
-                'user_approve_id' => $user->id
+            ->where('id', $id)
+            ->update([
+            'status' => RequestStatusContants::APPROVED,
+            'user_approve_id' => $user->id
             ]);
 
             $this->examModel->where('id', $content->exam_id)->update(['can_edit_scores' => true]);
@@ -358,7 +373,7 @@ class RequestService extends BaseService
     {
         $data = json_decode($content);
         $result = [
-            'exam' => $this->examModel->find($data->exam_id)
+        'exam' => $this->examModel->find($data->exam_id)
         ];
         return $result;
     }
@@ -367,9 +382,9 @@ class RequestService extends BaseService
     {
         $data = json_decode($content);
         $result = [
-            'oldCourse' => $this->courseModel->with('subject')->find($data->old_course_id),
-            'newCourse' =>  $this->courseModel->with('subject')->find($data->new_course_id),
-            'reason' => $data->reason
+        'oldCourse' => $this->courseModel->with('subject')->find($data->old_course_id),
+        'newCourse' =>  $this->courseModel->with('subject')->find($data->new_course_id),
+        'reason' => $data->reason
         ];
         return $result;
     }
@@ -378,7 +393,7 @@ class RequestService extends BaseService
     {
         $data = json_decode($content);
         $result = [
-            'exam' => $this->examModel->find($data->exam_id)
+        'exam' => $this->examModel->find($data->exam_id)
         ];
         return $result;
     }

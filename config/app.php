@@ -164,6 +164,7 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Sentry\Laravel\ServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -234,6 +235,7 @@ return [
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'Sentry' => Sentry\Laravel\Facade::class,
         'Pusher' => Pusher\Pusher::class,
+        'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
     ],
 
 ];
