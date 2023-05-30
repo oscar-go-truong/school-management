@@ -28,7 +28,6 @@
         $('#notifications').prepend(`<div class="container py-1 bg-gray-300 border-1 "> <a class="content" href="/notifications/${notification.id}">
         <div class="text-sm">${notification.title}</div>
         <div class="item-info text-xs text-dark">${notification.message}</div>
-            </div>
         </a></div>`);
 
         $('#dLabel').removeClass('no-after');
@@ -66,4 +65,27 @@
             addNewNotification(data);
         });
     }
+    $(document).ready(function() {
+        $('#view-all-notification-btn').click(function() {
+            toastr.info('Loading...');
+            $.ajax({
+                method: 'GET',
+                url: '/notifications',
+                success: function(resp) {
+                    $('#notifications').html('');
+                    for (let i = 0; i < resp.length; i++)
+                        $('#notifications').append(`<div class="container py-1 ${resp[i].read_at?"bg-white":"bg-gray-300"} border-1 "> 
+                                                        <a class="content" href="/notifications/${resp[i].id}">
+                                                            <div class="text-sm">${resp[i].title}</div>
+                                                            <div class="item-info text-xs text-dark">${resp[i].message}</div>
+                                                        </div>
+                                                    </a>
+                                                    </div>`);
+                },
+                error: function() {
+                    toastr.error('Error, please try again later!');
+                }
+            })
+        });
+    });
 </script>

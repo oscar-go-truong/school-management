@@ -140,18 +140,9 @@ class NotificationService extends BaseService
     {
         $user = Auth::user();
         if ($user->hasRole(UserRoleNameContants::ADMIN)) {
-            return $this->model->where('user_id', null)->orWhere('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+            return $this->model->whereRaw('(user_id is null or user_id=' . $user->id . ')')->orderBy('created_at', 'desc')->get();
         }
         return $this->model->where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-    }
-
-    public function countUnread()
-    {
-        $user = Auth::user();
-        if ($user->hasRole(UserRoleNameContants::ADMIN)) {
-            return $this->model->where('user_id', null)->orWhere('user_id', $user->id)->where('read_at', null)->count();
-        }
-        return $this->model->where('user_id', $user->id)->where('read_at', null)->count();
     }
 
     public function makeAsRead($id)

@@ -67,7 +67,7 @@ class User extends Authenticatable
         $query = Notification::orderBy('created_at', 'desc');
 
         if ($this->hasRole(UserRoleNameContants::ADMIN)) {
-            $query = $query->WhereRaw('user_id is null or user_id=' . $this->id);
+            $query = $query->WhereRaw('(user_id is null or user_id=' . $this->id . ')');
         } else {
             $query = $query->Where('user_id', $this->id);
         }

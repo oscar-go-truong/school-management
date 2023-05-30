@@ -122,26 +122,30 @@
                 };
                 // Missing password
 
-                if (password && !password.match(decimal)) {
-                    toastr.warning(
-                        'The password must have 8 to 32 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character.'
-                    );
-                    $('#password').removeClass('is-valid');
-                    $('#password').addClass('is-invalid');
-                } else {
-                    $('#password').removeClass('is-invalid');
-                    $('#password').addClass('is-valid');
-                };
-
                 // Repassword incorrect
-                if (password && password != repassword) {
-                    toastr.warning('Confirm password is incorrect.');
-                    $('#repassword').addClass('is-invalid');
-                    $('#password').val("");
-                    $('#repassword').val("");
-                } else {
-                    $('#repassword').addClass('is-valid');
-                };
+                if (password) {
+                    if (!password.match(decimal)) {
+                        toastr.warning(
+                            'The password must have 8 to 32 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character.'
+                        );
+                        $('#password').removeClass('is-valid');
+                        $('#password').addClass('is-invalid');
+                    } else if (!repassword) {
+                        toastr.warning('Confirm password field is requried.');
+                        $('#repassword').removeClass('is-valid');
+                        $('#repassword').addClass('is-invalid');
+
+                    } else if (password != repassword) {
+                        toastr.warning('Confirm password is incorrect.');
+                        $('#repassword').removeClass('is-valid');
+                        $('#repassword').addClass('is-invalid');
+                        $('#password').val("");
+                        $('#repassword').val("");
+                    } else {
+                        $('#repassword').removeClass('is-invalid');
+                        $('#repassword').addClass('is-valid');
+                    };
+                }
                 // Missing fullname
                 if (!fullname) {
                     toastr.warning('Fullname field is requried.');
