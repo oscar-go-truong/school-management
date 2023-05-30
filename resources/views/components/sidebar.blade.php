@@ -46,18 +46,6 @@
                     <i class="fa-sharp fa-solid fa-envelope mr-3"></i>
                     Requests
                 </a>
-                {{-- @role('admin')
-                    <a href="/requests" class="nav-link link-dark inline bg-danger text-white rounded-full text-xs " hidden
-                        id="request-count"
-                        style="padding-left: 15px;
-                    padding-right: 15px;
-                    position: absolute;
-                    top: -13px;
-                    right: -38px;
-                    z-index:99999">
-                        0
-                    </a>
-                @endrole --}}
             </li>
             <li class="{{ Request::is('schedules/*') || Request::is('schedules') ? 'active' : '' }}">
                 <a href="/schedules" class="nav-link link-dark">
@@ -81,20 +69,10 @@
     </div>
 </nav>
 <script>
+    if ($(window).width() < 1200) $("#sidebar").addClass("active");
     $(document).ready(function() {
         $("#sidebarCollapse").click(function() {
             $("#sidebar").toggleClass("active");
         });
-        // if ("{{ Auth::user()->hasRole('admin') }}")
-        //     $.ajax({
-        //         url: "/requests/pending-count",
-        //         method: "GET",
-        //         success: function(resp) {
-        //             if (resp.data.count) {
-        //                 $('#request-count').attr('hidden', false);
-        //                 $('#request-count').html(resp.data.count)
-        //             }
-        //         }
-        //     })
     })
 </script>

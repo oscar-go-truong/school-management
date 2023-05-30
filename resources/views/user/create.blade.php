@@ -122,20 +122,23 @@
                     $('#username').removeClass('is-invalid');
                     $('#username').addClass('is-valid');
                 };
-                if (password && !password.match(decimal)) {
+
+                if (!password) {
+                    toastr.warning('Password field is requried.');
+                    $('#password').removeClass('is-valid');
+                    $('#password').addClass('is-invalid');
+                } else if (!password.match(decimal)) {
                     toastr.warning(
                         'The password must have 8 to 32 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character.'
                     );
                     $('#password').removeClass('is-valid');
                     $('#password').addClass('is-invalid');
-                } else {
-                    $('#password').removeClass('is-invalid');
-                    $('#password').addClass('is-valid');
-                };
+                } else if (!repassword) {
+                    toastr.warning('Confirm password field is requried.');
+                    $('#repassword').removeClass('is-valid');
+                    $('#repassword').addClass('is-invalid');
 
-
-                // Repassword incorrect
-                if (password && password != repassword) {
+                } else if (password != repassword) {
                     toastr.warning('Confirm password is incorrect.');
                     $('#repassword').removeClass('is-valid');
                     $('#repassword').addClass('is-invalid');
@@ -146,22 +149,8 @@
                     $('#repassword').addClass('is-valid');
                 };
 
-                // Missing confirm password
-                if (!repassword) {
-                    toastr.warning('Confirm password field is requried.');
-                    $('#repassword').removeClass('is-valid');
-                    $('#repassword').addClass('is-invalid');
-                };
 
-                // Missing password
-                if (!password) {
-                    toastr.warning('Password field is requried.');
-                    $('#password').removeClass('is-valid');
-                    $('#password').addClass('is-invalid');
-                } else {
-                    $('#password').removeClass('is-invalid');
-                    $('#password').addClass('is-valid');
-                };
+
                 // Missing fullname
                 if (!fullname) {
                     toastr.warning('Fullname field is requried.');
@@ -224,7 +213,8 @@
                 const phone = $('#phone').val();
                 const mobile = $('#mobile').val();
                 const address = $('#address').val();
-                const isValid = validate(email, username, password, repassword, fullname, role, phone,
+                const isValid = validate(email, username, password, repassword, fullname, role,
+                    phone,
                     mobile, address);
                 if (isValid) {
                     $('#create').submit();

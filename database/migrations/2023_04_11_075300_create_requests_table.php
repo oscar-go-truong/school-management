@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RequestStatusContants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ class CreateRequestsTable extends Migration
             $table->unsignedBigInteger('user_request_id');
             $table->unsignedBigInteger('user_approve_id')->nullable();
             $table->integer('type');
-            $table->integer('status');
+            $table->integer('status')->default(RequestStatusContants::PENDING);
             $table->timestamps();
             $table->softDeletes();
         });

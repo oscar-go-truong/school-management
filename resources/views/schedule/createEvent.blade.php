@@ -152,7 +152,7 @@
             toastr.info('Loading available room...');
             $.ajax({
                 method: 'GET',
-                url: '/rooms/available',
+                url: '/rooms/available-room-for-event',
                 data: {
                     date: date,
                     start_time: startTime,

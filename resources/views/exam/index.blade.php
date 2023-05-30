@@ -1,37 +1,40 @@
 @extends('components.layout')
 @section('content')
-    <div class="d-flex justify-content-between">
-        <div class="text-3xl font-bold">
+    <div class="row">
+        <div class="text-3xl font-bold col-md-6">
             Exams
         </div>
-        <div class="inline">
-            <div class='inline-block  mr-3'>
-                {{-- filter by subject --}}
-                <select class="form-select w-80 text-sm filter inline-block" data-column="course" id="filter-course">
-                    <option value="">
-                        All courses
-                    </option>
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}" @if ($course->id == $courseId) selected @endif>
-                            {{ $course->name }}
+        <div class="col-md-6 d-flex justify-end">
+            <div>
+                <div class='inline-block  mr-3'>
+                    {{-- filter by subject --}}
+                    <select class="form-select w-60 text-sm filter inline-block" data-column="course" id="filter-course">
+                        <option value="">
+                            All courses
                         </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class='inline-block  mr-3'>
-                {{-- filter by year --}}
-                <select class="form-select
-                                                w-40 text-sm filter inline-block"
-                    data-column="year" id="filter-year">
-                    <option value="">
-                        All years
-                    </option>
-                    @foreach ($years as $year)
-                        <option value="{{ $year }}" @if ($year == date('Y')) selected @endif>
-                            {{ $year }}
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}" @if ($course->id == $courseId) selected @endif>
+                                {{ $course->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class='inline-block  mr-3'>
+                    {{-- filter by year --}}
+                    <select
+                        class="form-select
+                                                w-24 text-sm filter inline-block"
+                        data-column="year" id="filter-year">
+                        <option value="">
+                            All years
                         </option>
-                    @endforeach
-                </select>
+                        @foreach ($years as $year)
+                            <option value="{{ $year }}" @if ($year == date('Y')) selected @endif>
+                                {{ $year }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     </div>

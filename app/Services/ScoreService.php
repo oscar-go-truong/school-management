@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\MyExamTypeConstants;
 use App\Enums\UserRoleNameContants;
 use App\Helpers\Message;
 use App\Models\Exam;
@@ -13,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 
 class ScoreService extends BaseService
 {
-
     protected $examModel;
     protected $userCourseModel;
     public function __construct(Exam $examModel, UserCourse $userCourseModel)
@@ -73,18 +73,20 @@ class ScoreService extends BaseService
                         $query->where('name', UserRoleNameContants::STUDENT);
                     });
                 })->with('user')->first();
-                if ($userCourse)
+                if ($userCourse) {
                     $validContent[] = [
                         'user_id' => $userCourse->user->id,
                         'fullname' => $userCourse->user->fullname,
                         'email' => $userCourse->user->email,
                         'total' => $content['score']
                     ];
+                }
             }
-            if (count($validContent))
+            if (count($validContent)) {
                 return ['data' => $validContent];
-            else
+            } else {
                 return ['data' => null, 'message' => Message::fileUploadIsInvalid()];
+            }
         } catch (Exception $e) {
             return ['data' => null, 'message' => Message::fileUploadIsInvalid()];
         }
@@ -115,5 +117,21 @@ class ScoreService extends BaseService
             ];
         }
         return ['data' => $data];
+    }
+
+    public function getByEditKey($key)
+    {
+        $score =  $this->model->where('edit_key', $key)->with('exam.course.subject')->with('user')->first();
+        $score->examType = MyExamTypeConstants::getKey($score->exam->type);
+        return $score;
+    }
+
+    public function updateReview($request)
+    {
+        $result = $this->model->where('id', $request->id)->where('edit_key', $request->edit_key)->update(['edit_key' => null, 'total' => $request->total]);
+        if ($result) {
+            return ['data' => $this->model->find($request->id)->exam_id, 'message' => Message::updateSuccessfully('score')];
+        }
+        return ['data' => null, 'message' => Message::error()];
     }
 }

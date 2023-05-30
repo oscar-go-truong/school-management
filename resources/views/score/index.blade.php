@@ -1,40 +1,44 @@
 @extends('components.layout')
 @section('content')
     <div class="row">
-        <div class="col-md-12 text-3xl font-bold d-flex justify-content-between">
-            <div> Scores<div class="text-xl font-normal inline"> - {{ $exam->course->subject->name }}
+        <div class="col-md-12 row">
+            <div class="text-3xl font-bold col-md-6"> Scores<div class="text-xl font-normal inline"> -
+                    {{ $exam->course->subject->name }}
                     {{ $exam->course->name }} - {{ $exam->type }} exams</div>
             </div>
 
-            @if ($exam->can_edit_scores == 1)
-                @hasanyrole('admin|teacher')
-                    <div class="inline">
-                        <input type="file" id="data-sheet" class="form-control inline w-80 p-2y" name="file" accept=".csv">
+            <div class="col-md-6 d-flex justify-end">
+                @if ($exam->can_edit_scores == 1)
+                    @hasanyrole('admin|teacher')
                         <div class="inline">
-                            <button class="btn btn-primary rounded pb-2" id="open-upload-file-btn">Upload <i
-                                    class="fa-solid fa-cloud-arrow-up text-xl"></i>
-                            </button>
+                            <input type="file" id="data-sheet" class="form-control inline w-80 mb-2" name="file"
+                                accept=".csv">
+                            <div class="inline">
+                                <button class="btn btn-primary rounded pb-2 " id="open-upload-file-btn">Upload <i
+                                        class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="inline">
+                                <button class="btn btn-secondary rounded pb-2" id="open-edit-form-btn">Update <i
+                                        class="fa-solid fa-pen-to-square text-xl"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="inline">
-                            <button class="btn btn-secondary rounded pb-2" id="open-edit-form-btn">Update <i
-                                    class="fa-solid fa-pen-to-square text-xl"></i>
-                            </button>
+                    @endhasanyrole
+                @else
+                    @role('teacher')
+                        <div class="inline" id="request-update">
+                            @if (!$exam->isRequested)
+                                <button class="btn btn-success rounded pb-2" id="request-update-btn">Request Update <i
+                                        class="fa-sharp fa-solid fa-pen-to-square text-xl"></i>
+                                </button>
+                            @else
+                                <div class="bg-primary text-white text-xl p-2 text-normal rounded">Requesting</div>
+                            @endif
                         </div>
-                    </div>
-                @endhasanyrole
-            @else
-                @role('teacher')
-                    <div class="inline" id="request-update">
-                        @if (!$exam->isRequested)
-                            <button class="btn btn-success rounded pb-2" id="request-update-btn">Request Update <i
-                                    class="fa-sharp fa-solid fa-pen-to-square text-xl"></i>
-                            </button>
-                        @else
-                            <div class="bg-primary text-white text-xl p-2 text-normal rounded">Requesting</div>
-                        @endif
-                    </div>
-                @endrole('teacher')
-            @endif
+                    @endrole('teacher')
+                @endif
+            </div>
         </div>
     </div>
     <!-- /. ROW  -->
@@ -72,7 +76,7 @@
             $('#custom-btns').html(
                 `<div class="inline" id="AddStudentScores">
                             </div>
-                            <div class="float-right inline">
+                            <div class="float-right inline mt-2">
                                 <button class="btn btn-primary grounded" id="upload"> Submit </button>
                                 <button class = "btn btn-secondary grounded" id = "cancel"> Cancel </button>
                             </div>`
@@ -251,18 +255,22 @@
                 }
             })
             $(document).on('click', '#upload', function() {
-                toastr.clear();
-                toastr.options.timeOut = 0;
-                toastr.options.extendedTimeOut = 0;
-                toastr.options.closeButton = true;
-                toastr.info(`<div class="z-10">
+                if (!formData.length) {
+                    toastr.warning('Please insert student you want update score!')
+                } else {
+                    toastr.clear();
+                    toastr.options.timeOut = 0;
+                    toastr.options.extendedTimeOut = 0;
+                    toastr.options.closeButton = true;
+                    toastr.info(`<div class="z-10">
                     <div class="mb-10">Are you sure is you want to update ?</b></div>
                     <div class="d-flex justify-content-center">
                         <button class="btn btn-secondary mr-3">cancel</button> 
                         <button class="btn btn-success ml-3" onclick='upload()'>Upload</button></div>
                     </div>`);
-                toastr.options.timeOut = 3000;
-                toastr.options.extendedTimeOut = 3000;
+                    toastr.options.timeOut = 3000;
+                    toastr.options.extendedTimeOut = 3000;
+                }
             })
 
             $(document).on('change', '.score-demo-input', function() {
