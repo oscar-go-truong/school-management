@@ -19,7 +19,7 @@ class ExamSeeder extends Seeder
     public function run()
     {
         Exam::factory()->count(100)->create();
-        $exams = Exam::all();
+        $exams = Exam::with('course')->get();
         foreach($exams as $exam) 
         {
             $students = UserCourse::where('course_id', $exam->course_id)->whereHas('user', function ($query) {
@@ -34,7 +34,7 @@ class ExamSeeder extends Seeder
                 'exam_id' => $exam->id,
                 'created_at'=>$course->created_at,
                 'total' => collect([0,5,7,8,9,10])->random(),
-                'updated_by' => 2
+                'updated_by' => $course->owner_id
                 ]
             );
             }

@@ -1,32 +1,37 @@
 <div class="table-content">
     <div id="table-layout-component">
-        <div class="d-flex justify-content-between mb-1">
-            <div class="inline-block ml-5" id="select-limit">
-                <span class="font-medium">Show : <span>
-                        <div class='inline-block'>
-                            <select class="form-select  w-20  text-sm" aria-label="Default select example"
-                                id="itemPerPage">
+        <div class="row mb-1">
 
-                                <option value="10">
-                                    10
-                                </option>
-                                <option value="25">
-                                    25
-                                </option>
-                                <option value="50">
-                                    50
-                                </option>
-                                <option value="100">
-                                    100
-                                </option>
-                            </select>
-                        </div>
-                        <span class="font-medium"> entries <span>
+
+
+
+            <div class="col-md-6 " id="select-limit">
+                <div><span class="font-medium">
+                        Show :
+                    </span>
+                    <div class='inline-block'>
+                        <select class="form-select  w-20  text-sm" aria-label="Default select example" id="itemPerPage">
+
+                            <option value="10">
+                                10
+                            </option>
+                            <option value="25">
+                                25
+                            </option>
+                            <option value="50">
+                                50
+                            </option>
+                            <option value="100">
+                                100
+                            </option>
+                        </select>
+                    </div>
+                    <span class="font-medium"> entries </span>
+                </div>
             </div>
-            @if (isset($searchColumns))
-                <div class="inline-block ">
-                    {{-- select column for search --}}
-
+            <div class=" col-md-6 pl-0 d-flex justify-end">
+                {{-- select column for search --}}
+                @if (isset($searchColumns))
                     <select class="form-select  w-40  text-sm inline-block translate-x-[12px]" id="searchColumn">
                         <option value="">
                             Select column
@@ -38,8 +43,8 @@
                         @endforeach
                     </select>
                     <input type="text" class="form-control w-60 h-8 inline py-[16px] " id='searchKey'>
-                </div>
-            @endif
+                @endif
+            </div>
         </div>
         <table class="table table-striped table-bordered table-hover">
             <thead>

@@ -14,9 +14,15 @@ class RoomController extends Controller
         $this->roomService = $roomService;
     }
 
-    public function getAvailable(Request $request)
+    public function getAvailableRoomForEvent(Request $request)
     {
-        $rooms = $this->roomService->getAvailable($request);
+        $rooms = $this->roomService->getAvailableRoomForEvent($request);
+        return $rooms;
+    }
+
+    public function getAvailableRoomForSchedule(Request $request)
+    {
+        $rooms = $this->roomService->getAvailableRoomForSchedule($request);
         return $rooms;
     }
 }

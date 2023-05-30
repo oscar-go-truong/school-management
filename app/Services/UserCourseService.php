@@ -60,10 +60,6 @@ class UserCourseService extends BaseService
         })->with('user')->get();
         return $data;
     }
-    public function checkUserWasJoinedCourse($user_id, $course_id)
-    {
-        return $this->model->where('user_id', $user_id)->where('course_id', $course_id)->count();
-    }
 
     protected function checkUSerIsJoinedSubjectInThisYear($user, $course)
     {

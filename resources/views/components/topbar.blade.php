@@ -47,7 +47,7 @@
                         @endforeach
                     </div>
                     <li class="divider"></li>
-                    <div class="notification-footer">
+                    <div class="notification-footer" id="view-all-notification-btn">
                         <div class="mt-1 font-bold text-sm">View all <i class="fa-solid fa-circle-arrow-down"></i></div>
                     </div>
                 </ul>
@@ -60,21 +60,3 @@
         @endif
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        // $.ajax({
-        //     method: "GET",
-        //     url: '/notifications',
-        //     success: function(resp) {
-        //         const data = resp.data;
-        //         if (resp.hasUnread) {
-        //             $('#dLabel').removeClass('no-after');
-        //             $('#dLabel').addClass('red-dot');
-        //         }
-        //         for (let i = 0; i < data.length; i++) {
-        //             $('#notifications').append(``)
-        //         }
-        //     }
-        // });
-    })
-</script>

@@ -10,6 +10,8 @@ use App\Enums\UserRoleNameContants;
 use App\Helpers\Message;
 use App\Models\Course;
 use App\Models\Request;
+use App\Models\Schedule;
+use App\Models\UserCourse;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
@@ -17,13 +19,15 @@ use Illuminate\Support\Facades\DB;
 
 class CourseService extends BaseService
 {
-    protected $userCourseService;
+    protected $scheduleModel;
+    protected $userCourseModel;
     protected $requestModel;
 
-    public function __construct(UserCourseService $userCourseService, Request $requestModel)
+    public function __construct(Schedule $scheduleModel, UserCourse $userCourseModel, Request $requestModel)
     {
         parent::__construct();
-        $this->userCourseService = $userCourseService;
+        $this->scheduleModel = $scheduleModel;
+        $this->userCourseModel = $userCourseModel;
         $this->requestModel = $requestModel;
     }
     public function getModel()
@@ -63,7 +67,8 @@ class CourseService extends BaseService
                 return [
                 'start' => $schedule->start_time,
                 'end' => $schedule->finish_time,
-                'weekday' => $schedule->weekday
+                'weekday' => $schedule->weekday,
+                'room' => $schedule->room->name
                 ];
             });
 
@@ -113,10 +118,22 @@ class CourseService extends BaseService
         try {
             DB::beginTransaction();
             $course =  $this->model->create($request->input());
-            $this->userCourseService->store((object)[
+            $this->userCourseModel->create([
                     'user_id' => $course->owner_id,
                     'course_id' => $course->id,
-                    'status' => StatusTypeContants::ACTIVE]);
+                ]);
+            $schedules = [];
+            foreach (json_decode($request->schedules) as $schedule) {
+                $schedules[] = [
+                    'course_id' => $course->id,
+                    'start_time' => $schedule->start_time,
+                    'finish_time' => $schedule->finish_time,
+                    'room_id' => $schedule->room,
+                    'weekday' => $schedule->weekday,
+                    'created_at' => now()->format('Y-m-d H:i:s')
+                ];
+            }
+            $this->scheduleModel->insert($schedules);
             DB::commit();
             return [
                 'data' => $course,
@@ -155,16 +172,34 @@ class CourseService extends BaseService
                 'owner_id' => $request->owner_id,
                 'descriptions' => $request->descriptions
             ];
+
             $this->model->where('id', $id)->update($arg);
+
             $course = $this->model->find($id);
-            $teacherWasJoinedCourse = $this->userCourseService->checkUserWasJoinedCourse($course->owner_id, $course->id);
+
+            $teacherWasJoinedCourse = $this->userCourseModel->where('user_id', $course->owner_id)->where('course_id', $course->id)->count();
             if (!$teacherWasJoinedCourse) {
-                $this->userCourseService->store([
+                $this->userCourseModel->create([
                     'user_id' => $course->owner_id,
                     'course_id' => $course->id,
-                    'status' => StatusTypeContants::ACTIVE
                 ]);
             }
+
+            $this->scheduleModel->where('course_id', $course->id)->delete();
+
+            $schedules = [];
+            foreach (json_decode($request->schedules) as $schedule) {
+                $schedules[] = [
+                    'course_id' => $course->id,
+                    'start_time' => $schedule->start_time,
+                    'finish_time' => $schedule->finish_time,
+                    'room_id' => $schedule->room,
+                    'weekday' => $schedule->weekday,
+                    'created_at' => now()->format('Y-m-d H:i:s')
+                ];
+            }
+            $this->scheduleModel->insert($schedules);
+
             DB::commit();
             return ['data' => $course, 'message' => Message::updateSuccessfully('course')];
         } catch (Exception $e) {

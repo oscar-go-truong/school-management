@@ -16,10 +16,7 @@ class NotificationController extends Controller
 
     public function getTable()
     {
-        return response()->json([
-            'data' => $this->notificationService->getTable(),
-            'hasUnread' => $this->notificationService->countUnread()
-        ]);
+        return response()->json($this->notificationService->getTable());
     }
 
     public function show($id)

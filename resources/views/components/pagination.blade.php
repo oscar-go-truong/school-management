@@ -1,6 +1,6 @@
 <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-between"
     id='paginations'>
-    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+    <div class="sm:flex-1 sm:flex sm:items-center sm:justify-between">
         <div>
             <p class="text-sm text-gray-700 leading-5 inline">
                 Showing

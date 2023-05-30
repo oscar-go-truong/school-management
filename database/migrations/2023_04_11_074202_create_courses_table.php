@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\StatusTypeContants;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +18,7 @@ class CreateCoursesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('descriptions');
-            $table->integer('status');
+            $table->integer('status')->default(StatusTypeContants::ACTIVE);
             $table->unsignedBigInteger('owner_id');
             $table->unsignedBigInteger('subject_id');
             $table->softDeletes();

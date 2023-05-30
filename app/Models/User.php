@@ -64,15 +64,16 @@ class User extends Authenticatable
 
     public function notifications()
     {
-        $query = Notification::where('user_id', $this->id)->orderBy('created_at', 'desc');
+        $query = Notification::orderBy('created_at', 'desc');
 
         if ($this->hasRole(UserRoleNameContants::ADMIN)) {
-            $query = $query->orWhere('user_id', null);
+            $query = $query->WhereRaw('(user_id is null or user_id=' . $this->id . ')');
+        } else {
+            $query = $query->Where('user_id', $this->id);
         }
-
         return (object) [
             'notifications' => $query->offset(0)->limit(15)->get(),
-            'unread_count' => $query->count()
+            'unread_count' => $query->where('read_at', null)->count()
         ];
     }
 
