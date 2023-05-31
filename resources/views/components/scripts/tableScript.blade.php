@@ -1,5 +1,5 @@
 <script>
-    const PAGINATION_LIMIT = 7;
+    const PAGINATION_LIMIT = $(window).width() < 650 ? 3 : 7;
     toastr.options = {
         maxOpened: 1,
     };
@@ -28,7 +28,7 @@
                 if (models.length === 0)
                     $(tableId).append($(
                         `<tr>
-                            <td colspan="9" class="text-center">
+                            <td colspan="100%" class="text-center">
                                 No matching records found
                             </td>
                         </tr>`
@@ -58,7 +58,7 @@
                     }
                     if (pages[0] > 1)
                         $('#pagination').append(`<span 
-                                            class="pageIndex relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700  border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                            class=" relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700  border border-gray-300 leading-5  transition ease-in-out duration-150"
                                           >
                                             ...
                                         </span>`);
@@ -71,7 +71,7 @@
                     }
                     if (pages[pages.length - 1] < last_page)
                         $('#pagination').append(`<span 
-                                            class="pageIndex relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700  border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                                            class=" relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700  border border-gray-300 leading-5  transition ease-in-out duration-150"
                                           >
                                             ...
                                         </span>`);

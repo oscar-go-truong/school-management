@@ -54,8 +54,16 @@
 
     $(document).ready(function() {
         // filter by role
-        $('#dropdownRole').click(function(event) {
-            event.stopPropagation();
+        $('#selectRole').change(function(event) {
+            if ($(this).val().includes("")) {
+                $('.role-option').attr('selected', false);
+                $('.role-option').attr('disabled', true);
+                queryData.role = [];
+            } else {
+                $('.role-option').attr('disabled', false);
+                queryData.role = $(this).val();
+            }
+            getTable(createRow);
         });
         $('.role-check-input').change(function() {
             const checked = $(this).is(':checked');
@@ -69,19 +77,7 @@
             }
             getTable(createRow);
         })
-        $('#all-role').change(function() {
-            const checked = $(this).is(':checked');
-            $('.role-check-input').prop('checked', false);
-            if (!checked) {
-                $('.role-check-input').prop('checked', false);
-                $('.role-check-input').prop('disabled', false);
-            } else {
-                $('.role-check-input').prop('checked', true);
-                $('.role-check-input').prop('disabled', true);
-            }
-            queryData.role = [];
-            getTable(createRow);
-        })
+
         //filter status
         $('#filter-status').change(function() {
             const val = $(this).val();
