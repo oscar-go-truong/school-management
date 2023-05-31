@@ -27,7 +27,7 @@ body {
 }
 
 .table-content {
-    height: 80vh;
+    height: 79vh;
     overflow-y: scroll;
 }
 
@@ -496,7 +496,7 @@ a[data-toggle="collapse"] {
 #content {
     width: 100%;
     padding: 0;
-    min-height: 100vh;
+    min-height: 95vh;
     transition: all 0.3s;
 }
 
@@ -808,8 +808,11 @@ h2 {
 }
 
 .select2-selection--multiple {
-    height: 34px !important;
     overflow-y: scroll;
+}
+
+.select2-selection {
+    height: 34px !important;
 }
 
 .select2-selection--multiple::-webkit-scrollbar {

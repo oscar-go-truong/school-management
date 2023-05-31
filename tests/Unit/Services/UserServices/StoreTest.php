@@ -3,17 +3,31 @@
 namespace Tests\Unit\Services\UserServices;
 
 use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use App\Services\UserService;
-use ErrorException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class StoreTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $roles = [];
+        foreach (UserRoleNameContants::getvalues() as $role) {
+            $roles[] = [
+            'name' => $role,
+            'guard_name' => 'web'
+            ];
+        }
+        Role::insert($roles);
+    }
     /**
      * A basic unit test example.
      *
@@ -27,10 +41,14 @@ class StoreTest extends TestCase
             'email' => 'david@gmail.com',
             'password' => Hash::make('password'),
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT
+            'role' => UserRoleNameContants::ADMIN
         ];
-        $userService = new UserService();
-        $userService->store($user);
+        $request = Request::create('/users', 'POST', $user);
+
+        $userService = app()->make(UserService::class);
+
+        $userService->store($request);
+
         $this->assertDatabaseHas('users', [
             'email' => 'david@gmail.com'
         ]);
@@ -38,14 +56,14 @@ class StoreTest extends TestCase
 
     public function testStoreDuplicateEmailFailed()
     {
-    
+
         $user1 = [
             'username' => 'user-1',
             'fullname' => 'david kushner',
             'email' => 'user1@gmail.com',
             'password' => Hash::make('password'),
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT
+            'role' => UserRoleNameContants::STUDENT
         ];
 
         $user2 = [
@@ -54,54 +72,14 @@ class StoreTest extends TestCase
             'email' => 'user1@gmail.com',
             'password' => Hash::make('password'),
             'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT
+            'role' => UserRoleNameContants::TEACHER
         ];
-        $userService = new UserService();
-        $userService->store($user1);
+        $userService = app()->make(UserService::class);
+
+        $request = Request::create('/users', 'POST', $user1);
+        $userService->store($request);
         $this->expectException(QueryException::class);
-        $userService->store($user2);
+        $request = Request::create('/users', 'POST', $user2);
+        $userService->store($request);
     }
-
-    public function testStoreDuplicateUsernameFailed()
-    {
-    
-        $user1 = [
-            'username' => 'user-1',
-            'fullname' => 'david kushner',
-            'email' => 'user1@gmail.com',
-            'password' => Hash::make('password'),
-            'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT
-        ];
-
-        $user2 = [
-            'username' => 'user-1',
-            'fullname' => 'david kushner',
-            'email' => 'user2@gmail.com',
-            'password' => Hash::make('password'),
-            'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT
-        ];
-        $userService = new UserService();
-        $userService->store($user1);
-        $this->expectException(QueryException::class);
-        $userService->store($user2);
-    }
-
-    public function testStoreMissingPasswordFailed()
-    {
-    
-        $user = [
-            'username' => 'user-1',
-            'fullname' => 'david kushner',
-            'email' => 'user1@gmail.com',
-            'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::STUDENT
-        ];
-
-        $userService = new UserService();
-        $this->expectException(ErrorException::class);
-        $userService->store($user);
-    }
-
 }

@@ -46,8 +46,8 @@ class User extends Authenticatable
 
     public function scopeInRole($query, $request)
     {
-        if ($request->role && count($request->role) > 0) {
-            return $query->orWhereHas('roles', function ($query) use ($request) {
+        if (isset($request->role) && count($request->role) > 0) {
+            return $query->whereHas('roles', function ($query) use ($request) {
                 $query->whereIn('name', $request->role);
             });
         }
@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function scopeStatus($query, $request)
     {
-        if ($request->status) {
+        if (isset($request->status)) {
             return $query->where('status', $request->status);
         }
         return $query;
