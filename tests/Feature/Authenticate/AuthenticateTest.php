@@ -1,24 +1,25 @@
 <?php
 
-namespace Tests\Feature\Subject;
+namespace Tests\Feature\Authenticate;
 
 use App\Enums\UserRoleNameContants;
-use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use SebastianBergmann\Type\VoidType;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
-class GetIndexPageTest extends TestCase
+class AuthenticateTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * A basic test example.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
-
         $roles = [];
         foreach (UserRoleNameContants::getvalues() as $role) {
             $roles[] = [
@@ -27,24 +28,22 @@ class GetIndexPageTest extends TestCase
             ];
         }
         Role::insert($roles);
-
-        Subject::factory()->count(20)->create();
     }
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function testGetIndexPageSuccess()
+    public function testAuthenticatedResponse()
     {
         $user = User::factory()->create();
-        $user->assignRole(UserRoleNameContants::getRandomValue());
-
+        $role = collect(UserRoleNameContants::getValues())->random();
+        $user->assignRole($role);
         $this->actingAs($user);
-
-        $response = $this->get('subjects/');
-
-        $response->assertViewIs('subject.index');
+        $response = $this->get('/');
         $response->assertStatus(200);
+        $response->assertViewIs('auth.profile');
+    }
+
+    public function testNotAuthenticateRedirectToLoginView()
+    {
+        $response = $this->get('/');
+        $response->assertStatus(302);
+        $response->assertRedirect('/login');
     }
 }

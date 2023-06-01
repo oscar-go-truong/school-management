@@ -8,8 +8,8 @@
             </div>
 
             <div class="col-md-6 d-flex justify-end">
-                @if ($exam->can_edit_scores == 1)
-                    @hasanyrole('admin|teacher')
+                @role('teacher')
+                    @if ($exam->can_edit_scores == 1)
                         <div class="inline">
                             <input type="file" id="data-sheet" class="form-control inline w-80 mb-2" name="file"
                                 accept=".csv">
@@ -24,9 +24,7 @@
                                 </button>
                             </div>
                         </div>
-                    @endhasanyrole
-                @else
-                    @role('teacher')
+                    @else
                         <div class="inline" id="request-update">
                             @if (!$exam->isRequested)
                                 <button class="btn btn-success rounded pb-2" id="request-update-btn">Request Update <i
@@ -36,8 +34,8 @@
                                 <div class="bg-primary text-white text-xl p-2 text-normal rounded">Requesting</div>
                             @endif
                         </div>
-                    @endrole('teacher')
-                @endif
+                    @endif
+                @endrole('teacher')
             </div>
         </div>
     </div>

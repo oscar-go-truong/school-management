@@ -7,8 +7,9 @@
         <th>Email</th>
         <th>Joined at</th>
         @role('admin')
-            {{-- <th>Status</th> --}}
-            <th class="text-center">Remove</th>
+            @if ($course->status === 1)
+                <th class="text-center">Remove</th>
+            @endif
         @endrole
     </tr>
 @endsection
@@ -44,7 +45,7 @@
         row.append(
             `<td>${ new Date(teacher.joined_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
         );
-        if (isAdmin) {
+        if (isAdmin && '{{ $course->status }}' == 1) {
             row.append(`<td class="text-danger text-center"><i class="fa-solid fa-user-xmark delete" data-id="${teacher.id}" data-name="${teacher.fullname}"
                                 ></i></td>`);
         }

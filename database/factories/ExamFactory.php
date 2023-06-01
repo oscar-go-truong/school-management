@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Enums\MyExamTypeConstants;
 use App\Enums\StatusTypeContants;
@@ -16,10 +17,12 @@ class ExamFactory extends Factory
      */
     public function definition()
     {
+        $course = Course::all()->random();
         return [
             'type' => MyExamTypeConstants::getRandomValue(),
             'status' => StatusTypeContants::ACTIVE,
-          'course_id' => Course::all()->random()->id,
+          'course_id' => $course->id,
+          'can_edit_scores' => false
         ];
     }
 }
