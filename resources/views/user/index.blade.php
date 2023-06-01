@@ -29,7 +29,7 @@
                         <div class="dropdown inline-block">
                             <select class="select2 w-36" id="selectRole" multiple>
 
-                                <option id="all-role" value="">
+                                <option id="default-role" value="">
                                     All roles
                                 </option>
                                 @foreach ($roles as $role)

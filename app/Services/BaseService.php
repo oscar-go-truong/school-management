@@ -39,15 +39,15 @@ abstract class BaseService
 
     protected function orderNSearch($request, $query)
     {
-        $limit = $request->limit ? $request->limit : PaginationContants::LIMIT;
+        $limit = isset($request->limit) ? $request->limit : PaginationContants::LIMIT;
         // order by
-        $isOrder = $request->orderBy && $request->orderDirect;
+        $isOrder = isset($request->orderBy) && isset($request->orderDirect);
         if ($isOrder) {
             $orderBy =  $request->orderBy ;
             $orderDirect = $request->orderDirect;
                 $query = $query->orderBy($orderBy, $orderDirect);
         }
-        if ($request->search) {
+        if (isset($request->search)) {
             $searchColumn = $request->search['column'];
             $searchType = $request->search['type'];
             $searchKey = $request->search['key'];

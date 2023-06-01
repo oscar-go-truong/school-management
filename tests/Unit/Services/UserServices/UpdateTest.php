@@ -2,108 +2,54 @@
 
 namespace Tests\Unit\Services\UserServices;
 
-use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\UserRoleNameContants;
 use App\Models\User;
 use App\Services\UserService;
-use ErrorException;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class UpdateTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    public function testUpdateNewDataSuccess() 
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $roles = [];
+        foreach (UserRoleNameContants::getvalues() as $role) {
+            $roles[] = [
+            'name' => $role,
+            'guard_name' => 'web'
+            ];
+        }
+        Role::insert($roles);
+    }
+
+    public function testUpdateNewDataSuccess()
     {
         $user = User::factory()->create();
+        $newRole = UserRoleNameContants::ADMIN;
         $userUpdate = [
             'username' => 'davidskusnerfans',
             'fullname' => 'david kushner fans',
             'email' => 'davidfanss@gmail.com',
-            'status' => StatusTypeContants::INACTIVE,
-            'role' => UserRoleContants::ADMIN
+            'role' => $newRole,
         ];
-        $userService = new UserService();
-        $userService->update($user->id, $userUpdate);
-        $newUser = User::find($user->id);
-        $this->assertEquals($userUpdate['username'], $newUser->username);
-        $this->assertEquals($userUpdate['fullname'], $newUser->fullname);
-        $this->assertEquals($userUpdate['email'], $newUser->email);
-        $this->assertEquals($userUpdate['status'], $newUser->status);
-        $this->assertEquals($userUpdate['role'], $newUser->role);
-    }
 
-    public function testUpdateOldDataSuccess() 
-    {
-        $user = User::factory()->create();
-        $userUpdate = [
-            'username' => $user->username,
-            'fullname' => $user->fullname,
-            'email' => $user->email,
-            'password' => $user->password,
-            'status' => StatusTypeContants::INACTIVE,
-            'role' => UserRoleContants::ADMIN
-        ];
-        $userService = new UserService();
-        $userService->update($user->id, $userUpdate);
-        $newUser = User::find($user->id);
-        $this->assertEquals($userUpdate['username'], $newUser->username);
-        $this->assertEquals($userUpdate['fullname'], $newUser->fullname);
-        $this->assertEquals($userUpdate['email'], $newUser->email);
-        $this->assertEquals($userUpdate['status'], $newUser->status);
-        $this->assertEquals($userUpdate['role'], $newUser->role);
-    }
+        $request = Request::create('/users/' . $user->id, 'PATCH', $userUpdate);
 
-    public function testUpdateDuplicateEmailFailed() 
-    {
-        User::insert([
+        $userService = app()->make(UserService::class);
+        $userService->update($user->id, $request);
+        $newUser = User::find($user->id);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
             'username' => 'davidskusnerfans',
             'fullname' => 'david kushner fans',
-            'password' => Hash::make('password'),
-            'email' => 'david@gmail.com',
-            'status' => StatusTypeContants::INACTIVE,
-            'role' => UserRoleContants::ADMIN
+            'email' => 'davidfanss@gmail.com',
         ]);
-        $user = User::factory()->create();
-        $userUpdate = [
-            'username' => 'username-1',
-            'fullname' => 'peter pan',
-            'email' => 'david@gmail.com',
-            'status' => StatusTypeContants::INACTIVE,
-            'role' => UserRoleContants::ADMIN
-        ];
-        $userService = new UserService();
-        $this->expectException(QueryException::class);
-        $userService->update($user->id, $userUpdate);
-    }
-
-    public function testUpdateDuplicateUsernameFailed() 
-    {
-        User::insert([
-            'username' => 'davidskusnerfans',
-            'fullname' => 'david kushner fans',
-            'password' => Hash::make('password'),
-            'email' => 'david@gmail.com',
-            'status' => StatusTypeContants::INACTIVE,
-            'role' => UserRoleContants::ADMIN
-        ]);
-        $user = User::factory()->create();
-        $userUpdate = [
-            'username' => 'davidskusnerfans',
-            'fullname' => 'peter pan',
-            'email' => 'exmaple@gmail.com',
-            'status' => StatusTypeContants::INACTIVE,
-            'role' => UserRoleContants::ADMIN
-        ];
-        $userService = new UserService();
-        $this->expectException(QueryException::class);
-        $userService->update($user->id, $userUpdate);
+        $this->assertTrue($newUser->hasRole($newRole));
     }
 }

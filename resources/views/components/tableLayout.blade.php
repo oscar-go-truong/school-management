@@ -1,10 +1,6 @@
 <div class="table-content">
     <div id="table-layout-component">
         <div class="row mb-1">
-
-
-
-
             <div class="col-md-6 " id="select-limit">
                 <div><span class="font-medium">
                         Show :
@@ -24,6 +20,9 @@
                             <option value="100">
                                 100
                             </option>
+                            <option value="200">
+                                200
+                            </option>
                         </select>
                     </div>
                     <span class="font-medium"> entries </span>
@@ -32,7 +31,7 @@
             <div class=" col-md-6 pl-0 d-flex justify-end">
                 {{-- select column for search --}}
                 @if (isset($searchColumns))
-                    <select class="form-select  w-40  text-sm inline-block translate-x-[12px]" id="searchColumn">
+                    <select class="form-select  w-40  text-sm inline-block translate-x-[6px]" id="searchColumn">
                         <option value="">
                             Select column
                         </option>

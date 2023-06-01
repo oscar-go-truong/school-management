@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Courses;
+namespace Tests\Feature\Subject;
 
 use App\Enums\UserRoleNameContants;
 use App\Models\Course;
@@ -8,7 +8,6 @@ use App\Models\Subject;
 use App\Models\User;
 use App\Models\UserCourse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -16,13 +15,14 @@ class GetDetailPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $teacher;
+    protected $subject;
     protected $admin;
-    protected $course;
+    protected $userLearnSubject;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         $roles = [];
         foreach (UserRoleNameContants::getvalues() as $role) {
             $roles[] = [
@@ -35,19 +35,18 @@ class GetDetailPageTest extends TestCase
         $this->admin = User::factory()->create();
         $this->admin->assignRole(UserRoleNameContants::ADMIN);
 
-        $this->teacher = User::factory()->create();
-        $this->teacher->assignRole(UserRoleNameContants::TEACHER);
+        $this->subject = Subject::factory()->create();
 
-        Subject::factory()->create();
+        $this->userLearnSubject = User::factory()->create();
+        $this->userLearnSubject->assignRole(UserRoleNameContants::TEACHER);
 
-        $this->course = Course::factory()->create();
+        $courseOfSubject = Course::factory()->create();
 
         UserCourse::create([
-            'user_id' => $this->teacher->id,
-            'course_id' => $this->course->id
+            'user_id' => $this->userLearnSubject->id,
+            'course_id' => $courseOfSubject->id
         ]);
     }
-
     /**
      * A basic feature test example.
      *
@@ -58,27 +57,27 @@ class GetDetailPageTest extends TestCase
 
         $this->actingAs($this->admin);
 
-        $response = $this->get('/courses/' . $this->course->id);
-        $response->assertViewIs('course.detail');
+        $response = $this->get('/subjects/' . $this->subject->id);
+        $response->assertViewIs('subject.detail');
         $response->assertStatus(200);
     }
 
-    public function testUserInCourseGetDetailPageSuccess()
+    public function testUserLearnSubjectGetDetailPageSuccess()
     {
-        $this->actingAs($this->teacher);
+        $this->actingAs($this->userLearnSubject);
 
-        $response = $this->get('/courses/' . $this->course->id);
-        $response->assertViewIs('course.detail');
+        $response = $this->get('/subjects/' . $this->subject->id);
+        $response->assertViewIs('subject.detail');
         $response->assertStatus(200);
     }
 
-    public function testUserNotInCourseGetDetailPageReturn404()
+    public function testUserDoesntLearnSubjectGetDetailPageReturn404()
     {
         $user = User::factory()->create();
         $user->assignRole(UserRoleNameContants::STUDENT);
         $this->actingAs($user);
 
-        $response = $this->get('/courses/' . $this->course->id);
+        $response = $this->get('/subjects/' . $this->subject->id);
         $response->assertStatus(404);
     }
 }
