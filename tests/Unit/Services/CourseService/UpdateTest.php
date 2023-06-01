@@ -2,99 +2,85 @@
 
 namespace Tests\Unit\Services\CourseService;
 
-use App\Enums\StatusTypeContants;
-use App\Enums\UserRoleContants;
+use App\Enums\TimeConstants;
+use App\Enums\UserRoleNameContants;
 use App\Models\Course;
+use App\Models\Room;
 use App\Models\Subject;
 use App\Models\User;
 use App\Services\CourseService;
-use App\Services\UserCourseService;
-use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-use Mockery;
+use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class UpdateTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    public function testUpdateSuccess()
-    {
-        $user = User::insertGetId([
-            'username' => 'david kushner',
-            'fullname' => 'david kushner',
-            'email' => 'user1@gmail.com',
-            'password' => Hash::make('password'),
-            'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::TEACHER
-          ]);
-          $subject = Subject::factory()->create();
-          $course = [
-            'name' => 'example courses',
-            'descriptions' => 'this is descriptions for course',
-            'owner_id' => $user,
-            'subject_id' => $subject->id,
-            'status' => StatusTypeContants::ACTIVE
-          ];
-        $courseId = Course::insertGetId($course);
-        $newCourse = [
-        'name' => 'example courses new',
-        'descriptions' => 'this is new descriptions for course',
-        'owner_id' => $user,
-        'subject_id' => $subject->id,
-        'status' => StatusTypeContants::INACTIVE
-        ];
-    $mockUserCourseService = Mockery::mock(UserCourseService::class);
-    $mockUserCourseService->shouldReceive('store')->andReturn(['data'=>'ok']);
-    $mockUserCourseService->shouldReceive('checkUserWasJoinedCourse')->andReturn(1);
-    $courseSevice = new CourseService($mockUserCourseService);
-    $response = $courseSevice->update($courseId, $newCourse);
-    $this->assertEquals($response['message'], "Update successful!");
-    $this->assertDatabaseHas('courses',[
-        'id'=>$courseId,  
-        'name' => 'example courses new',
-        'descriptions' => 'this is new descriptions for course',
-        'owner_id' => $user,
-        'subject_id' => $subject->id,
-        'status' => StatusTypeContants::INACTIVE]);
-    }
 
-    public function testUpdateRollbackWhenFailed()
+    protected function setUp(): void
     {
-        $user = User::insertGetId([
-            'username' => 'david kushner',
-            'fullname' => 'david kushner',
-            'email' => 'user1@gmail.com',
-            'password' => Hash::make('password'),
-            'status' => StatusTypeContants::ACTIVE,
-            'role' => UserRoleContants::TEACHER
-          ]);
-          $subject = Subject::factory()->create();
-          $course = [
-            'name' => 'example courses',
-            'descriptions' => 'this is descriptions for course',
-            'owner_id' => $user,
-            'subject_id' => $subject->id,
-            'status' => StatusTypeContants::ACTIVE
-          ];
-        $courseId = Course::insertGetId($course);
-        $newCourse = [
-        'name' => 'example courses new',
-        'descriptions' => 'this is new descriptions for course',
-        'owner_id' => $user,
-        'subject_id' => $subject->id,
-        'status' => StatusTypeContants::INACTIVE
+        parent::setUp();
+        $roles = [];
+        foreach (UserRoleNameContants::getvalues() as $role) {
+            $roles[] = [
+            'name' => $role,
+            'guard_name' => 'web'
+            ];
+        }
+        Role::insert($roles);
+    }
+    public function testStoreSuccess()
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole(UserRoleNameContants::TEACHER);
+
+        $room = Room::factory()->create();
+        $weekday = collect(TimeConstants::WEEKDAY)->random();
+        $schedules = json_encode([
+          (object)[
+            'start_time' => "15:30:00",
+            'finish_time' => "17:00:00",
+            'weekday' => $weekday,
+            'room' => $room->id
+          ]
+        ]);
+
+        $subject = Subject::factory()->create();
+        $courseId = Course::factory()->create()->id;
+        $course = [
+          'owner_id' => $teacher->id,
+          'subject_id' => $subject->id,
+          'schedules' => $schedules,
+          'name' => 'course test',
+          'descriptions' => 'somethings'
         ];
-    $mockUserCourseService = Mockery::mock(UserCourseService::class);
-    $mockUserCourseService->shouldReceive('store')->andThrow(new Exception('error'));
-    $mockUserCourseService->shouldReceive('checkUserWasJoinedCourse')->andReturn(0);
-    $courseSevice = new CourseService($mockUserCourseService);
-    $response = $courseSevice->update($courseId, $newCourse);
-    $this->assertEquals($response['message'], "Error, please try again later!");
-}
+
+        $request = Request::create('/courses', 'POST', $course);
+
+        $courseService = app()->make(CourseService::class);
+
+        $course = $courseService->update($courseId, $request)['data'];
+
+        $this->assertDatabaseHas('courses', [
+          'id' => $courseId,
+          'owner_id' => $teacher->id,
+          'subject_id' => $subject->id,
+          'name' => 'course test',
+          'descriptions' => 'somethings'
+        ]);
+
+        $this->assertDatabaseHas('user_course', [
+          'user_id' => $teacher->id,
+          'course_id' => $course->id
+        ]);
+
+        $this->assertDatabaseHas('schedules', [
+          'start_time' => "15:30:00",
+          'finish_time' => "17:00:00",
+          'weekday' => $weekday,
+          'room_id' => $room->id,
+          'course_id' => $course->id
+        ]);
+    }
 }

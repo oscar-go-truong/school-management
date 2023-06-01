@@ -61,7 +61,7 @@
                     aria-label="Default select example">
                     <option value="0">Select role</option>
                     @foreach ($roles as $role)
-                        <option value="{{ $role->name }}" @if ($role->name === $user->getRoleNames()[0]) selected @endif>
+                        <option value="{{ $role->name }}" @if ($role->name === $user->getRoleNames()->first()) selected @endif>
                             {{ $role->name }}</option>
                     @endforeach
                 </select>

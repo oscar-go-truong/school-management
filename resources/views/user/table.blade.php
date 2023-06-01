@@ -81,7 +81,7 @@
         //filter status
         $('#filter-status').change(function() {
             const val = $(this).val();
-            if (val)
+            if (val != "")
                 queryData.status = val;
             else
                 queryData.status = null;

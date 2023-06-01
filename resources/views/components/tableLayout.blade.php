@@ -24,6 +24,9 @@
                             <option value="100">
                                 100
                             </option>
+                            <option value="200">
+                                200
+                            </option>
                         </select>
                     </div>
                     <span class="font-medium"> entries </span>
@@ -32,7 +35,7 @@
             <div class=" col-md-6 pl-0 d-flex justify-end">
                 {{-- select column for search --}}
                 @if (isset($searchColumns))
-                    <select class="form-select  w-40  text-sm inline-block translate-x-[12px]" id="searchColumn">
+                    <select class="form-select  w-40  text-sm inline-block translate-x-[6px]" id="searchColumn">
                         <option value="">
                             Select column
                         </option>

@@ -122,7 +122,9 @@ class ScoreService extends BaseService
     public function getByEditKey($key)
     {
         $score =  $this->model->where('edit_key', $key)->with('exam.course.subject')->with('user')->first();
-        $score->examType = MyExamTypeConstants::getKey($score->exam->type);
+        if ($score) {
+            $score->examType = MyExamTypeConstants::getKey($score->exam->type);
+        }
         return $score;
     }
 

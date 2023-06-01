@@ -38,8 +38,8 @@ class CourseService extends BaseService
     public function getTable($request)
     {
         $user = Auth::user();
-        $subjectId = $request->subjectId;
-        $year = $request->year;
+        $subjectId = isset($request->subjectId) ? $request->subjectId : null;
+        $year = isset($request->year) ? $request->year : null;
 
         $query = $this->model
         ->year($year)
@@ -125,12 +125,12 @@ class CourseService extends BaseService
             $schedules = [];
             foreach (json_decode($request->schedules) as $schedule) {
                 $schedules[] = [
-                    'course_id' => $course->id,
-                    'start_time' => $schedule->start_time,
-                    'finish_time' => $schedule->finish_time,
-                    'room_id' => $schedule->room,
-                    'weekday' => $schedule->weekday,
-                    'created_at' => now()->format('Y-m-d H:i:s')
+                'course_id' => $course->id,
+                'start_time' => $schedule->start_time,
+                'finish_time' => $schedule->finish_time,
+                'room_id' => $schedule->room,
+                'weekday' => $schedule->weekday,
+                'created_at' => now()->format('Y-m-d H:i:s')
                 ];
             }
             $this->scheduleModel->insert($schedules);
@@ -142,8 +142,8 @@ class CourseService extends BaseService
         } catch (Exception $e) {
             DB::rollBack();
             return [
-                'data' => null,
-                'message' => Message::error()
+            'data' => null,
+            'message' => Message::error()
             ];
         }
     }
@@ -157,7 +157,7 @@ class CourseService extends BaseService
         ->where('subject_id', $course
         ->subject_id)->where('status', StatusTypeContants::ACTIVE)
         ->whereDoesntHave('userCourses', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
+            $query->where('user_id', $userId);
         })
         ->get();
     }
@@ -167,10 +167,10 @@ class CourseService extends BaseService
         try {
             DB::beginTransaction();
             $arg = [
-                'name' => $request->name,
-                'subject_id' => $request->subject_id,
-                'owner_id' => $request->owner_id,
-                'descriptions' => $request->descriptions
+            'name' => $request->name,
+            'subject_id' => $request->subject_id,
+            'owner_id' => $request->owner_id,
+            'descriptions' => $request->descriptions
             ];
 
             $this->model->where('id', $id)->update($arg);
@@ -180,8 +180,8 @@ class CourseService extends BaseService
             $teacherWasJoinedCourse = $this->userCourseModel->where('user_id', $course->owner_id)->where('course_id', $course->id)->count();
             if (!$teacherWasJoinedCourse) {
                 $this->userCourseModel->create([
-                    'user_id' => $course->owner_id,
-                    'course_id' => $course->id,
+                'user_id' => $course->owner_id,
+                'course_id' => $course->id,
                 ]);
             }
 
@@ -190,12 +190,12 @@ class CourseService extends BaseService
             $schedules = [];
             foreach (json_decode($request->schedules) as $schedule) {
                 $schedules[] = [
-                    'course_id' => $course->id,
-                    'start_time' => $schedule->start_time,
-                    'finish_time' => $schedule->finish_time,
-                    'room_id' => $schedule->room,
-                    'weekday' => $schedule->weekday,
-                    'created_at' => now()->format('Y-m-d H:i:s')
+                'course_id' => $course->id,
+                'start_time' => $schedule->start_time,
+                'finish_time' => $schedule->finish_time,
+                'room_id' => $schedule->room,
+                'weekday' => $schedule->weekday,
+                'created_at' => now()->format('Y-m-d H:i:s')
                 ];
             }
             $this->scheduleModel->insert($schedules);
@@ -213,21 +213,21 @@ class CourseService extends BaseService
         $user = Auth::user();
 
         $course = $this->model
-                ->with('subject')
-                ->withCount('exams')
-                ->withCount('teachers')
-                ->withCount('students')
-                ->with('schedules', function ($query) {
-                                                        $query->orderByRaw("FIELD(weekday, '" . implode("', '", TimeConstants::WEEKDAY) . "')");
-                })
-                ->find($id);
+            ->with('subject')
+            ->withCount('exams')
+            ->withCount('teachers')
+            ->withCount('students')
+            ->with('schedules', function ($query) {
+                                                    $query->orderByRaw("FIELD(weekday, '" . implode("', '", TimeConstants::WEEKDAY) . "')");
+            })
+            ->find($id);
         if ($user->hasRole(UserRoleNameContants::STUDENT)) {
             $course->isRequestSwitch =  $this->requestModel
-                                        ->where('user_request_id', $user->id)
-                                        ->where('content->old_course_id', $id)
-                                        ->where('type', RequestTypeContants::SWITCH_COURSE)
-                                        ->where('status', RequestStatusContants::PENDING)
-                                        ->count();
+                                    ->where('user_request_id', $user->id)
+                                    ->where('content->old_course_id', $id)
+                                    ->where('type', RequestTypeContants::SWITCH_COURSE)
+                                    ->where('status', RequestStatusContants::PENDING)
+                                    ->count();
         }
 
         return $course;

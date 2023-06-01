@@ -12,7 +12,7 @@
             <li class="{{ Request::is('/') ? 'active' : '' }}">
                 <a href="/" class="nav-link link-dark" aria-current="page">
                     <i class="fa-solid fa-user mr-3"></i>
-                    Profile
+                    Dashboard
                 </a>
             </li>
             @role('admin')
