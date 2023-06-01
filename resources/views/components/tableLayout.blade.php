@@ -1,10 +1,6 @@
 <div class="table-content">
     <div id="table-layout-component">
         <div class="row mb-1">
-
-
-
-
             <div class="col-md-6 " id="select-limit">
                 <div><span class="font-medium">
                         Show :
