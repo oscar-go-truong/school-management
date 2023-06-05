@@ -19,32 +19,53 @@
                     </div><!-- / course-info-box -->
                 </div><!-- / column -->
                 <div class="col-xl-8">
-                    <div class="course-info-box mt-0 mb-3">
+                    <div class="course-info-box mt-2 mb-2">
                         <h5 class="pb-1"><b>{{ strtoupper($course->subject->name . ' ' . $course->name) }}</b></h5>
                         <div>{{ $course->descriptions }}</div>
                         <div class="text-sm"><b>Homeroom Teacher: </b>{{ $course->homeroomTeacher->fullname }}</div>
                     </div><!-- / course-info-box -->
                     <div class="course-info-box mb-3">
-                        <div class="font-bold mb-1"> Schedule: </div>
+                        <div class="font-bold mb-1"> Schedules: </div>
                         @foreach ($course->schedules as $schedule)
                             <div>{{ $schedule->weekday }} {{ $schedule->start_time }}-{{ $schedule->finish_time }}</div>
                         @endforeach
-                        <div class="font-bold mb-1 mt-2"> Detail: </div>
-                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail p-1"
-                            href="/courses/{{ $course->id }}/teachers">
-                            <div class="inline font-bold">Teacher</div>
-                            <div class="inline font-bold mr-2">{{ $course->teachers_count }}</div>
-                        </a>
-                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail p-1"
-                            href="/courses/{{ $course->id }}/students">
-                            <div class="inline font-bold">Student</div>
-                            <div class="inline font-bold mr-2">{{ $course->students_count }}</div>
-                        </a>
-                        <a class="d-flex justify-content-between border-b-2 borbder-gray-2 bg-cyan-500 text-white course-detail p-1"
-                            href="/exams?courseId={{ $course->id }}">
-                            <div class="inline font-bold">Exam</div>
-                            <div class="inline font-bold mr-2">{{ $course->exams_count }}</div>
-                        </a>
+                        <div class="font-bold mt-2"> Detail: </div>
+                        <div class="table100 ver4 m-b-110">
+                            <div class="table100-body js-pscroll ps ps--active-y">
+                                <table class="table table-hover">
+                                    <tbody class="font-bold text-dark">
+                                        <tr>
+                                            <td>
+                                                <a href="/courses/{{ $course->id }}/teachers">
+                                                    Teacher
+
+                                                </a>
+                                            </td>
+                                            <td class="text-right">{{ $course->teachers_count }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a href="/courses/{{ $course->id }}/students">
+                                                    Students
+
+                                                </a>
+                                            </td>
+                                            <td class="text-right">{{ $course->students_count }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a href="/exams?courseId={{ $course->id }}">
+                                                    Exams
+
+                                                </a>
+                                            </td>
+                                            <td class="text-right">{{ $course->exams_count }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
 
                     </div>
                     @if ($course->status === 1)

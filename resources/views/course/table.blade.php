@@ -33,7 +33,6 @@
         year: new Date().getFullYear(),
         subjectId: subjectId
     };
-    let last_page = 1;
     // end config
     //
     // Create row for table

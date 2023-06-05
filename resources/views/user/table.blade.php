@@ -7,8 +7,7 @@
         <th class="sort sorting" data-column="email">Email</th>
         <th>Role</th>
         <th>Status</th>
-        <th>Update</th>
-        <th>Delete</th>
+        <th class="text-center">Action</th>
     </tr>
 @endsection
 @section('tableId', 'usersTable')
@@ -25,8 +24,7 @@
         role: [],
         status: null
 
-    };
-    let last_page = 1;
+    };;
     // end config
     //
     // Create row for table
@@ -45,10 +43,17 @@
                     </label>
                     </div>
                     </td>`);
-        row.append(`<td class="text-primary"><a href="/users/${ user.id }/edit"><i
-                                        class="fa-solid fa-pen-to-square"></i></a></td>`);
-        row.append(`<td class="text-danger"><i class="fa-sharp fa-solid fa-user-minus delete"
-                                    data-id=${ user.id } data-name=${ user.email }></i></i></td>`);
+        row.append(`<td class='text-center'>
+                        <a href="/users/${ user.id }/edit" class="text-primary">
+                            <i class="fa-solid fa-pen-to-square">
+                            </i>
+                        </a>
+                        <div class='text-danger delete inline>
+                        <i class="fa-sharp fa-solid fa-user-minus "
+                                    data-id=${ user.id } data-name=${ user.email }>
+                        </i>
+                        </div class='text-danger delete inline>
+                    </td>`);
         return row;
     }
 

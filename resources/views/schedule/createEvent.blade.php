@@ -75,8 +75,8 @@
                         <div class="form-group col-md-3">
                             <label class="control-label mt-3  font-semibold">Available Room <span
                                     class="text-danger">*</span></label>
-                            <div class="inputRoomContainer">
-                                <select class="form-control select2" id="roomSelect" name="room_id">
+                            <div class="inputRoomContainer" id="inputRoomContainer">
+                                <select class="form-control" id="roomSelect" name="room_id">
 
                                 </select>
                                 @error('room_id')
@@ -127,7 +127,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label mt-3  font-semibold">Description <span class="text-danger">*</span></label>
+                    <label class="control-label mt-3 font-semibold">Description <span class="text-danger">*</span></label>
                     <div class="inputGroupContainer">
                         <div class="input-group">
                             <textarea placeholder="Description..." rows="10" class="form-control" id="description" name="description"></textarea>
@@ -160,19 +160,19 @@
                 },
                 dataType: 'json',
                 success: function(resp) {
+                    $('#roomSelect').html('');
                     if (resp.data) {
                         const rooms = resp.data.rooms;
                         if (rooms.length) {
                             $('#roomSelect').append(
                                 '<option value="" id="defaultRoomSelect">-- Select Available Room --</option>'
                             );
-                            toastr.success('Loading done!');
                             for (let i = 0; i < resp.data.rooms.length; i++)
                                 $('#roomSelect').append(
                                     ` <option value="${rooms[i].id}" id="room-${rooms[i].id}">${rooms[i].name}</option>`
                                 )
+                            toastr.success('Loading done!');
                         } else {
-                            $('#roomSelect').html('');
                             toastr.warning('No available rooms found!');
                         }
                     }

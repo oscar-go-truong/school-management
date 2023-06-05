@@ -24,6 +24,11 @@ class Score extends Model
         return $this->belongsTo(User::class, "student_id");
     }
 
+    public function marker(): BelongsTo
+    {
+        return $this->belongsTo(User::class, "updated_by");
+    }
+
     public function exam(): BelongsTo
     {
         return $this->belongsTo(Exam::class);

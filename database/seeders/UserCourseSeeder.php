@@ -22,12 +22,18 @@ class UserCourseSeeder extends Seeder
        {
         do{
             $userId = User::role(UserRoleNameContants::STUDENT)->inRandomOrder()->first()->id;
-            $courseId = Course::all()->random()->id;
-        } while(UserCourse::where('user_id', $userId)->where('course_id', $courseId)->count());
+            $course = Course::all()->random();
+            $isValidCourse = UserCourse::where('user_id', $userId)
+                                        ->where('course_id', $course->id)
+                                        ->count() && UserCourse::where('user_id', $userId)
+                                        ->whereHas('course', function($query) use($course){
+                                            $query->where('subject_id'.$course->subject_id);
+            });
+        } while($isValidCourse);
         UserCourse::insert([
             'user_id' => $userId,
-            'course_id' => $courseId,
-            'status' => StatusTypeContants::getRandomValue(),
+            'course_id' => $course->id,
+            'status' => StatusTypeContants::ACTIVE,
         ]);
        }
     }

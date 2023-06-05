@@ -6,15 +6,9 @@ use App\Enums\MyExamTypeConstants;
 use App\Enums\RequestStatusContants;
 use App\Enums\RequestTypeContants;
 use App\Enums\UserRoleNameContants;
-use App\Helpers\Message;
-use App\Jobs\PreventUpdateExamScores;
 use App\Models\Exam;
 use App\Models\Request;
-use App\Models\Score;
-use App\Models\UserCourse;
-use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ExamService extends BaseService
 {
@@ -51,8 +45,12 @@ class ExamService extends BaseService
         $query = $this->model->withCount('scores')->with('course.subject')->course($courseId)->year($year);
 
         if (!$userIsAdmin) {
-            $query = $query->whereHas('course.userCourses', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
+            $query = $query->where(function ($query) use ($user) {
+                $query->whereHas('course.userCourses', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })->orWhereHas('scores', function ($query) use ($user) {
+                    $query->where('student_id', $user->id);
+                });
             });
             if ($userIsStudent) {
                 $query = $query->with('scores', function ($query) use ($user) {
@@ -70,12 +68,12 @@ class ExamService extends BaseService
                 'course' => $exam->course->name,
                 'type' => ucfirst(strtolower(MyExamTypeConstants::getKey($exam->type))),
                 'scoresCount' => $exam->scores_count,
-                'created_at' => $exam->created_at
             ];
             if ($userIsStudent) {
             }
                 {
                     $item['myScore'] = count($exam->scores) ? $exam->scores[0]->total : "";
+                    $item['marker'] = count($exam->scores) ? $exam->scores[0]->marker->fullname : "";
                     $item['isUpdated'] = count($exam->scores) && !$exam->scores[0]->edit_key && $this->requestModel->where('user_request_id', $user->id)->where('status', RequestStatusContants::APPROVED)->where("content->exam_id", [$exam->id])->first() ? true : false;
                     $status = $this->requestModel->where('user_request_id', $user->id)->where('status', '!=', RequestStatusContants::CANCELLED)->where("content->exam_id", [$exam->id])->first();
                     $item['requestStatus'] = $status ? ucfirst(strtolower(RequestStatusContants::getKey($status->status))) : null;

@@ -26,11 +26,6 @@ class Course extends Model
     ];
 
 
-    public function bookingRoom(): HasMany
-    {
-        return $this->HasMany(BookingRoom::class);
-    }
-
     public function exams(): HasMany
     {
         return $this->hasMany(Exam::class);
@@ -43,14 +38,16 @@ class Course extends Model
 
     public function scopeYear($query, $year)
     {
-        if($year)
-            return $query->whereRaw('Year(created_at) = '.$year);
+        if ($year) {
+            return $query->whereRaw('Year(created_at) = ' . $year);
+        }
         return $query;
     }
     public function scopeSubject($query, $subjectId)
     {
-        if($subjectId)
+        if ($subjectId) {
             return $query->where('subject_id', $subjectId);
+        }
         return $query;
     }
     public function homeroomTeacher(): BelongsTo
@@ -58,9 +55,9 @@ class Course extends Model
         return $this->belongsTo(User::class, "owner_id");
     }
 
-    public function userCourses() : HasMany
+    public function userCourses(): HasMany
     {
-        return $this->hasMany(UserCourse::class); 
+        return $this->hasMany(UserCourse::class);
     }
 
     public function teachers()
@@ -77,9 +74,8 @@ class Course extends Model
         });
     }
 
-    public function schedules() : HasMany
+    public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class);
     }
-
 }

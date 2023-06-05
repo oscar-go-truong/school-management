@@ -304,6 +304,8 @@
                         $('#select-weekday-' + id).removeClass('is-invalid');
                         $('#select-weekday-' + id).addClass('is-valid');
                         toastr.info('Loading available room!');
+                        const scheduleIndex = schedules.findIndex(obj => obj.id === id);
+                        schedules[scheduleIndex].room = null;
                         $.ajax({
                             method: "GET",
                             url: "/rooms/available-room-for-schedule",
@@ -313,6 +315,8 @@
                                 weekday: weekday
                             },
                             success: function(resp) {
+                                $('#select-room-' + id).html(
+                                    '<option value="">Available rooms</option>');
                                 const rooms = resp.data.rooms;
                                 for (let i = 0; i < rooms.length; i++) {
                                     $('#select-room-' + id).append(
