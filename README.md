@@ -6,10 +6,10 @@
     <img src="images/logo.png" alt="Logo" width="500" height="500">
   </a>
 
-<h3 align="center">School Management</h3>
+<h3 align="center">School Management App</h3>
 
   <p align="center">
-    Application for student, teacher & school manager.
+   This is a web-based application for managing schools built using the Laravel framework. It allows administrators to manage various aspects of the school such as students, teachers, classes, exams, and grades.
   </p>
 </div>
 
@@ -19,9 +19,9 @@
 
 ### Built With
 
-- [![Laravel][laravel.com]][laravel-url]
-- [![Bootstrap][bootstrap.com]][bootstrap-url]
-- [![JQuery][jquery.com]][jquery-url]
+-   [![Laravel][laravel.com]][laravel-url]
+-   [![Bootstrap][bootstrap.com]][bootstrap-url]
+-   [![JQuery][jquery.com]][jquery-url]
 
 <!-- GETTING STARTED -->
 
@@ -34,18 +34,18 @@ This is an example of how to list things you need to use the software and how to
 ### Installation
 
 1. Clone the repo
-   ```sh
-   git clone https://github.com/oscar-go-truong/school-management.git
-   ```
+    ```sh
+    git clone https://github.com/oscar-go-truong/school-management.git
+    ```
 2. Install composer packages
-   ```sh
-   composer install
-   ```
+    ```sh
+    composer install
+    ```
 3. start the server
-   ```sh
-   php artisan serve
-   ```
-   <!-- USAGE EXAMPLES -->
+    ```sh
+    php artisan serve
+    ```
+    <!-- USAGE EXAMPLES -->
 
 ## Usage
 
