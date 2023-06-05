@@ -48,9 +48,9 @@
                             <i class="fa-solid fa-pen-to-square">
                             </i>
                         </a>
-                        <div class='text-danger delete inline>
+                        <div class='text-danger delete inline' data-id=${ user.id } data-name=${ user.email }>
                         <i class="fa-sharp fa-solid fa-user-minus "
-                                    data-id=${ user.id } data-name=${ user.email }>
+                                    >
                         </i>
                         </div class='text-danger delete inline>
                     </td>`);
