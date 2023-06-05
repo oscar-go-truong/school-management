@@ -33,9 +33,9 @@
                         </div>
                     </div>
                 </div>
-                <form class="col-md-8" method="POST" action="/profile/update" id="update-profile-form">
+                <form class="col-md-8 h-auto" method="POST" action="/profile/update" id="update-profile-form">
                     @csrf
-                    <div class="card mb-3">
+                    <div class="card mb-3 h-100">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-3">
@@ -95,9 +95,10 @@
                                 @enderror
                             </div>
                             <hr>
-                            <div class="row mt-3">
-                                <div class="col-sm-12">
-                                    <button class="btn btn-info" id="update">Update</button>
+                            <div class="row mt-3 ">
+                                <div class="d-flex justify-content-end ">
+                                    <button class="btn btn-primary" id="update">Update</button>
+
                                 </div>
                             </div>
                         </div>

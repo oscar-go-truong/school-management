@@ -7,9 +7,9 @@
         <th>Exam type</th>
         @role('student')
             <th>My score</th>
+            <th>Marker</th>
         @endrole
         <th class="text-center">Scores</th>
-        <th>Created at</th>
         @role('student')
             <th class="text-center">Request review score</th>
         @endrole
@@ -31,8 +31,7 @@
         status: null,
         courseId: '{{ $courseId }}',
         year: new Date().getFullYear(),
-    };
-    let last_page = 1;
+    };;
     // end config
     //
     // Create row for table
@@ -42,16 +41,15 @@
         row.append(`<td>${ exam.subject }</td>`);
         row.append(`<td>${ exam.course }</td>`);
         row.append(`<td>${ exam.type }</td>`);
-        if (isStudent)
+        if (isStudent) {
             row.append(`<td>${exam.myScore}</td>`);
+            row.append(`<td>${exam.marker}</td>`);
+        }
         row.append(
             ` <td class="text-center text-secondary"><a href="/exams/${exam.id}/scores"><i class="fa-sharp fa-solid fa-circle-info"></i></a></td>`
         );
-        row.append(
-            `<td>${  new Date(exam.created_at).toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"short", day:"numeric"})  }</td>`
-        );
         if (isStudent)
-            if (exam.myScore) {
+            if (exam.myScore !== "") {
                 if (!exam.requestStatus)
                     row.append(
                         `<td class="text-primary text-center" id="request-btn-${exam.id}"><i class="fa-solid fa-up-right-from-square create-request-review-score"  data-examId='${exam.id}' data-courseName='${exam.course}' data-subjectName='${exam.subject}' data-type='${exam.type}'></i></td>`

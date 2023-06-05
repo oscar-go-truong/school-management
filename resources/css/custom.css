@@ -288,9 +288,7 @@ h5,
 
 }
 
-.sorting {
-    position: relative;
-}
+
 
 .sorting::after {
     content: "\f0dd";
