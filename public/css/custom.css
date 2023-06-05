@@ -929,12 +929,12 @@ h2 {
     background-color: #ccc
 }
 
-table th {
-    position: -webkit-sticky;
+table thead th {
+
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #fff;
+    background-color: #fff !important;
 }
 
 .outcome-export {
