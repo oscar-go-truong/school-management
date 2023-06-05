@@ -98,6 +98,7 @@
                             <div class="row mt-3 ">
                                 <div class="d-flex justify-content-end ">
                                     <button class="btn btn-primary" id="update">Update</button>
+
                                 </div>
                             </div>
                         </div>
