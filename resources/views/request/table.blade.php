@@ -29,8 +29,7 @@
         role: [],
         status: isAdmin ? 1 : null,
         type: null
-    };
-    let last_page = 1;
+    };;
     // end config
     //
     // Create row for table
@@ -76,14 +75,13 @@
         })
     }
     $(document).ready(function() {
-        $(document).ready(function() {
-            $('#filter-status').change(function() {
-                if ($(this).val())
-                    queryData.status = $(this).val();
-                else
-                    queryData.status = null;
-                getTable(createRow);
-            });
+        $('#filter-status').change(function() {
+            if ($(this).val())
+                queryData.status = $(this).val();
+            else
+                queryData.status = null;
+            getTable(createRow);
+
         })
         $('#filter-type').change(function() {
             if ($(this).val())

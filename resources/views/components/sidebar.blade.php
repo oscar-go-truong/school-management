@@ -11,45 +11,53 @@
         <ul class="list-unstyled components mb-5">
             <li class="{{ Request::is('/') ? 'active' : '' }}">
                 <a href="/" class="nav-link link-dark" aria-current="page">
-                    <i class="fa-solid fa-user mr-3"></i>
+                    <div class="w-8 inline-block"><i class="fa-solid fa-user "></i></div>
                     Dashboard
                 </a>
             </li>
             @role('admin')
                 <li class="{{ Request::is('users/*') || Request::is('users') ? 'active' : '' }}">
                     <a href="/users" class="nav-link link-dark">
-                        <i class="fa-solid fa-users mr-3"></i>
+                        <div class="w-8 inline-block"><i class="fa-solid fa-users "></i></div>
                         Users
                     </a>
                 </li>
+                <li class="{{ Request::is('subjects/*') || Request::is('subjects') ? 'active' : '' }}">
+                    <a href="/subjects" class="nav-link link-dark">
+                        <div class="w-8 inline-block"><i class="fa-solid fa-book "></i></div>
+                        Subjects
+                    </a>
+                </li>
             @endrole
-            <li class="{{ Request::is('subjects/*') || Request::is('subjects') ? 'active' : '' }}">
-                <a href="/subjects" class="nav-link link-dark">
-                    <i class="fa-solid fa-book mr-3"></i>
-                    Subjects
-                </a>
-            </li>
             <li class="{{ Request::is('courses/*') || Request::is('courses') ? 'active' : '' }}">
                 <a href="/courses" class="nav-link link-dark">
-                    <i class="fa-solid fa-school mr-3"></i>
+                    <div class="w-8 inline-block"><i class="fa-solid fa-school "></i></div>
                     Courses
                 </a>
             </li>
             <li class="{{ Request::is('exams/*') || Request::is('exams') ? 'active' : '' }}">
                 <a href="/exams" class="nav-link link-dark">
-                    <i class="fa-solid fa-file mr-3"></i>
+                    <div class="w-8 inline-block"><i class="fa-solid fa-file "></i></div>
                     Exams
                 </a>
             </li>
+            @role('student')
+                <li class="{{ Request::is('outcomes/*') || Request::is('outcomes') ? 'active' : '' }}">
+                    <a href="/outcomes" class="nav-link link-dark">
+                        <div class="w-8 inline-block"><i class="fa-solid fa-graduation-cap "></i></div>
+                        Outcomes
+                    </a>
+                </li>
+            @endrole
             <li class="{{ Request::is('requests/*') || Request::is('requests') ? 'active' : '' }} relative">
                 <a href="/requests" class="nav-link link-dark inline">
-                    <i class="fa-sharp fa-solid fa-envelope mr-3"></i>
+                    <div class="w-8 inline-block"> <i class="fa-sharp fa-solid fa-envelope "></i></div>
                     Requests
                 </a>
             </li>
             <li class="{{ Request::is('schedules/*') || Request::is('schedules') ? 'active' : '' }}">
                 <a href="/schedules" class="nav-link link-dark">
-                    <i class="fa-solid fa-calendar mr-3"></i>
+                    <div class="w-8 inline-block"> <i class="fa-solid fa-calendar "></i></div>
                     Schedules
                 </a>
             </li>

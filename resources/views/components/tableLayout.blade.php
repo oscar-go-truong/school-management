@@ -49,14 +49,18 @@
                 @endif
             </div>
         </div>
-        <table class="table table-striped table-bordered table-hover">
-            <thead>
-                @yield('th')
-            </thead>
-            <tbody id="@yield('tableId')">
+        <div class="table100 ver4 m-b-110">
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table class="table table-hover">
+                    <thead>
+                        @yield('th')
+                    </thead>
+                    <tbody id="@yield('tableId')">
 
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div id="userPagination" class="pt-2">
             @include('components.pagination')
         </div>

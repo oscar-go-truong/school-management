@@ -25,7 +25,7 @@ class RoomService extends BaseService
             $query->whereHas('course', function ($query) {
                 $query->where('status', StatusTypeContants::ACTIVE);
             })->whereRaw('((start_time <="' . $startTime . '" and "' . $startTime . '"<= finish_time) or (start_time <= "' . $endTime . '" and "' . $endTime . '" <= finish_time) or (start_time >= "' . $startTime . '" and "' . $endTime . '" >= finish_time))')->where('weekday', $weekday);
-        })->get();
+        })->orderBy('name', 'asc')->get();
         return ['data' => ['rooms' => $rooms]];
     }
 
@@ -38,7 +38,7 @@ class RoomService extends BaseService
             $query->whereHas('course', function ($query) {
                 $query->where('status', StatusTypeContants::ACTIVE);
             })->whereRaw('((start_time <="' . $startTime . '" and "' . $startTime . '"<= finish_time) or (start_time <= "' . $finishTime . '" and "' . $finishTime . '" <= finish_time) or (start_time >= "' . $startTime . '" and "' . $finishTime . '" >= finish_time))')->where('weekday', $weekday);
-        })->get();
+        })->orderBy('name', 'asc')->get();
         return ['data' => ['rooms' => $rooms]];
     }
 }

@@ -28,10 +28,6 @@
                         {{-- filter by role --}}
                         <div class="dropdown inline-block">
                             <select class="select2 w-36" id="selectRole" multiple>
-
-                                <option id="default-role" value="">
-                                    All roles
-                                </option>
                                 @foreach ($roles as $role)
                                     <option value="{{ $role->name }}" id="role-{{ $role->name }}" class="role-option">
                                         {{ $role->name }}

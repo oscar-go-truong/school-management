@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OutcomeController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\ScheduleController;
@@ -132,5 +133,11 @@ use Illuminate\Support\Facades\Route;
         Route::prefix('/notifications/')->group(function () {
             Route::get('/', [NotificationController::class, 'getTable'])->name('user.get.notifications.table');
             Route::get('/{id}', [NotificationController::class, 'show'])->name('user.get.notifications.detail');
+        });
+
+        Route::prefix('/outcomes/')->group(function () {
+            Route::get('/', [OutcomeController::class, 'index'])->name('student.get.outcome.index');
+            Route::get('/table', [OutcomeController::class, 'getTable'])->name('student.get.outcome.table');
+            Route::get('/export', [OutcomeController::class, 'export'])->name('student.export.outcome.table.pdf');
         });
     });
