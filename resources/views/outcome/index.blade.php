@@ -42,7 +42,7 @@
                         <th class="cell100">#</th>
                         <th class="cell100">Subject</th>
                         <th class="cell100">Course</th>
-                        <th class="cell100">Hoomroom Teacher</th>
+                        <th class="cell100">Homeroom Teacher</th>
                         <th class="cell100 text-center">Grade Points</th>
                         <th class="cell100 text-center">Grade Letter</th>
                         <th class="cell100 text-center">Grade</th>
